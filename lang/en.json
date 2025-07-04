@@ -1,12 +1,12 @@
 {
   "LORE_LEGACY": {
     "Ability": {
-      "Str": { "long": "Strength", "abbr": "str" },
-      "Con": { "long": "Constitution", "abbr": "con" },
-      "Dex": { "long": "Dexterity", "abbr": "dex" },
-      "Int": { "long": "Intelligence", "abbr": "int" },
-      "Wis": { "long": "Wisdom", "abbr": "wis" },
-      "Cha": { "long": "Charisma", "abbr": "cha" }
+      "Vig": { "long": "Vigueur", "abbr": "vig" },
+      "Rob": { "long": "Robustesse", "abbr": "rob" },
+      "Mai": { "long": "Maîtrise", "abbr": "mai" },
+      "Pre": { "long": "Prestance", "abbr": "pre" },
+      "Dis": { "long": "Discernement", "abbr": "dis" },
+      "Car": { "long": "Caractère", "abbr": "car" }
     },
     "SheetLabels": {
       "Actor": "LoreLegacy Actor Sheet",
@@ -35,6 +35,8 @@
     "Item": {
       "item": "Item",
       "feature": "Feature",
+      "skill": "Skill",
+      "trait": "Trait",
       "spell": "Spell"
     }
   }

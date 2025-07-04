@@ -8,39 +8,94 @@
           "min": 0,
           "max": 10
         },
+        "lastchance": {
+          "value": 5,
+          "min": 0,
+          "max": 5
+        },
         "power": {
           "value": 5,
           "min": 0,
           "max": 5
         },
-        "biography": ""
+        "fortune": {
+          "value": 2,
+          "min": 0,
+          "max": 2
+        },
+        "biography": "<p>Peuple : </p> <p>Description : Historique, particularité, notes... A remplir</p>"
       }
     },
     "character": {
       "templates": ["base"],
       "attributes": {
-        "level": {
+        "tael": {
           "value": 1
-        }
+        },
+        "astre": {
+          "value": 0
+        },
+        "bfortune" : false,
+        "nfortune" : 0,
+        "cfortune" : "unchecked",
+        "badversite" : false,
+        "nadversite" : 0,
+        "cadversite" : "unchecked"
       },
       "abilities": {
-        "str": {
-          "value": 10
+        "vig": {
+          "value": 1,
+          "bfortune" : false,
+          "nfortune" : 0,
+          "cfortune" : "unchecked",
+          "badversite" : false,
+          "nadversite" : 0,
+          "cadversite" : "unchecked"
         },
-        "dex": {
-          "value": 10
+        "mai": {
+          "value": 1,
+          "bfortune" : false,
+          "nfortune" : 0,
+          "cfortune" : "unchecked",
+          "badversite" : false,
+          "nadversite" : 0,
+          "cadversite" : "unchecked"
         },
-        "con": {
-          "value": 10
+        "rob": {
+          "value": 1,
+          "bfortune" : false,
+          "nfortune" : 0,
+          "cfortune" : "unchecked",
+          "badversite" : false,
+          "nadversite" : 0,
+          "cadversite" : "unchecked"
         },
-        "int": {
-          "value": 10
+        "pre": {
+          "value": 1,
+          "bfortune" : false,
+          "nfortune" : 0,
+          "cfortune" : "unchecked",
+          "badversite" : false,
+          "nadversite" : 0,
+          "cadversite" : "unchecked"
         },
-        "wis": {
-          "value": 10
+        "dis": {
+          "value": 1,
+          "bfortune" : false,
+          "nfortune" : 0,
+          "cfortune" : "unchecked",
+          "badversite" : false,
+          "nadversite" : 0,
+          "cadversite" : "unchecked"
         },
-        "cha": {
-          "value": 10
+        "car": {
+          "value": 1,
+          "bfortune" : false,
+          "nfortune" : 0,
+          "cfortune" : "unchecked",
+          "badversite" : false,
+          "nadversite" : 0,
+          "cadversite" : "unchecked"
         }
       }
     },
@@ -50,7 +105,7 @@
     }
   },
   "Item": {
-    "types": ["item", "feature", "spell"],
+    "types": ["item", "feature", "skill", "trait", "spell"],
     "templates": {
       "base": {
         "description": ""
@@ -60,9 +115,24 @@
       "templates": ["base"],
       "quantity": 1,
       "weight": 0,
-      "formula": "d20 + @str.mod + ceil(@lvl / 2)"
+      "damage": 0,
+      "formula": "@damage"
     },
     "feature": {
+      "templates": ["base"]
+    },
+    "skill": {
+      "templates": ["base"],
+      "skillLevel": 1,
+      "formula": "@skillLevel",
+      "bfortune" : false,
+      "nfortune" : 0,
+      "cfortune" : "unchecked",
+      "badversite" : false,
+      "nadversite" : 0,
+      "cadversite" : "unchecked"
+    },
+    "trait": {
       "templates": ["base"]
     },
     "spell": {

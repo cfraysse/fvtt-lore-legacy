@@ -4,24 +4,20 @@
   "description": "The Lore & Legacy system for FoundryVTT!",
   "authors": [
     {
-      "name": "Asacolips",
-      "discord": "asacolips"
-    },
-    {
-      "name": "Lee Talman",
-      "discord": ".pizzaWizard"
+      "name": "Cyrille Fraysse",
+      "discord": "bozoin"
     }
   ],
-  "url": "Replace this with a link to your public repository",
+  "url": "https://github.com/cfraysse/fvtt-lore-legacy",
   "license": "LICENSE.txt",
   "readme": "README.md",
-  "bugs": "Replace this with a link to file issues or tickets",
+  "bugs": "https://github.com/cfraysse/fvtt-lore-legacy/issues",
   "changelog": "CHANGELOG.md",
   "media": [
     {
       "type": "setup",
-      "url": "systems/fvtt-lore-legacy/assets/anvil-impact.png",
-      "thumbnail": "systems/fvtt-lore-legacy/assets/anvil-impact.png"
+      "url": "systems/fvtt-lore-legacy/assets/loreAndLegacyCouv.jpg",
+      "thumbnail": "systems/fvtt-lore-legacy/assets/loreAndLegacyCouv.jpg"
     }
   ],
   "version": "2.0.0",
@@ -36,6 +32,11 @@
       "lang": "en",
       "name": "English",
       "path": "lang/en.json"
+    },
+    {
+      "lang": "fr",
+      "name": "Français",
+      "path": "lang/fr.json"
     }
   ],
   "packs": [],
@@ -43,7 +44,7 @@
   "socket": false,
   "manifest": "Replace this with a link to the /latest release system.json so people can receive updates after they've installed the system",
   "download": "This must link to a .zip file of the current version",
-  "background": "systems/fvtt-lore-legacy/assets/anvil-impact.png",
+  "background": "systems/fvtt-lore-legacy/assets/loreAndLegacyCouv.jpg",
   "gridDistance": 5,
   "gridUnits": "ft",
   "primaryTokenAttribute": "health",

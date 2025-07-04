@@ -105,6 +105,8 @@ export class LoreLegacyActorSheet extends ActorSheet {
     // Initialize containers.
     const gear = [];
     const features = [];
+    const traits = [];
+    const skills = [];
     const spells = {
       0: [],
       1: [],
@@ -129,6 +131,14 @@ export class LoreLegacyActorSheet extends ActorSheet {
       else if (i.type === 'feature') {
         features.push(i);
       }
+      // Append to traits.
+      else if (i.type === 'trait') {
+        traits.push(i);
+      }
+      // Append to skills.
+      else if (i.type === 'skill') {
+        skills.push(i);
+      }
       // Append to spells.
       else if (i.type === 'spell') {
         if (i.system.spellLevel != undefined) {
@@ -140,6 +150,8 @@ export class LoreLegacyActorSheet extends ActorSheet {
     // Assign and return
     context.gear = gear;
     context.features = features;
+    context.traits = traits;
+    context.skills = skills;
     context.spells = spells;
   }
 
@@ -205,6 +217,20 @@ export class LoreLegacyActorSheet extends ActorSheet {
     const header = event.currentTarget;
     // Get the type of item to create.
     const type = header.dataset.type;
+    var img;
+    if(type === "skill")
+    {
+      img = "systems/fvtt-lore-legacy/assets/skills.png"
+    }
+    else if(type === "trait")
+    {
+      img = "systems/fvtt-lore-legacy/assets/aura.png"
+    }
+    else
+    {
+      img = "systems/fvtt-lore-legacy/assets/swap-bag.png"
+    }
+    
     // Grab any data associated with this control.
     const data = duplicate(header.dataset);
     // Initialize a default name.
@@ -214,6 +240,7 @@ export class LoreLegacyActorSheet extends ActorSheet {
       name: name,
       type: type,
       system: data,
+      img: img,
     };
     // Remove the type from the dataset since it's in the itemData.type prop.
     delete itemData.system['type'];

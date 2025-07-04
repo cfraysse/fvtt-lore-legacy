@@ -47,10 +47,62 @@ export class LoreLegacyActor extends Actor {
     // Make modifications to data here. For example:
     const systemData = actorData.system;
 
+    if (systemData.attributes.bfortune == true) {
+      systemData.attributes.nfortune = 1;
+      systemData.attributes.cfortune = "checked";
+    }
+    else {
+      systemData.attributes.nfortune = 0;
+      systemData.attributes.cfortune = "unchecked";
+    }
+
+    if (systemData.attributes.badversite == true) {
+      systemData.attributes.nadversite = 1;
+      systemData.attributes.cadversite = "checked";
+    }
+    else {
+      systemData.attributes.nadversite = 0;
+      systemData.attributes.cadversite = "unchecked";
+    }
+
     // Loop through ability scores, and add their modifiers to our sheet output.
     for (let [key, ability] of Object.entries(systemData.abilities)) {
-      // Calculate the modifier using d20 rules.
-      ability.mod = Math.floor((ability.value - 10) / 2);
+      // Lore & legacy add value of ability to d6.
+      ability.mod = ability.value;
+      if (ability.bfortune == true) {
+        ability.nfortune = 1;
+        ability.cfortune = "checked";
+      }
+      else {
+        if(systemData.attributes.bfortune == true) {
+          ability.nfortune = 1;
+        }
+        else {
+          ability.nfortune = 0;
+        }
+        ability.cfortune = "unchecked";
+      }
+
+      if (ability.badversite == true) {
+        ability.nadversite = 1;
+        ability.cadversite = "checked";
+      }
+      else {
+        if(systemData.attributes.badversite == true) {
+          ability.nadversite = 1;
+        }
+        else {
+          ability.nadversite = 0;
+        }
+        ability.cadversite = "unchecked";
+      }
+    }
+
+    for (let [key, skill] of Object.entries(systemData.skills)) {
+
+      //skill.prepareTriangle(systemData.attributes.badversite, systemData.attributes.bfortune);
+      // TODO ??? skill.prepareTriangle(systemData.attributes.badversite, systemData.attributes.bfortune)
+      // Lore & legacy add value of skill to d10.
     }
   }
 
@@ -86,9 +138,15 @@ export class LoreLegacyActor extends Actor {
     if (this.type !== 'character') return;
 
     // Copy the ability scores to the top level, so that rolls can use
-    // formulas like `@str.mod + 4`.
+    // formulas like `@vig.mod + 4`.
     if (data.abilities) {
       for (let [k, v] of Object.entries(data.abilities)) {
+        data[k] = foundry.utils.deepClone(v);
+      }
+    }
+
+    if (data.skills) {
+      for (let [k, v] of Object.entries(data.skills)) {
         data[k] = foundry.utils.deepClone(v);
       }
     }
@@ -96,6 +154,12 @@ export class LoreLegacyActor extends Actor {
     // Add level for easier access, or fall back to 0.
     if (data.attributes.level) {
       data.lvl = data.attributes.level.value ?? 0;
+    }
+
+    if (data.attributes) {
+      for (let [k, v] of Object.entries(data.attributes)) {
+        data[k] = foundry.utils.deepClone(v);
+      }
     }
   }
 
@@ -106,5 +170,13 @@ export class LoreLegacyActor extends Actor {
     if (this.type !== 'npc') return;
 
     // Process additional NPC data here.
+  }
+
+  getNFortune() {
+    return this.system.nfortune;
+  }
+
+  getNAdversite() {
+    return this.system.nadversite;
   }
 }

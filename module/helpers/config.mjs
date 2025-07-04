@@ -5,19 +5,19 @@ export const LORE_LEGACY = {};
  * @type {Object}
  */
 LORE_LEGACY.abilities = {
-  str: 'LORE_LEGACY.Ability.Str.long',
-  dex: 'LORE_LEGACY.Ability.Dex.long',
-  con: 'LORE_LEGACY.Ability.Con.long',
-  int: 'LORE_LEGACY.Ability.Int.long',
-  wis: 'LORE_LEGACY.Ability.Wis.long',
-  cha: 'LORE_LEGACY.Ability.Cha.long',
+  vig: 'LORE_LEGACY.Ability.Vig.long',
+  mai: 'LORE_LEGACY.Ability.Mai.long',
+  rob: 'LORE_LEGACY.Ability.Rob.long',
+  pre: 'LORE_LEGACY.Ability.Pre.long',
+  dis: 'LORE_LEGACY.Ability.Dis.long',
+  car: 'LORE_LEGACY.Ability.Car.long'
 };
 
 LORE_LEGACY.abilityAbbreviations = {
-  str: 'LORE_LEGACY.Ability.Str.abbr',
-  dex: 'LORE_LEGACY.Ability.Dex.abbr',
-  con: 'LORE_LEGACY.Ability.Con.abbr',
-  int: 'LORE_LEGACY.Ability.Int.abbr',
-  wis: 'LORE_LEGACY.Ability.Wis.abbr',
-  cha: 'LORE_LEGACY.Ability.Cha.abbr',
+  vig: 'LORE_LEGACY.Ability.Vig.abbr',
+  mai: 'LORE_LEGACY.Ability.Mai.abbr',
+  rob: 'LORE_LEGACY.Ability.Rob.abbr',
+  pre: 'LORE_LEGACY.Ability.Pre.abbr',
+  dis: 'LORE_LEGACY.Ability.Dis.abbr',
+  car: 'LORE_LEGACY.Ability.Car.abbr'
 };

@@ -1,6 +1,8 @@
 # IDE
 .idea/
 .vs/
+*.code-workspace
+sshadd.sh
 
 # Node Modules
 node_modules/

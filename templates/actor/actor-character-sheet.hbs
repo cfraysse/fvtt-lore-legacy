@@ -2,39 +2,82 @@
 
   {{!-- Sheet Header --}}
   <header class="sheet-header">
-    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100"/>
+    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100" />
     <div class="header-fields">
-      <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name"/></h1>
+      <div class="resources grid grid-2col">
+        <h1 class="charname flexrow flex-center flex-between"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
+
+        <div class="resource flex-group-center">
+          <section class="grid grid-3col">
+            <div class="triangle-group resource flex-group-center">
+              <div class="adversitebigtriangle">
+                <input type="checkbox" id='system.attributes.badversite'
+                  name="system.attributes.badversite" {{system.attributes.cadversite}}>
+                <label for="system.attributes.badversite"></label>
+                </input>
+              </div>
+              <div class="fortunebigtriangle">
+                <input type="checkbox" id='system.attributes.bfortune' name="system.attributes.bfortune"
+                  {{system.attributes.cfortune}}>
+                <label for="system.attributes.bfortune"></label>
+                </input>
+              </div>
+            </div>
+            <div class="resource flex-group-center">
+              <label for="system.attributes.tael.value" class="resource-label">{{localize 'LORE_LEGACY.Property.Tael'}}</label>
+                <input type="text" name="system.attributes.tael.value" value="{{system.attributes.tael.value}}"
+                  data-dtype="Number" />
+            </div>
+            <div class="resource flex-group-center">
+              <label for="system.attributes.astre.value" class="resource-label">{{localize 'LORE_LEGACY.Property.Astre'}}</label>
+                <input type="text" name="system.attributes.astre.value" value="{{system.attributes.astre.value}}"
+                  data-dtype="Number" />
+            </div>
+          </section>
+        </div>
+      </div>
+
       {{!-- The grid classes are defined in scss/global/_grid.scss. To use,
       use both the "grid" and "grid-Ncol" class where "N" can be any number
-      from 1 to 12 and will create that number of columns.  --}}
-      <div class="resources grid grid-3col">
+      from 1 to 12 and will create that number of columns. --}}
+      <div class="resources jauges grid grid-4col">
 
         {{!-- "flex-group-center" is also defined in the _grid.scss file
         and it will add a small amount of padding, a border, and will
         center all of its child elements content and text. --}}
         <div class="resource flex-group-center">
-          <label for="system.health.value" class="resource-label">Health</label>
+          <label for="system.health.value" class="resource-label">{{localize 'LORE_LEGACY.Property.Health'}}</label>
           <div class="resource-content flexrow flex-center flex-between">
-          <input type="text" name="system.health.value" value="{{system.health.value}}" data-dtype="Number"/>
-          <span> / </span>
-          <input type="text" name="system.health.max" value="{{system.health.max}}" data-dtype="Number"/>
+            <input type="text" name="system.health.value" value="{{system.health.value}}" data-dtype="Number" />
+            <span>/</span>
+            <input type="text" name="system.health.max" value="{{system.health.max}}" data-dtype="Number" />
           </div>
         </div>
 
         <div class="resource flex-group-center">
-          <label for="system.power.value" class="resource-label">Power</label>
+          <label for="system.lastchance.value" class="resource-label">{{localize 'LORE_LEGACY.Property.LastChance'}}</label>
           <div class="resource-content flexrow flex-center flex-between">
-          <input type="text" name="system.power.value" value="{{system.power.value}}" data-dtype="Number"/>
-          <span> / </span>
-          <input type="text" name="system.power.max" value="{{system.power.max}}" data-dtype="Number"/>
+            <input type="text" name="system.lastchance.value" value="{{system.lastchance.value}}" data-dtype="Number" />
+            <span>/</span>
+            <input type="text" name="system.lastchance.max" value="{{system.lastchance.max}}" data-dtype="Number" />
           </div>
         </div>
 
         <div class="resource flex-group-center">
-          <label for="system.attributes.level.value" class="resource-label">Level</label>
+          <label for="system.power.value" class="resource-label">{{localize 'LORE_LEGACY.Property.Magic'}}</label>
           <div class="resource-content flexrow flex-center flex-between">
-          <input type="text" name="system.attributes.level.value" value="{{system.attributes.level.value}}" data-dtype="Number"/>
+            <input type="text" name="system.power.value" value="{{system.power.value}}" data-dtype="Number" />
+            <span>/</span>
+            <input type="text" name="system.power.max" value="{{system.power.max}}" data-dtype="Number" />
+          </div>
+        </div>
+
+        <div class="resource flex-group-center">
+          <label for="system.fortune.value" class="resource-label">{{localize 'LORE_LEGACY.Property.Fortune'}}</label>
+          <div class="resource-content flexrow flex-center flex-between">
+            <input type="text" name="system.fortune.value" value="{{system.fortune.value}}" data-dtype="Number" />
+            <span>/</span>
+            <input type="text" name="system.fortune.max" value="{{system.fortune.max}}" data-dtype="Number" />
           </div>
         </div>
 
@@ -45,11 +88,10 @@
   {{!-- Sheet Tab Navigation --}}
   <nav class="sheet-tabs tabs" data-group="primary">
     {{!-- Default tab is specified in actor-sheet.mjs --}}
-    <a class="item" data-tab="features">Features</a>
-    <a class="item" data-tab="description">Description</a>
-    <a class="item" data-tab="items">Items</a>
-    <a class="item" data-tab="spells">Spells</a>
-    <a class="item" data-tab="effects">Effects</a>
+    <a class="item" data-tab="features">{{localize 'TYPES.Item.feature'}}</a>
+    <a class="item" data-tab="description">{{localize 'DOCUMENT.Description'}}</a>
+    <a class="item" data-tab="items">{{localize 'TYPES.Item.item'}}</a>
+    <a class="item" data-tab="spells">{{localize 'TYPES.Item.spell'}}</a>
   </nav>
 
   {{!-- Sheet Body --}}
@@ -62,23 +104,112 @@
 
           {{!-- The grid classes are defined in scss/global/_grid.scss. To use,
           use both the "grid" and "grid-Ncol" class where "N" can be any number
-          from 1 to 12 and will create that number of columns.  --}}
+          from 1 to 12 and will create that number of columns. --}}
           <div class="abilities flexcol">
             {{#each system.abilities as |ability key|}}
             <div class="ability flexrow flex-group-center">
-              <label for="system.abilities.{{key}}.value" class="resource-label rollable flexlarge align-left" data-roll="d20+@abilities.{{key}}.mod" data-label="{{localize (lookup @root.config.abilities key)}}">{{localize (lookup @root.config.abilities key)}}</label>
-              <input type="text" name="system.abilities.{{key}}.value" value="{{ability.value}}" data-dtype="Number"/>
-              <span class="ability-mod rollable" data-roll="d20+@abilities.{{key}}.mod" data-label="{{localize (lookup @root.config.abilities key)}}">{{numberFormat ability.mod decimals=0 sign=true}}</span>
+              <section class="grid grid-4col-abilities">
+                <label for="system.abilities.{{key}}.value" class="resource-label rollable flexlarge flexcol align-left"
+                  data-roll="{(1d6[starynight]+(@abilities.{{key}}.nfortune)d6[inspired]-(@abilities.{{key}}.nadversite)d6[bloodmoon]),0}kh+@abilities.{{key}}.mod"
+                  data-label="{{localize (lookup @root.config.abilities key)}}">{{localize (lookup
+                  @root.config.abilities key)}}</label>
+                  <input type="text" name="system.abilities.{{key}}.value" value="{{ability.value}}"
+                    data-dtype="Number" />
+                  <div class="triangle-group">
+                  <div class="adversitetriangle flexcol">
+                    <input type="checkbox" id='system.abilities.{{key}}.badversite'
+                      name="system.abilities.{{key}}.badversite" {{ability.cadversite}}>
+                    <label for="system.abilities.{{key}}.badversite"></label>
+                    </input>
+                  </div>
+                  <div class="fortunetriangle flexcol">
+                    <input type="checkbox" id='system.abilities.{{key}}.bfortune' name="system.abilities.{{key}}.bfortune"
+                      {{ability.cfortune}}>
+                    <label for="system.abilities.{{key}}.bfortune"></label>
+                    </input>
+                  </div>
+                </div>
+              </section>
+
             </div>
+
             {{/each}}
+          </div>
+
+          <div class="capacitesecond flexcol">
+
+            <div class="resources grid grid-4col">
+              <div class="resource flex-group-center">
+                <label for="system.ResPhys.value" class="resource-label">{{localize 'LORE_LEGACY.Property.ResPhys'}}</label>
+              </div>
+              <div class="resource-content flexrow flex-center flex-between">
+                <input type="text" name="system.ResPhys.value" value="{{system.ResPhys.value}}" data-dtype="Number" />
+              </div>
+
+              <div class="resource flex-group-center">
+                <label for="system.ResMent.value" class="resource-label">{{localize 'LORE_LEGACY.Property.ResMent'}}</label>
+              </div>
+              <div class="resource-content flexrow flex-center flex-between">
+                <input type="text" name="system.ResMent.value" value="{{system.ResMent.value}}" data-dtype="Number" />
+              </div>
+            </div>
+            
+            <div class="resources grid grid-4col">
+              <div class="resource flex-group-center">
+                <label for="system.ResMag.value" class="resource-label">{{localize 'LORE_LEGACY.Property.ResMag'}}</label>
+              </div>
+              <div class="resource-content flexrow flex-center flex-between">
+                <input type="text" name="system.ResMag.value" value="{{system.ResMag.value}}" data-dtype="Number" />
+              </div>
+
+              <div class="resource flex-group-center">
+                <label for="system.SeuilBlessure.value" class="resource-label">{{localize 'LORE_LEGACY.Property.SeuilBlessure'}}</label>
+              </div>
+              <div class="resource-content flexrow flex-center flex-between">
+                <input type="text" name="system.SeuilBlessure.value" value="{{system.SeuilBlessure.value}}" data-dtype="Number" />
+              </div>
+            </div>
+
+            <div class="resources grid grid-4col">
+              <div class="resource flex-group-center">
+                <label for="system.Rapidite.value" class="resource-label">{{localize 'LORE_LEGACY.Property.Rapidite'}}</label>
+              </div>
+              <div class="resource-content flexrow flex-center flex-between">
+                <input type="text" name="system.Rapidite.value" value="{{system.Rapidite.value}}" data-dtype="Number" />
+              </div>
+
+              <div class="resource flex-group-center">
+                <label for="system.Bagage.value" class="resource-label">{{localize 'LORE_LEGACY.Property.Bagage'}}</label>
+              </div>
+              <div class="resource-content flexrow flex-center flex-between">
+                <input type="text" name="system.Bagage.value" value="{{system.Bagage.value}}" data-dtype="Number" />
+              </div>
+            </div>
+
+            <div class="resources grid grid-2col">
+              <div class="resource flex-group-center">
+                <label for="system.Poids.value" class="resource-label">{{localize 'LORE_LEGACY.Property.Poids'}}</label>
+              </div>
+              <div class="resource-content flexrow flex-center flex-between">
+                <input type="text" name="system.Poids.value" value="{{system.Poids.value}}" data-dtype="Number" />
+              </div>
+            </div>
+
+ {{!--Bagage Poids  Rapidite SeuilBlessure  ResMent  ResMag ResPhys --}}
+
+
           </div>
         </aside>
 
+
         {{!-- For the main features list, span the right two columns --}}
         <section class="main grid-span-2">
-          {{!-- This is a Handlebars partial. They're stored in the `/parts` folder next to this sheet, and defined in module/helpers/templates.mjs --}}
-          {{> "systems/fvtt-lore-legacy/templates/actor/parts/actor-features.hbs"}}
+          {{!-- This is a Handlebars partial. They're stored in the `/parts` folder next to this sheet, and defined in
+          module/helpers/templates.mjs --}}
+          {{> "systems/fvtt-lore-legacy/templates/actor/parts/actor-skills.hbs"}}
+          {{> "systems/fvtt-lore-legacy/templates/actor/parts/actor-traits.hbs"}}
         </section>
+
 
       </section>
     </div>
@@ -91,17 +222,12 @@
 
     {{!-- Owned Items Tab --}}
     <div class="tab items" data-group="primary" data-tab="items">
-       {{> "systems/fvtt-lore-legacy/templates/actor/parts/actor-items.hbs"}}
+      {{> "systems/fvtt-lore-legacy/templates/actor/parts/actor-items.hbs"}}
     </div>
 
     {{!-- Owned Spells Tab --}}
     <div class="tab spells" data-group="primary" data-tab="spells">
       {{> "systems/fvtt-lore-legacy/templates/actor/parts/actor-spells.hbs"}}
-    </div>
-
-    {{!-- Active Effects Tab --}}
-    <div class="tab effects flexcol" data-group="primary" data-tab="effects">
-      {{> "systems/fvtt-lore-legacy/templates/actor/parts/actor-effects.hbs"}}
     </div>
 
   </section>

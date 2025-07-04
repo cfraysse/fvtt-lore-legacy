@@ -1,0 +1,70 @@
+{
+  "LORE_LEGACY": {
+    "Ability": {
+      "Vig": { "long": "Vigueur", "abbr": "vig" },
+      "Rob": { "long": "Robustesse", "abbr": "rob" },
+      "Mai": { "long": "Maîtrise", "abbr": "mai" },
+      "Pre": { "long": "Prestance", "abbr": "pre" },
+      "Dis": { "long": "Discernement", "abbr": "dis" },
+      "Car": { "long": "Caractère", "abbr": "car" }
+    },
+    "SheetLabels": {
+      "Actor": "Lore & Legacy feuille de personnage",
+      "Item": "Lore & Legacy feuille d'objet"
+    },
+    "Item": {
+      "Spell": {
+        "SpellLVL": "Niveau {level} Sorts",
+        "AddLVL": "Ajoute Niveau {level}"
+      }
+    },
+    "Effect": {
+      "Source": "Source",
+      "Toggle": "Toggle Effect",
+      "Temporary": "Effets Temporaires",
+      "Passive": "Effets Passifs",
+      "Inactive": "Effets Inactifs",
+      "Effects": "Effets"
+    },
+    "Property": {
+      "Health": "Vie",
+      "Fortune": "Fortune",
+      "Adversity": "Adversity",
+      "Magic": "Magie",
+      "LastChance": "Dernière chance",
+      "Trait": "Trait",
+      "Tael": "Tael",
+      "Astre": "Astre",
+      "Skills": "Capacités",
+      "Level": "Niveau",
+      "ResPhys": "Rés. physique",
+      "ResMent": "Rés. mentale",
+      "ResMag": "Rés. magique",
+      "SeuilBlessure": "Seuil blessure",
+      "Poids": "Poids",
+      "Bagage": "Bagage",
+      "Rapidite": "Rapidité"
+    }
+  },
+
+  "TYPES": {
+    "Actor": {
+      "character": "Personnage",
+      "npc": "PNJ"
+    },
+    "Item": {
+      "item": "Armures & Accessoires",
+      "feature": "Attributs",
+      "skill": "Capacités",
+      "trait": "Trait",
+      "spell": "Armes & Sortilèges"
+    }
+  },
+  "DOCUMENT": {
+    "Create" : "Créer",
+    "Update": "Mettre à jour",
+    "New" : "Nouveau",
+    "Delete" : "Supprimer",
+    "Description" : "Description"
+  }
+}

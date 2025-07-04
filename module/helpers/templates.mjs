@@ -7,6 +7,8 @@ export const preloadHandlebarsTemplates = async function () {
   return loadTemplates([
     // Actor partials.
     'systems/fvtt-lore-legacy/templates/actor/parts/actor-features.hbs',
+    'systems/fvtt-lore-legacy/templates/actor/parts/actor-skills.hbs',
+    'systems/fvtt-lore-legacy/templates/actor/parts/actor-traits.hbs',
     'systems/fvtt-lore-legacy/templates/actor/parts/actor-items.hbs',
     'systems/fvtt-lore-legacy/templates/actor/parts/actor-spells.hbs',
     'systems/fvtt-lore-legacy/templates/actor/parts/actor-effects.hbs',

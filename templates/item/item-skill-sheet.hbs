@@ -1,0 +1,53 @@
+<form class="{{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+    <div class="header-fields">
+        <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
+      <div class="resources grid grid-2col">
+        <div class=" resource flex-group-center">
+          <label for="system.skillLevel" class="resource-label">{{localize 'LORE_LEGACY.Property.Level'}}</label>
+          <h2 class="charname flexrow flex-center flex-between">
+            <input
+                    type='text'
+                    name='system.skillLevel'
+                    value='{{system.skillLevel}}'
+                    data-dtype='Number'
+                    placeholder="Niveau" 
+            />
+          </h2>
+        </div>
+        <div class="triangle-group resource flex-group-center">
+          <div class="adversitebigtriangle flexcol">
+            <input type="checkbox" id='system.badversite'
+              name="system.badversite" {{system.cadversite}}>
+            <label for="system.badversite"></label>
+            </input>
+          </div>
+          <div class="fortunebigtriangle flexcol">
+            <input type="checkbox" id='system.bfortune' name="system.bfortune"
+              {{system.cfortune}}>
+            <label for="system.bfortune"></label>
+            </input>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {{!-- Sheet Tab Navigation --}}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="description">{{localize 'DOCUMENT.Description'}}</a>
+  </nav>
+
+  {{!-- Sheet Body --}}
+  <section class="sheet-body">
+
+    {{!-- Description Tab --}}
+    <div class="tab" data-group="primary" data-tab="description">
+      {{!-- Editors must receive enriched text data from getData to properly handle rolls --}}
+      {{editor enrichedDescription target="system.description" engine="prosemirror" button=true editable=editable}}
+    </div>
+
+  </section>
+
+</form>

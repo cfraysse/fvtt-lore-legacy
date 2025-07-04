@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 /* Global styles */
 .window-app {
@@ -6,7 +7,7 @@
 
 .rollable:hover, .rollable:focus {
   color: #000;
-  text-shadow: 0 0 10px red;
+  text-shadow: 0 0 12px rgba(245, 228, 0, 0.5);
   cursor: pointer;
 }
 
@@ -28,6 +29,14 @@
 .grid-4col {
   grid-column: span 4/span 4;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.grid-4col-abilities {
+  grid-column: span 4/span 4;
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: 6px;
 }
 
 .grid-5col {
@@ -248,6 +257,212 @@
 }
 .fvtt-lore-legacy .tox .tox-edit-area {
   padding: 0 8px;
+}
+.fvtt-lore-legacy .fortunetriangle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.fvtt-lore-legacy .fortunetriangle label {
+  display: block;
+  position: relative;
+  width: 0;
+  height: 0;
+  cursor: pointer;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 15px solid transparent;
+}
+.fvtt-lore-legacy .fortunetriangle label::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  bottom: -15px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 15px solid rgba(0, 0, 0, 0.15);
+  z-index: 1;
+}
+.fvtt-lore-legacy .fortunetriangle label::after {
+  content: "";
+  position: absolute;
+  left: -10px;
+  bottom: -15px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 15px solid transparent;
+  transition: border-bottom-color 0.3s ease;
+  z-index: 2;
+}
+.fvtt-lore-legacy .fortunetriangle input:checked + label::after {
+  border-bottom-color: rgb(192, 173, 0);
+}
+.fvtt-lore-legacy .adversitetriangle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.fvtt-lore-legacy .adversitetriangle label {
+  display: block;
+  position: relative;
+  width: 0;
+  height: 0;
+  cursor: pointer;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 15px solid transparent;
+}
+.fvtt-lore-legacy .adversitetriangle label::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: -15px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 15px solid rgba(0, 0, 0, 0.15);
+  z-index: 1;
+}
+.fvtt-lore-legacy .adversitetriangle label::after {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: -15px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 15px solid transparent;
+  transition: border-top-color 0.3s ease;
+  z-index: 2;
+}
+.fvtt-lore-legacy .adversitetriangle input:checked + label::after {
+  border-top-color: rgba(125, 0, 0, 0.5);
+}
+.fvtt-lore-legacy .adversitetriangle,
+.fvtt-lore-legacy .fortunetriangle {
+  margin: 0 0ch; /* Réduit l’espace horizontal */
+  display: inline-block; /* Les place côte à côte */
+}
+.fvtt-lore-legacy .triangle-group {
+  display: flex;
+  gap: 0px; /* Ajuste l’espace entre les deux triangles */
+}
+.fvtt-lore-legacy .fortunebigtriangle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.fvtt-lore-legacy .fortunebigtriangle label {
+  display: block;
+  position: relative;
+  width: 0;
+  height: 0;
+  cursor: pointer;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 30px solid transparent;
+}
+.fvtt-lore-legacy .fortunebigtriangle label::before {
+  content: "";
+  position: absolute;
+  left: -20px;
+  bottom: -30px;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 30px solid rgba(0, 0, 0, 0.15);
+  z-index: 1;
+}
+.fvtt-lore-legacy .fortunebigtriangle label::after {
+  content: "";
+  position: absolute;
+  left: -20px;
+  bottom: -30px;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 30px solid transparent;
+  transition: border-bottom-color 0.3s ease;
+  z-index: 2;
+}
+.fvtt-lore-legacy .fortunebigtriangle input:checked + label::after {
+  border-bottom-color: rgb(192, 173, 0);
+}
+.fvtt-lore-legacy .adversitebigtriangle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.fvtt-lore-legacy .adversitebigtriangle label {
+  display: block;
+  position: relative;
+  width: 0;
+  height: 0;
+  cursor: pointer;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 30px solid transparent;
+}
+.fvtt-lore-legacy .adversitebigtriangle label::before {
+  content: "";
+  position: absolute;
+  left: -20px;
+  top: -30px;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 30px solid rgba(0, 0, 0, 0.15);
+  z-index: 1;
+}
+.fvtt-lore-legacy .adversitebigtriangle label::after {
+  content: "";
+  position: absolute;
+  left: -20px;
+  top: -30px;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 30px solid transparent;
+  transition: border-top-color 0.3s ease;
+  z-index: 2;
+}
+.fvtt-lore-legacy .adversitebigtriangle input:checked + label::after {
+  border-top-color: rgba(125, 0, 0, 0.5);
+}
+.fvtt-lore-legacy .adversitebigtriangle,
+.fvtt-lore-legacy .fortunebigtriangle {
+  margin: 0 0ch; /* Réduit l’espace horizontal */
+  display: inline-block; /* Les place côte à côte */
+}
+.fvtt-lore-legacy .ability .resource-label {
+  margin-right: 0px;
+  margin: 0 0ch; /* Réduit l’espace horizontal */
+}
+.fvtt-lore-legacy .ability input[type=text] {
+  width: 3ch;
+  text-align: center;
+}
+.fvtt-lore-legacy .jauges .resource-label {
+  margin-right: 0px;
+  margin: 0 0ch; /* Réduit l’espace horizontal */
+}
+.fvtt-lore-legacy .jauges input[type=text] {
+  width: 2ch;
+  text-align: center;
+}
+.fvtt-lore-legacy .capacitesecond .resource-label {
+  font-size: 12px;
+  text-align: left;
+  margin-right: 0px;
+  margin: 0 0ch; /* Réduit l’espace horizontal */
+}
+.fvtt-lore-legacy .capacitesecond input[type=text] {
+  font-size: 12px;
+  width: 3ch;
+  text-align: center;
+}
+.fvtt-lore-legacy .capacitesecond input[type=number] {
+  font-size: 12px;
+  width: 3ch;
+  text-align: center;
 }
 .fvtt-lore-legacy .resource-label {
   font-weight: bold;
