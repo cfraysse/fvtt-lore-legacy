@@ -40,34 +40,34 @@ export class LoreLegacyItem extends Item {
 
   prepareTriangle(genAdversite, genFortune){
     // Lore & legacy add value of skill to d10.
-    const skillData = this.system;
+    const data = this.system;
 
-    if (skillData.bfortune == true) {
-      skillData.nfortune = 1;
-      skillData.cfortune = "checked";
+    if (data.bfortune == true) {
+      data.nfortune = 1;
+      data.cfortune = "checked";
     }
     else {
       if(genFortune == true) {
-        skillData.nfortune = 1;
+        data.nfortune = 1;
       }
       else {
-        skillData.nfortune = 0;
+        data.nfortune = 0;
       }
-      skillData.cfortune = "unchecked";
+      data.cfortune = "unchecked";
     }
 
-    if (skillData.badversite == true) {
-      skillData.nadversite = 1;
-      skillData.cadversite = "checked";
+    if (data.badversite == true) {
+      data.nadversite = 1;
+      data.cadversite = "checked";
     }
     else {
       if(genAdversite == true) {
-        skillData.nadversite = 1;
+        data.nadversite = 1;
       }
       else {
-        skillData.nadversite = 0;
+        data.nadversite = 0;
       }
-      skillData.cadversite = "unchecked";
+      data.cadversite = "unchecked";
     }
   }
 
@@ -75,40 +75,38 @@ export class LoreLegacyItem extends Item {
    * Prepare Character type specific data
    */
   _prepareSkillData(itemData) {
-    if (itemData.type !== 'skill') return;
-    const skillData = itemData.system;
+    if (itemData.type !== 'skill' && itemData.type !== 'spell') return;
+    const data = itemData.system;
 
 
-    // Lore & legacy add value of skill to d10.
-    if (skillData.bfortune == true) {
-      skillData.nfortune = 1;
-      skillData.cfortune = "checked";
+    if (data.bfortune == true) {
+      data.nfortune = 1;
+      data.cfortune = "checked";
     }
     else {
       if(itemData.actor.system.attributes.bfortune == true) {
-        skillData.nfortune = 1;
+        data.nfortune = 1;
       }
       else {
-        skillData.nfortune = 0;
+        data.nfortune = 0;
       }
-      skillData.cfortune = "unchecked";
+      data.cfortune = "unchecked";
     }
 
-    if (skillData.badversite == true) {
-      skillData.nadversite = 1;
-      skillData.cadversite = "checked";
+    if (data.badversite == true) {
+      data.nadversite = 1;
+      data.cadversite = "checked";
     }
     else {
       if(itemData.actor.system.attributes.badversite == true) {
-        skillData.nadversite = 1;
+        data.nadversite = 1;
       }
       else {
-        skillData.nadversite = 0;
+        data.nadversite = 0;
       }
-      skillData.cadversite = "unchecked";
+      data.cadversite = "unchecked";
     }
   }
-
 
   /**
    * Prepare a data object which defines the data schema used by dice roll commands against this Item
@@ -140,13 +138,15 @@ export class LoreLegacyItem extends Item {
     const rollMode = game.settings.get('core', 'rollMode');
     const label = `[${item.type}] ${item.name}`;
 
+    const content = /*item.system.description ??*/ JSON.stringify(item);
+
     // If there's no roll data, send a chat message.
     if (!this.system.formula) {
       ChatMessage.create({
         speaker: speaker,
         rollMode: rollMode,
         flavor: label,
-        content: item.system.description ?? '',
+        content: content,
       });
     }
     // Otherwise, create a roll and send a chat message from it.
@@ -154,7 +154,13 @@ export class LoreLegacyItem extends Item {
       // Retrieve roll data.
       const rollData = this.getRollData();
       // Invoke the roll and submit it to chat.
-      const formula = "{(1d10[starynight]+(" + rollData.nfortune + ")d10[inspired]-(" + rollData.nadversite + ")d10[bloodmoon]),0}kh+" + rollData.formula;
+      var dice = "d10";
+      if(item.type === "spell")
+      {
+        dice = "d8";
+      }
+      
+      const formula = "{(1" + dice + "[starynight]+(" + rollData.nfortune + ")" + dice + "[inspired]-(" + rollData.nadversite + ")" + dice + "[bloodmoon]),0}kh+" + rollData.formula;
 
       const roll = new Roll(formula, rollData);
       // If you need to store the value first, uncomment the next line.

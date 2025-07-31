@@ -67,6 +67,16 @@
     }
   }
 
+  .capsecedit {
+    display: flex;
+    justify-content: flex-end;
+    a {
+      font-size: 12px;
+      text-align: center;
+      margin: 0 6px;
+    }
+  }
+
   // Individual Item
   .item {
     align-items: center;

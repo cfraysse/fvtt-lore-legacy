@@ -1,54 +1,62 @@
-<form class='{{cssClass}}' autocomplete='off'>
-  <header class='sheet-header'>
-    <img
-      class='profile-img'
-      src='{{item.img}}'
-      data-edit='img'
-      title='{{item.name}}'
-    />
-    <div class='header-fields'>
-      <h1 class='charname'><input
-          name='name'
-          type='text'
-          value='{{item.name}}'
-          placeholder='Name'
-        /></h1>
+<form class="{{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+    <div class="header-fields">
+        <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
+      <div class="resources grid grid-3col">
+        <div class=" resource flex-group-center">
+          <label for="system.spellLevel" class="resource-label">{{localize 'LORE_LEGACY.Item.Spell.bonus'}}</label>
+          <h2 class="charname flexrow flex-center flex-between">
+            <input
+                    type='text'
+                    name='system.spellLevel'
+                    value='{{system.spellLevel}}'
+                    data-dtype='Number'
+                    placeholder="Niveau" 
+            />
+          </h2>
+        </div>
+        <div class='resource'>
+          <label class='resource-label'>Encombrement</label>
+          <input
+            type='text'
+            name='system.weight'
+            value='{{system.weight}}'
+            data-dtype='Number'
+          />
+        </div>
+        <div class="triangle-group resource flex-group-center">
+          <div class="adversitebigtriangle flexcol">
+            <input type="checkbox" id='system.badversite'
+              name="system.badversite" {{system.cadversite}}>
+            <label for="system.badversite"></label>
+            </input>
+          </div>
+          <div class="fortunebigtriangle flexcol">
+            <input type="checkbox" id='system.bfortune' name="system.bfortune"
+              {{system.cfortune}}>
+            <label for="system.bfortune"></label>
+            </input>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
-  {{! Sheet Tab Navigation }}
-  <nav class='sheet-tabs tabs' data-group='primary'>
-    <a class='item' data-tab='description'>Description</a>
-    <a class='item' data-tab='attributes'>Attributes</a>
+  {{!-- Sheet Tab Navigation --}}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="description">{{localize 'DOCUMENT.Description'}}</a>
   </nav>
 
-  {{! Sheet Body }}
-  <section class='sheet-body'>
+  {{!-- Sheet Body --}}
+  <section class="sheet-body">
 
-    {{! Description Tab }}
-    <div class='tab' data-group='primary' data-tab='description'>
-      {{! Editors must receive enriched text data from getData to properly handle rolls }}
-      {{editor
-        enrichedDescription
-        target='system.description'
-        engine='prosemirror'
-        button=true
-        editable=editable
-      }}
+    {{!-- Description Tab --}}
+    <div class="tab" data-group="primary" data-tab="description">
+      {{!-- Editors must receive enriched text data from getData to properly handle rolls --}}
+      {{editor enrichedDescription target="system.description" engine="prosemirror" button=true editable=editable}}
     </div>
 
-    {{! Attributes Tab }}
-    <div class='tab attributes' data-group='primary' data-tab='attributes'>
-      {{! As you add new fields, add them in here! }}
-      <div class='resource'>
-        <label class='resource-label'>Spell Level</label>
-        <input
-          type='text'
-          name='system.spellLevel'
-          value='{{system.spellLevel}}'
-          data-dtype='Number'
-        />
-      </div>
-    </div>
   </section>
+
 </form>

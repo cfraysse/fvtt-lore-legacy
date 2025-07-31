@@ -1,49 +1,66 @@
 <ol class='items-list'>
-  {{#each spells as |spells spellLevel|}}
-    <li class='item flexrow items-header'>
+  <li class='item flexrow items-header'>
+    <div class='item-name'>{{localize 'TYPES.Item.spell'}}</div>
+    <div class='item-controls'>
+      <a
+        class='item-control item-create'
+        title='{{localize "DOCUMENT.Create" type='Item'}}'
+        data-type='spell'
+      >
+        <i class='fas fa-plus'></i>
+        {{"+" type='spell'}}
+      </a>
+    </div>
+  </li>
+  {{#each spells as |spell id|}}
+    <li class='item flexrow' data-item-id='{{spell._id}}'>
       <div class='item-name'>
-        {{localize 'LORE_LEGACY.Item.Spell.SpellLVL' level=spellLevel}}
+        <div class='item-image'>
+          <a class='rollable' data-roll-type='item' data-label="{{spell.name}}">
+            <img
+              src='{{spell.img}}'
+              title='{{spell.name}}'
+              width='24'
+              height='24'
+            />
+          </a>
+        </div>
+        <h4>{{spell.name}}</h4>
       </div>
+
+      <div class='resource'>
+        <h4>1d8 + {{spell.system.spellLevel}}</h4>
+      </div>
+
+      <div class="triangle-group">
+        <div class="adversitetriangle flexcol">
+          <input type="checkbox" id='{{spell.name}}.adversite' disabled="true"
+            name="{{spell.name}}.adversite" {{spell.system.cadversite}}>
+          <label for="{{spell.name}}.adversite"></label>
+          </input>
+        </div>
+        <div class="fortunetriangle flexcol">
+          <input type="checkbox" id='{{spell.name}}.fortune' disabled="true" name="{{spell.name}}.fortune"
+            {{spell.system.cfortune}}>
+          <label for="{{spell.name}}.fortune"></label>
+          </input>
+        </div>
+      </div>
+
       <div class='item-controls'>
         <a
-          class='item-control item-create'
-          title='{{localize "DOCUMENT.Create" type='Spell'}}'
-          data-type='spell'
-          data-spell-level='{{spellLevel}}'
+          class='item-control item-edit'
+          title='{{localize "DOCUMENT.Edit" type='spell'}}'
         >
-          <i class='fas fa-plus'></i>
-          {{localize 'LORE_LEGACY.Item.Spell.AddLVL' level=spellLevel}}
+          <i class='fas fa-edit'></i>
+        </a>
+        <a
+          class='item-control item-delete'
+          title='{{localize "DOCUMENT.Delete" type='spell'}}'
+        >
+          <i class='fas fa-trash'></i>
         </a>
       </div>
     </li>
-    {{#each spells as |item id|}}
-      <li class='item flexrow' data-item-id='{{item._id}}'>
-        <div class='item-name flexrow'>
-          <div class='item-image'>
-            <a class='rollable' data-roll-type='item'><img
-                src='{{item.img}}'
-                title='{{item.name}}'
-                width='24'
-                height='24'
-              /></a>
-          </div>
-          <h4>{{item.name}}</h4>
-        </div>
-        <div class='item-controls'>
-          <a
-            class='item-control item-edit'
-            title='{{localize "DOCUMENT.Edit" type='spell'}}'
-          >
-            <i class='fas fa-edit'></i>
-          </a>
-          <a
-            class='item-control item-delete'
-            title='{{localize "DOCUMENT.Delete" type='spell'}}'
-          >
-            <i class='fas fa-trash'></i>
-          </a>
-        </div>
-      </li>
-    {{/each}}
   {{/each}}
 </ol>

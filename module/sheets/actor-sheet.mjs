@@ -107,18 +107,8 @@ export class LoreLegacyActorSheet extends ActorSheet {
     const features = [];
     const traits = [];
     const skills = [];
-    const spells = {
-      0: [],
-      1: [],
-      2: [],
-      3: [],
-      4: [],
-      5: [],
-      6: [],
-      7: [],
-      8: [],
-      9: [],
-    };
+    var capsecs = [];
+    const spells = [];
 
     // Iterate through items, allocating to containers
     for (let i of context.items) {
@@ -139,20 +129,31 @@ export class LoreLegacyActorSheet extends ActorSheet {
       else if (i.type === 'skill') {
         skills.push(i);
       }
+      // Append to capsecs.
+      else if (i.type === 'capsec') {
+        capsecs.push(i);
+      }
       // Append to spells.
       else if (i.type === 'spell') {
-        if (i.system.spellLevel != undefined) {
-          spells[i.system.spellLevel].push(i);
-        }
+        spells.push(i);
       }
     }
 
+    if(capsecs.length < 7)
+    {
+      capsecs = this._createCapsecs();
+    }
+    else if(capsecs.length > 7)
+    {
+      capsecs = capsecs.slice(0, 7); // TODO Vérifier plutôt les différents capsecs
+    }
     // Assign and return
     context.gear = gear;
     context.features = features;
     context.traits = traits;
     context.skills = skills;
     context.spells = spells;
+    context.capsecs = capsecs;
   }
 
   /* -------------------------------------------- */
@@ -215,6 +216,42 @@ export class LoreLegacyActorSheet extends ActorSheet {
   }
 
   /**
+   * @private
+   */
+  _createCapsecs() {
+    const capsecs = [];
+    capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.ResPhys')));
+    capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.ResMent')));
+    capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.ResMag')));
+    capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.SeuilBlessure')));
+    capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.Poids')));
+    capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.Bagage')));
+    capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.Rapidite')));
+    return capsecs;
+  }
+
+  /**
+   * @private
+   */
+  _createCapsec(name) {
+    // Prepare the item object.
+    const itemData = {
+      name: name,
+      type: "capsec",
+      system: {"capsecLevel": 0},
+      img: "systems/fvtt-lore-legacy/assets/checkbox-tree.png",
+    };
+
+    // Remove the type from the dataset since it's in the itemData.type prop.
+    delete itemData.system['type'];
+
+    // Finally, create the item!
+    return Item.create(itemData, { parent: this.actor });
+  }
+
+
+
+  /**
    * Handle creating a new Owned Item for the actor using initial data defined in the HTML dataset
    * @param {Event} event   The originating click event
    * @private
@@ -228,6 +265,10 @@ export class LoreLegacyActorSheet extends ActorSheet {
     if(type === "skill")
     {
       img = "systems/fvtt-lore-legacy/assets/skills.png"
+    }
+    else if(type === "capsec")
+    {
+      img = "systems/fvtt-lore-legacy/assets/checkbox-tree.png"
     }
     else if(type === "trait")
     {

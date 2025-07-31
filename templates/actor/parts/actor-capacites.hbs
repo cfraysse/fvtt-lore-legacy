@@ -1,86 +1,31 @@
 <ol class='items-list'>
   <li class='item flexrow items-header'>
-    <div class='item-name'>{{localize 'LORE_LEGACY.Property.Capacites'}}</div>
-    <div class='item-controls'>
-    </div>
+    <div class='item-name'>{{localize 'LORE_LEGACY.Property.CapacitesSec'}}</div>
   </li>
-    <li class='item flexrow' data-item-id='ResPhys'>
+  {{#each capsecs as |capsec id|}}
+    <li class='item flexrow' data-item-id='{{capsec._id}}'>
       <div class='item-name'>
-        <h4>{{localize 'LORE_LEGACY.Property.ResPhys'}}</h4>
+        <div class='item-image'>
+          <a class='rollable' data-roll-type='item' data-label="{{capsec.name}}">
+            <img
+              src='{{capsec.img}}'
+              title='{{capsec.name}}'
+              width='24'
+              height='24'
+            />
+          </a>
+        </div>
+        <h4>{{capsec.name}}</h4>
       </div>
-      <div class='item-controls'>
+
+      <div class='resource capsecedit'>
         <a
-          class='item-control cap-edit'
-          title='{{localize "DOCUMENT.Edit" type='feature'}}'
+          class='item-edit'
+          title='{{localize "DOCUMENT.Edit" type='skill'}}'
         >
-          <h6>{{system.ResPhys.value}}</h4>
+          <h4>{{capsec.system.capsecLevel}}</h4>
         </a>
       </div>
     </li>
-
+  {{/each}}
 </ol>
-
-
-              <div class="capacitesecond flexcol">
-
-            <div class="resources grid grid-4col">
-              <div class="resource flex-group-center">
-                <label for="system.ResPhys.value" class="resource-label">{{localize 'LORE_LEGACY.Property.ResPhys'}}</label>
-              </div>
-              <div class="resource-content flexrow flex-center flex-between">
-                <input type="text" name="system.ResPhys.value" value="{{system.ResPhys.value}}" data-dtype="Number" />
-              </div>
-
-              <div class="resource flex-group-center">
-                <label for="system.ResMent.value" class="resource-label">{{localize 'LORE_LEGACY.Property.ResMent'}}</label>
-              </div>
-              <div class="resource-content flexrow flex-center flex-between">
-                <input type="text" name="system.ResMent.value" value="{{system.ResMent.value}}" data-dtype="Number" />
-              </div>
-            </div>
-            
-            <div class="resources grid grid-4col">
-              <div class="resource flex-group-center">
-                <label for="system.ResMag.value" class="resource-label">{{localize 'LORE_LEGACY.Property.ResMag'}}</label>
-              </div>
-              <div class="resource-content flexrow flex-center flex-between">
-                <input type="text" name="system.ResMag.value" value="{{system.ResMag.value}}" data-dtype="Number" />
-              </div>
-
-              <div class="resource flex-group-center">
-                <label for="system.SeuilBlessure.value" class="resource-label">{{localize 'LORE_LEGACY.Property.SeuilBlessure'}}</label>
-              </div>
-              <div class="resource-content flexrow flex-center flex-between">
-                <input type="text" name="system.SeuilBlessure.value" value="{{system.SeuilBlessure.value}}" data-dtype="Number" />
-              </div>
-            </div>
-
-            <div class="resources grid grid-4col">
-              <div class="resource flex-group-center">
-                <label for="system.Rapidite.value" class="resource-label">{{localize 'LORE_LEGACY.Property.Rapidite'}}</label>
-              </div>
-              <div class="resource-content flexrow flex-center flex-between">
-                <input type="text" name="system.Rapidite.value" value="{{system.Rapidite.value}}" data-dtype="Number" />
-              </div>
-
-              <div class="resource flex-group-center">
-                <label for="system.Bagage.value" class="resource-label">{{localize 'LORE_LEGACY.Property.Bagage'}}</label>
-              </div>
-              <div class="resource-content flexrow flex-center flex-between">
-                <input type="text" name="system.Bagage.value" value="{{system.Bagage.value}}" data-dtype="Number" />
-              </div>
-            </div>
-
-            <div class="resources grid grid-2col">
-              <div class="resource flex-group-center">
-                <label for="system.Poids.value" class="resource-label">{{localize 'LORE_LEGACY.Property.Poids'}}</label>
-              </div>
-              <div class="resource-content flexrow flex-center flex-between">
-                <input type="text" name="system.Poids.value" value="{{system.Poids.value}}" data-dtype="Number" />
-              </div>
-            </div>
-
- {{!--Bagage Poids  Rapidite SeuilBlessure  ResMent  ResMag ResPhys --}}
-
-
-          </div>

@@ -15,7 +15,8 @@
     "Item": {
       "Spell": {
         "SpellLVL": "Niveau {level} Sorts",
-        "AddLVL": "Ajoute Niveau {level}"
+        "AddLVL": "Ajoute Niveau {level}",
+        "bonus": "Bonus de dégat"
       }
     },
     "Effect": {
@@ -37,14 +38,18 @@
       "Astre": "Astre",
       "Skills": "Capacités",
       "Level": "Niveau",
+      "Value": "Valeur",
+      "Capacites": "Capacités",
+      "CapacitesSec": "Capacités secondaires"
+    },
+    "CapSec": {
       "ResPhys": "Rés. physique",
       "ResMent": "Rés. mentale",
       "ResMag": "Rés. magique",
       "SeuilBlessure": "Seuil blessure",
       "Poids": "Poids",
       "Bagage": "Bagage",
-      "Rapidite": "Rapidité",
-      "Capacites": "Capacités"
+      "Rapidite": "Rapidité"
     }
   },
 
@@ -57,6 +62,7 @@
       "item": "Armures & Accessoires",
       "feature": "Attributs",
       "skill": "Capacités",
+      "capsec": "Capacités Secondaires",
       "trait": "Trait",
       "spell": "Armes & Sortilèges"
     }

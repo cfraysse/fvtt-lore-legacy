@@ -104,6 +104,11 @@ export class LoreLegacyActor extends Actor {
       // TODO ??? skill.prepareTriangle(systemData.attributes.badversite, systemData.attributes.bfortune)
       // Lore & legacy add value of skill to d10.
     }
+
+    for (let [key, capsec] of Object.entries(systemData.capsecs)) {
+
+      // TODO
+    }
   }
 
   /**
@@ -145,12 +150,17 @@ export class LoreLegacyActor extends Actor {
       }
     }
 
+    if (data.spells) {
+      for (let [k, v] of Object.entries(data.spells)) {
+        data[k] = foundry.utils.deepClone(v);
+      }
+    }
+
     if (data.skills) {
       for (let [k, v] of Object.entries(data.skills)) {
         data[k] = foundry.utils.deepClone(v);
       }
     }
-
     // Add level for easier access, or fall back to 0.
     if (data.attributes.level) {
       data.lvl = data.attributes.level.value ?? 0;

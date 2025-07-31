@@ -39,6 +39,14 @@
   gap: 6px;
 }
 
+.grid-2col-auto {
+  grid-column: span 2/span 2;
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: 6px;
+}
+
 .grid-5col {
   grid-column: span 5/span 5;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -519,6 +527,15 @@
   justify-content: flex-end;
 }
 .fvtt-lore-legacy .items-list .item-controls a {
+  font-size: 12px;
+  text-align: center;
+  margin: 0 6px;
+}
+.fvtt-lore-legacy .items-list .capsecedit {
+  display: flex;
+  justify-content: flex-end;
+}
+.fvtt-lore-legacy .items-list .capsecedit a {
   font-size: 12px;
   text-align: center;
   margin: 0 6px;
