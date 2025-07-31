@@ -162,6 +162,13 @@ export class LoreLegacyActorSheet extends ActorSheet {
     super.activateListeners(html);
 
     // Render the item sheet for viewing/editing prior to the editable check.
+    html.on('click', '.cap-edit', (ev) => {
+      const li = $(ev.currentTarget).parents('.cap');
+      const capacite = this.actor.capacites.get(li.data('capId'));
+      capacite.sheet.render(true);
+    });
+    
+    // Render the item sheet for viewing/editing prior to the editable check.
     html.on('click', '.item-edit', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
       const item = this.actor.items.get(li.data('itemId'));
