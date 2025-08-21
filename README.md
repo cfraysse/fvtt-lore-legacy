@@ -4,6 +4,11 @@
 
 This system is a fvtt-lore-legacy system that you can use as a starting point for building your own custom systems. It's similar to Simple World-building, but has examples of creating attributes in code rather than dynamically through the UI.
 
+## Installation
+
+Créer un dossier lore-legacy dans votre dossier foundryvtt/Data/systems/
+Copier tout les fichiers de ce dépot dans ce dossier.
+
 ## Usage
 
 There are two ways to get started: using the LoreLegacy system generator command or manually renaming and updating files.
