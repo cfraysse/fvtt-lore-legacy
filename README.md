@@ -2,7 +2,9 @@
 
 ![Foundry v11](https://img.shields.io/badge/foundry-v11-green)
 
-This system is a fvtt-lore-legacy system that you can use as a starting point for building your own custom systems. It's similar to Simple World-building, but has examples of creating attributes in code rather than dynamically through the UI.
+Lore & Legacy est un jeu de rôle sur table de science-fantasy se trouvant au croisement de multiples sources d’inspiration. 
+Lore & Legacy est un jeu de rôle de Julien Pirou édité par Empyreal Media Productions.
+https://empyreal.pirou.games
 
 ## Installation
 
@@ -10,10 +12,6 @@ Créer un dossier lore-legacy dans votre dossier foundryvtt/Data/systems/
 Copier tout les fichiers de ce dépot dans ce dossier.
 
 ## Usage
-
-There are two ways to get started: using the LoreLegacy system generator command or manually renaming and updating files.
-
-Regardless of which method you choose, think carefully about your system's name. Your system's package name when submitted to Foundry must be formatted like `alphanumeric-lowercase`, and it must be unique. Check the Foundry systems package list for conflicts before committing to a name!
 
 > **Data Models**
 >
