@@ -22,8 +22,8 @@
   ],
   "version": "2.0.1",
   "compatibility": {
-    "minimum": 11,
-    "verified": "11.315"
+    "minimum": "13.341",
+    "verified": "13"
   },
   "esmodules": ["module/fvtt-lore-legacy.mjs"],
   "styles": ["css/fvtt-lore-legacy.css"],
@@ -43,7 +43,7 @@
   "packFolders": [],
   "socket": false,
   "manifest": "https://raw.githubusercontent.com/cfraysse/fvtt-lore-legacy/main/system.json",
-  "download": "https://github.com/cfraysse/fvtt-lore-legacy/releases/download/release-2.0.1/lore-legacy-release-2.0.1.zip",
+  "download": "https://github.com/cfraysse/fvtt-lore-legacy/releases/download/2.0.1/lore-legacy-release-2.0.1.zip",
   "background": "systems/fvtt-lore-legacy/assets/loreAndLegacyCouv.jpg",
   "gridDistance": 5,
   "gridUnits": "ft",
