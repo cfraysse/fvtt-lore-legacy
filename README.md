@@ -8,8 +8,7 @@ https://empyreal.pirou.games
 
 ## Installation
 
-Créer un dossier lore-legacy dans votre dossier foundryvtt/Data/systems/
-Copier tout les fichiers de ce dépot dans ce dossier.
+Ce module utilise le système d'installation et de mise à jour automatique proposé par foundryvtt. Le module n'est pas pour autant disponible sur leur store, cependant il suffit de rentrer l'url suivant : https://raw.githubusercontent.com/cfraysse/fvtt-lore-legacy/main/system.json dans URL du manifeste après avoir cliqué sur ajouter un système de jeu. Vous pourrez ensuite automatiquement mettre à jour ce module comme n'importe quel module fvtt en cliquant sur mettre à jour.
 
 ## Usage
 
