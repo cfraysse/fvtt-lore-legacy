@@ -73,5 +73,13 @@
     "New" : "Nouveau",
     "Delete" : "Supprimer",
     "Description" : "Description"
+  },
+  "SETTINGS.LORE_LEGACY": {
+    "RULES": {
+      "pdf": {
+        "name": "Nom du pdf des règles",
+        "hint": "Indice du pdf des règles"
+      }
+    }
   }
 }

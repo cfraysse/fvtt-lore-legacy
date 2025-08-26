@@ -54,6 +54,15 @@ Hooks.once('init', function () {
     label: 'LORE_LEGACY.SheetLabels.Item',
   });
 
+  game.settings.register("fvtt-lore-legacy", "PDFrules", {
+    name: "SETTINGS.LORE_LEGACY.RULES.pdf.name",
+    hint: "SETTINGS.LORE_LEGACY.RULES.pdf.hint",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false
+  });
+
   // Preload Handlebars templates.
   return preloadHandlebarsTemplates();
 });
