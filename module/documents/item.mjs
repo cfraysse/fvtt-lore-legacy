@@ -138,7 +138,7 @@ export class LoreLegacyItem extends Item {
     const rollMode = game.settings.get('core', 'rollMode');
     const label = `[${item.type}] ${item.name}`;
 
-    const content = /*item.system.description ??*/ JSON.stringify(item);
+    const content = item.system.description; // JSON.stringify(item);
 
     // If there's no roll data, send a chat message.
     if (!this.system.formula) {
