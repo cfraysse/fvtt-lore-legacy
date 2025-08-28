@@ -1,3 +1,5 @@
+import pdfjsLib from 'pdfjs-dist';
+
 
 export async function prepareCompendiumWithPDF(pdfPath) {
     const label = `[PDF] new`;
