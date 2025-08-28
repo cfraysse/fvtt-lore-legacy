@@ -1,12 +1,15 @@
 // Import document classes.
 import { LoreLegacyActor } from './documents/actor.mjs';
 import { LoreLegacyItem } from './documents/item.mjs';
+import { prepareCompendiumWithPDF } from './documents/pdf.mjs';
+
 // Import sheet classes.
 import { LoreLegacyActorSheet } from './sheets/actor-sheet.mjs';
 import { LoreLegacyItemSheet } from './sheets/item-sheet.mjs';
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from './helpers/templates.mjs';
 import { LORE_LEGACY } from './helpers/config.mjs';
+
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
@@ -53,19 +56,42 @@ Hooks.once('init', function () {
     makeDefault: true,
     label: 'LORE_LEGACY.SheetLabels.Item',
   });
-
+    
   game.settings.register("fvtt-lore-legacy", "PDFrules", {
-    name: "SETTINGS.LORE_LEGACY.RULES.pdf.name",
-    hint: "SETTINGS.LORE_LEGACY.RULES.pdf.hint",
+    name: game.i18n.localize('LORE_LEGACY.SETTINGS.RULES.pdf.name'),
     scope: "world",
-    config: true,
-    onChange: value => { // value is the new value of the setting
-      console.log(value)
-    },
-    requiresReload: true, // true if you want to prompt the user to reload
-    /** Creates a select dropdown */
+    config: false,
     type: String,
-    filePicker: true
+    default: ""
+  });
+
+  game.settings.registerMenu("fvtt-lore-legacy", "PDFrulesMenu", {
+    name: game.i18n.localize('LORE_LEGACY.SETTINGS.RULES.pdf.createCompendium'),
+    label: game.i18n.localize('LORE_LEGACY.SETTINGS.RULES.pdf.copyRules'),
+    hint: game.i18n.localize('LORE_LEGACY.SETTINGS.RULES.pdf.hint'),
+    icon: "fas fa-file-alt",
+    type: class PDFrulesForm extends FormApplication {
+      static get defaultOptions() {
+        return foundry.utils.mergeObject(super.defaultOptions, {
+          id: "pdfrules-form",
+          title: game.i18n.localize('LORE_LEGACY.SETTINGS.RULES.pdf.name'),
+          template: "systems/fvtt-lore-legacy/templates/pdfrules-form.hbs",
+          width: 600
+        });
+      }
+
+      async getData() {
+        return {
+          value: game.settings.get("fvtt-lore-legacy", "PDFrules") ?? ""
+        };
+      }
+
+      async _updateObject(event, formData) {
+        const value = formData["pdfrules-textarea"] ?? "";
+        prepareCompendiumWithPDF(value);
+      }
+    },
+    restricted: false
   });
 
   // Preload Handlebars templates.

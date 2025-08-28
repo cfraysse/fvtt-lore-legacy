@@ -84,7 +84,7 @@ export class LoreLegacyItem extends Item {
       data.cfortune = "checked";
     }
     else {
-      if(itemData.actor.system.attributes.bfortune == true) {
+      if(itemData.actor && itemData.actor.system.attributes && itemData.actor.system.attributes.bfortune == true) {
         data.nfortune = 1;
       }
       else {
@@ -98,7 +98,7 @@ export class LoreLegacyItem extends Item {
       data.cadversite = "checked";
     }
     else {
-      if(itemData.actor.system.attributes.badversite == true) {
+      if(itemData.actor && itemData.actor.system.attributes && itemData.actor.system.attributes.bfortune == true) {
         data.nadversite = 1;
       }
       else {

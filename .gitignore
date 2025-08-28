@@ -2,7 +2,6 @@
 .idea/
 .vs/
 *.code-workspace
-sshadd.sh
 
 # Node Modules
 node_modules/
@@ -15,3 +14,7 @@ foundry
 
 # Boilerplate
 build/
+
+#Divers
+reglepdf.txt
+sshadd.sh
