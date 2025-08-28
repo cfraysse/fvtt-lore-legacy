@@ -1,12 +1,15 @@
 // Import document classes.
 import { LoreLegacyActor } from './documents/actor.mjs';
 import { LoreLegacyItem } from './documents/item.mjs';
+import { prepareCompendiumWithPDF } from './documents/pdf.mjs';
+
 // Import sheet classes.
 import { LoreLegacyActorSheet } from './sheets/actor-sheet.mjs';
 import { LoreLegacyItemSheet } from './sheets/item-sheet.mjs';
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from './helpers/templates.mjs';
 import { LORE_LEGACY } from './helpers/config.mjs';
+
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
@@ -59,11 +62,11 @@ Hooks.once('init', function () {
     hint: "SETTINGS.LORE_LEGACY.RULES.pdf.hint",
     scope: "world",
     config: true,
-    onChange: value => { // value is the new value of the setting
-      console.log(value)
+    onChange: value => { 
+      console.log(value);
+      prepareCompendiumWithPDF(value);
     },
-    requiresReload: true, // true if you want to prompt the user to reload
-    /** Creates a select dropdown */
+    requiresReload: false,
     type: String,
     filePicker: true
   });

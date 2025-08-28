@@ -78,7 +78,7 @@
     "RULES": {
       "pdf": {
         "name": "Nom du pdf des règles",
-        "hint": "Indice du pdf des règles"
+        "hint": "Charger un pdf pour créer un compendium"
       }
     }
   }
