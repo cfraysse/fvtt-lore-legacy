@@ -58,9 +58,14 @@ Hooks.once('init', function () {
     name: "SETTINGS.LORE_LEGACY.RULES.pdf.name",
     hint: "SETTINGS.LORE_LEGACY.RULES.pdf.hint",
     scope: "world",
-    config: false,
-    type: Boolean,
-    default: false
+    config: true,
+    onChange: value => { // value is the new value of the setting
+      console.log(value)
+    },
+    requiresReload: true, // true if you want to prompt the user to reload
+    /** Creates a select dropdown */
+    type: String,
+    filePicker: true
   });
 
   // Preload Handlebars templates.
