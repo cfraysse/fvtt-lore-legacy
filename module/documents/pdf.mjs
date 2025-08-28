@@ -1,20 +1,15 @@
 
 /**
  */
-export function prepareCompendiumWithPDF(pdfPath) {
+export async function prepareCompendiumWithPDF(pdfPath) {
     
     // Initialize chat data.
-    const speaker = ChatMessage.getSpeaker({ actor: this.actor });
     const label = `[PDF] new`;
 
-    const content = pdfPath; // JSON.stringify(item);
+    const content = JSON.stringify(pdfPath); // JSON.stringify(item);
 
-    if (!this.system.formula) {
-      ChatMessage.create({
-        speaker: speaker,
-        rollMode: rollMode,
-        flavor: label,
-        content: content,
-      });
-    }
+    const proceed = await foundry.applications.api.DialogV2.prompt({
+    window: { title: "Proceed" },
+    content: "<p>appliquer le PDF : " + content + "  ?</p>"
+    })
 }
