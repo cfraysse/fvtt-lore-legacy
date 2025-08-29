@@ -63,12 +63,12 @@ Hooks.once('init', function () {
     scope: "world",
     config: true,
     onChange: value => { 
-      console.log(value);
+      //console.log(value);
       prepareCompendiumWithPDF(value);
     },
     requiresReload: false,
     type: String,
-    filePicker: true
+    filePicker: false
   });
 
   // Preload Handlebars templates.
