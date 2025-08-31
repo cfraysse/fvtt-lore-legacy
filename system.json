@@ -39,8 +39,33 @@
       "path": "lang/fr.json"
     }
   ],
-  "packs": [],
-  "packFolders": [],
+  "packs": [ 
+    {
+    "name": "spells",
+    "label": "Spells",
+    "system": "fvtt-lore-legacy",
+    "path": "packs/spells",
+    "type": "Item",
+    "private": false,
+    "flags": {
+      "fvtt-lore-legacy": {
+        "sorting": "m",
+        "sourceBook": "Lore & Legacy 2.10",
+        "types": ["spell"]
+      }
+    }
+    }
+  ],
+  "packFolders": [
+    {
+      "name": "Lore & Legacy Content",
+      "color": "#cd2c1e",
+      "sorting": "m",
+      "packs": [
+        "spells"
+      ]
+    }
+  ],
   "socket": false,
   "manifest": "https://raw.githubusercontent.com/cfraysse/fvtt-lore-legacy/main/system.json",
   "download": "https://github.com/cfraysse/fvtt-lore-legacy/releases/download/2.0.1/lore-legacy-release-2.0.1.zip",
