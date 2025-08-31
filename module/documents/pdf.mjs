@@ -1,7 +1,8 @@
 
 /**
  */
-const fs = require('fs');
+import fs from "fs";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 
 function getFifthLine(filePath) {
   try {
