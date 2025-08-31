@@ -2,11 +2,10 @@
 /**
  */
 import fs from "fs";
-import { readdir, readFile, writeFile } from "node:fs/promises";
 
 function getFifthLine(filePath) {
   try {
-    const data = fs.readFileSync(filePath, 'utf8');
+    const data = 'utf8' //fs.readFileSync(filePath, 'utf8');
     const lines = data.split(/\r?\n/); // gère les fins de ligne Windows et Unix
     if (lines.length >= 5) {
       return lines[4]; // index 4 = 5ᵉ ligne
