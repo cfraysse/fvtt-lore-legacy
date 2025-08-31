@@ -1,11 +1,22 @@
 
 /**
  */
+const fs = require('fs');
 
-function getFifthLine(text) {
-    const lines = text.split(/\r?\n/); // Gère les retours à la ligne Windows et Unix
-    return lines.length >= 5 ? lines[4] : null;
+function getFifthLine(filePath) {
+  try {
+    const data = fs.readFileSync(filePath, 'utf8');
+    const lines = data.split(/\r?\n/); // gère les fins de ligne Windows et Unix
+    if (lines.length >= 5) {
+      return lines[4]; // index 4 = 5ᵉ ligne
+    } else {
+      return 'Le fichier contient moins de 5 lignes.';
+    }
+  } catch (err) {
+    return `Erreur lors de la lecture du fichier : ${err.message}`;
   }
+
+}
 
 export async function prepareCompendiumWithPDF(pdfPath) {
     
