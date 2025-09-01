@@ -1,4 +1,4 @@
-import { getDocument } from "./pdfjs-dist/webpack.mjs";
+import { getDocument } from "../../pdfjs-dist/webpack.mjs";
 import { BOOKS, MODULE } from "./constants.js";
 
 export default class Importer {
