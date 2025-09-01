@@ -1,4 +1,4 @@
-import { getDocument } from "../../pdfjs-dist/webpack.mjs";
+//import { getDocument } from "../../pdfjs-dist/webpack.mjs";
 import { BOOKS, MODULE } from "./constants.js";
 
 export default class Importer {
@@ -11,10 +11,10 @@ export default class Importer {
 
 		const monsterImporter = new shadowdark.apps.MonsterImporterSD();
 		*/
-		const doc = await getDocument(file).promise;
+//		const doc = await getDocument(file).promise;
 
-		const book = await this.#identifyLoreLegacy(doc);
-
+//		const book = await this.#identifyLoreLegacy(doc);
+		const book = "test";
 		return book;
 /*
 		const book = (await this.#identifyRulebook(doc));
