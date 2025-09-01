@@ -2,6 +2,8 @@
 /**
  */
 //import fs from "fs";
+//import { getDocument } from "../../src/pdfjs-dist/webpack.mjs";
+import Importer from "./importer.mjs";
 
 function getFifthLine(filePath) {
   try {
@@ -22,8 +24,9 @@ export async function prepareCompendiumWithPDF(pdfPath) {
     
     // Initialize chat data.
     const label = `[PDF] new`;
-
-    const content = getFifthLine(pdfPath); // JSON.stringify(item);
+    const imp = new Importer();
+    const content = imp.getTextFromPDF(pdfPath);
+    //const content = getFifthLine(pdfPath); // JSON.stringify(item);
 
     const proceed = await foundry.applications.api.DialogV2.prompt({
     window: { title: "Proceed" },
