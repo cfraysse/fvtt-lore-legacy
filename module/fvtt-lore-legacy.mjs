@@ -56,38 +56,45 @@ Hooks.once('init', function () {
     makeDefault: true,
     label: 'LORE_LEGACY.SheetLabels.Item',
   });
-
-  // Votre setting tel quel
+    
+  // 1) On garde un setting (optionnel) pour stocker la valeur
   game.settings.register("fvtt-lore-legacy", "PDFrules", {
-    name: "SETTINGS.LORE_LEGACY.RULES.pdf.name",
-    hint: "SETTINGS.LORE_LEGACY.RULES.pdf.hint",
+    name: "Règles PDF",
     scope: "world",
-    config: true,
-    onChange: value => { 
-      prepareCompendiumWithPDF(value);
-    },
-    requiresReload: false,
+    config: false,     // On le cache du panneau standard
     type: String,
-    filePicker: false
+    default: ""
   });
 
-  // Hook: convertir l'input en textarea lors de l’ouverture des paramètres
-  Hooks.on("renderSettingsConfig", (app, html, data) => {
-    const moduleKey = "fvtt-lore-legacy.PDFrules";
-    const input = html[0].querySelector(`input[name="${moduleKey}"]`);
-    if (!input) return;
+  // 2) On enregistre un menu dédié
+  game.settings.registerMenu("fvtt-lore-legacy", "PDFrulesMenu", {
+    name: "Règles PDF",
+    label: "Éditer les règles PDF",
+    hint: "Saisir plusieurs lignes de texte pour les règles PDF.",
+    icon: "fas fa-file-alt",
+    type: class PDFrulesForm extends FormApplication {
+      static get defaultOptions() {
+        return foundry.utils.mergeObject(super.defaultOptions, {
+          id: "pdfrules-form",
+          title: "Règles PDF",
+          template: "systems/fvtt-lore-legacy/templates/pdfrules-form.hbs",
+          width: 600
+        });
+      }
 
-    const ta = document.createElement("textarea");
-    ta.name = moduleKey;
-    ta.rows = 8;           // Ajustez le nombre de lignes
-    ta.style.width = "100%";
-    ta.value = input.value ?? "";
+      async getData() {
+        return {
+          value: game.settings.get("fvtt-lore-legacy", "PDFrules") ?? ""
+        };
+      }
 
-    // Copier les attributs utiles (placeholder, etc.)
-    if (input.placeholder) ta.placeholder = input.placeholder;
-
-    // Remplacer dans le DOM
-    input.replaceWith(ta);
+      async _updateObject(event, formData) {
+        const value = formData["pdfrules-textarea"] ?? "";
+        await game.settings.set("fvtt-lore-legacy", "PDFrules", value);
+        prepareCompendiumWithPDF(value);
+      }
+    },
+    restricted: false
   });
 
   // Preload Handlebars templates.

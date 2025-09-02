@@ -15,5 +15,6 @@ export const preloadHandlebarsTemplates = async function () {
     'systems/fvtt-lore-legacy/templates/actor/parts/actor-effects.hbs',
     // Item partials
     'systems/fvtt-lore-legacy/templates/item/parts/item-effects.hbs',
+    'systems/fvtt-lore-legacy/templates/pdfrules-form.hbs',
   ]);
 };
