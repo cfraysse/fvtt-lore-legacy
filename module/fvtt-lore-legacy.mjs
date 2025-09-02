@@ -57,18 +57,37 @@ Hooks.once('init', function () {
     label: 'LORE_LEGACY.SheetLabels.Item',
   });
 
+  // Votre setting tel quel
   game.settings.register("fvtt-lore-legacy", "PDFrules", {
     name: "SETTINGS.LORE_LEGACY.RULES.pdf.name",
     hint: "SETTINGS.LORE_LEGACY.RULES.pdf.hint",
     scope: "world",
     config: true,
     onChange: value => { 
-      //console.log(value);
       prepareCompendiumWithPDF(value);
     },
     requiresReload: false,
     type: String,
     filePicker: false
+  });
+
+  // Hook: convertir l'input en textarea lors de l’ouverture des paramètres
+  Hooks.on("renderSettingsConfig", (app, html, data) => {
+    const moduleKey = "fvtt-lore-legacy.PDFrules";
+    const input = html[0].querySelector(`input[name="${moduleKey}"]`);
+    if (!input) return;
+
+    const ta = document.createElement("textarea");
+    ta.name = moduleKey;
+    ta.rows = 8;           // Ajustez le nombre de lignes
+    ta.style.width = "100%";
+    ta.value = input.value ?? "";
+
+    // Copier les attributs utiles (placeholder, etc.)
+    if (input.placeholder) ta.placeholder = input.placeholder;
+
+    // Remplacer dans le DOM
+    input.replaceWith(ta);
   });
 
   // Preload Handlebars templates.
