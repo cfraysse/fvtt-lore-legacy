@@ -57,16 +57,14 @@ Hooks.once('init', function () {
     label: 'LORE_LEGACY.SheetLabels.Item',
   });
     
-  // 1) On garde un setting (optionnel) pour stocker la valeur
   game.settings.register("fvtt-lore-legacy", "PDFrules", {
     name: "Règles PDF",
     scope: "world",
-    config: false,     // On le cache du panneau standard
+    config: false,
     type: String,
     default: ""
   });
 
-  // 2) On enregistre un menu dédié
   game.settings.registerMenu("fvtt-lore-legacy", "PDFrulesMenu", {
     name: "Règles PDF",
     label: "Éditer les règles PDF",
