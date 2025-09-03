@@ -7,13 +7,13 @@
  * - system.description: HTML avec <section><p>…</p></section>, incluant Coût et Effet si présents
  * - system.effects: laissé vide par défaut (à adapter si vous avez une règle d’extraction)
  */
-async function parseTraitsFromText(input) {
+function parseTraitsFromText(input) {
   const section = extractSection(input, /VI\.\s*Traits\n/i, /VII\.\s*Capacit[ée]s\n/i);
   if (!section) return ["empty"];
 
   // Trouve les blocs: "Nom du trait" + ligne "Coût : …" + corps jusqu'au prochain bloc ou fin
   const traitRegex = new RegExp(
-    String.raw`(^[^\r\n].+?)\r?\n\s*Co[uû]t\s*:\s*([^\r\n]+)([\s\S]*?)(?=^[^\r\n].+?\r?\n\s*Co[uû]t\s*:|\Z)`,
+    String.raw`(?:(^[^\r\n]+)\r?\n)?\s*Co[uû]t\s*:\s*([^\r\n]+)([\s\S]*?)(?=\n(?:[^\r\n]+\r?\n)?\s*Co[uû]t\s*:|\Z)`,
     'gmi'
   );
 
@@ -46,12 +46,6 @@ async function parseTraitsFromText(input) {
       flags: {},
       permission: { default: 2 } 
     });
-    
-    await foundry.applications.api.DialogV2.prompt({
-    window: { title: "Proceed" },
-    content: "<p>appliquer le PDF " + html + "  ?</p>"
-    })
-
   }
 
   return results;
