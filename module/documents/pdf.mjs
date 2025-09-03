@@ -36,7 +36,7 @@ function parseTraitsFromText(input) {
 
     results.push({
       name: rawName,
-      type: 'trait',
+      type: 'Item',
       img: "icons/svg/aura.svg",
       system: {
         description: html,
