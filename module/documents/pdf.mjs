@@ -17,7 +17,7 @@ function parseTraitsFromText(input) {
     'gmi'
   );
 
-  const results = [{full : section}];
+  const results = [];
   let match;
 
   while ((match = traitRegex.exec(section)) !== null) {
@@ -143,7 +143,7 @@ export async function prepareCompendiumWithPDF(pdfPath) {
 
     const content2 = getFifthLine(pdfPath); // JSON.stringify(item);
     const traits = parseTraitsFromText(pdfPath);
-    const content = JSON.stringify(traits);
+    const content = JSON.stringify(traits[1]);
     const proceed = await foundry.applications.api.DialogV2.prompt({
     window: { title: "Proceed" },
     content: "<p>appliquer le PDF " + content2 + " : " + content + "  ?</p>"
