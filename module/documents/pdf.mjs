@@ -37,10 +37,14 @@ function parseTraitsFromText(input) {
     results.push({
       name: rawName,
       type: 'trait',
+      img: "icons/svg/aura.svg",
       system: {
         description: html,
-        effects: '' // Laissez vide ou adaptez selon votre logique d’extraction
-      }
+        effects: ''
+      },
+      folder: null,
+      flags: {},
+      permission: { default: 2 } 
     });
   }
 
@@ -156,17 +160,9 @@ async function prepareCompendiumTraits() {
   return pack;
 }
 
-async function fillCompendium(pack, text) {
-  // À partir d'ici, tu peux remplir le compendium avec le texte
-  const entryData = {
-    name: "Règles PDF",
-    content: text,
-    folder: null,
-    flags: {},
-    permission: { default: 2 } // 2 = lecture pour tous
-  };
+async function fillCompendium(pack, item) {
 
-  await pack.createDocument(entryData);
+  await pack.createDocument(item);
 }
 
 export async function prepareCompendiumWithPDF(pdfPath) {
