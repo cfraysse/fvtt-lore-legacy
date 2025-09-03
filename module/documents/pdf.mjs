@@ -143,7 +143,7 @@ export async function prepareCompendiumWithPDF(pdfPath) {
 
     const content2 = getFifthLine(pdfPath); // JSON.stringify(item);
     const traits = parseTraitsFromText(pdfPath);
-    const content = JSON.stringify(traits[0]);
+    const content = JSON.stringify(traits);
     const proceed = await foundry.applications.api.DialogV2.prompt({
     window: { title: "Proceed" },
     content: "<p>appliquer le PDF " + content2 + " : " + content + "  ?</p>"
