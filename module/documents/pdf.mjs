@@ -9,7 +9,7 @@
  */
 function parseTraitsFromText(input) {
   const section = extractSection(input, /VI\.\s*Traits/i, /VII\.\s*Capacit[ée]s/i);
-  if (!section) return [];
+  if (!section) return ["empty"];
 
   // Trouve les blocs: "Nom du trait" + ligne "Coût : …" + corps jusqu'au prochain bloc ou fin
   const traitRegex = new RegExp(
