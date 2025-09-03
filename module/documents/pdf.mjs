@@ -163,7 +163,8 @@ async function prepareCompendiumTraits() {
 
 async function fillCompendium(pack, item) {
   //await pack.push(item);
-  await pack.createDocument(item);
+  const doc = await pack.createDocument(item);
+  await pack.importDocument(doc);
 }
 
 export async function prepareCompendiumWithPDF(pdfPath) {
