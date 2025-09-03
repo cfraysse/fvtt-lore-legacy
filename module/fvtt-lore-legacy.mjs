@@ -66,9 +66,9 @@ Hooks.once('init', function () {
   });
 
   game.settings.registerMenu("fvtt-lore-legacy", "PDFrulesMenu", {
-    name: "Règles PDF",
-    label: "Éditer les règles PDF",
-    hint: "Saisir plusieurs lignes de texte pour les règles PDF.",
+    name: "Créer les compendiums",
+    label: "Copier les règles PDF",
+    hint: "Copier le texte du PDF officiel des règles. Une fois le PDF ouvert, cliquez sur un morceau de texte. Puis 'ctrl + A' pour sélectionner tout le texte, puis 'ctrl + C' pour copier le texte. Enfin coller tout avec 'ctrl + V' dans le champs ci-dessus.",
     icon: "fas fa-file-alt",
     type: class PDFrulesForm extends FormApplication {
       static get defaultOptions() {
