@@ -142,7 +142,7 @@ function getFifthLine(text) {
 
 async function prepareCompendiumTraits() {
   const packName = "traits";
-  const packageName = "fvtt-lore-legacy";
+  const packageName = "lorelegacy";
   // Vérifie si le compendium existe déjà
   let pack = game.packs.get(`${packageName}.${packName}`);
 
