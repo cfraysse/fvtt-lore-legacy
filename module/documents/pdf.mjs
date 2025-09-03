@@ -141,10 +141,11 @@ function getFifthLine(text) {
   }
 
 async function prepareCompendiumTraits() {
-  const packName = "fvtt-lore-legacy.traits";
+  const packName = "traits";
 
   // Vérifie si le compendium existe déjà
   let pack = game.packs.get(packName);
+
   if (!pack) {
     // Crée le compendium s'il n'existe pas
     const createdPack = await CompendiumCollection.createCompendium({
@@ -156,7 +157,17 @@ async function prepareCompendiumTraits() {
     });
 
     pack = game.packs.get(`${createdPack.metadata.package}.${createdPack.metadata.name}`);
+    const proceed = await foundry.applications.api.DialogV2.prompt({
+      window: { title: "Proceed" },
+      content: "<p>createdPack " + JSON.stringify(createdPack) + "  ?</p>"
+    })
   }
+
+  const proceed = await foundry.applications.api.DialogV2.prompt({
+    window: { title: "Proceed" },
+    content: "<p>pack " + JSON.stringify(p) + "  ?</p>"
+  })
+  
   return pack;
 }
 
