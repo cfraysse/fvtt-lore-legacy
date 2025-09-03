@@ -173,7 +173,7 @@ export async function prepareCompendiumWithPDF(pdfPath) {
     const label = `[PDF] new`;
     var packTraits = await prepareCompendiumTraits();
     const traits = parseTraitsFromText(pdfPath);
-    fillCompendium(packTraits, traits[1]);
+    traits.forEach(trait => fillCompendium(packTraits, trait));
     const content = JSON.stringify(traits[1]);
     const proceed = await foundry.applications.api.DialogV2.prompt({
     window: { title: "Proceed" },
