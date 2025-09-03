@@ -147,7 +147,7 @@ async function prepareCompendiumTraits() {
   let pack = game.packs.get(`${packageName}.${packName}`);
 
   if (!pack) {
-
+/*
 
     game.packs.forEach(p =>
       {
@@ -177,7 +177,7 @@ async function prepareCompendiumTraits() {
       content: "<p>CompendiumPacks.content " + JSON.stringify(game.packs.contents()) + "  ?</p>"
     })
 
-
+*/
         // Crée le compendium s'il n'existe pas
     const createdPack2 = await game.packs.createCompendium({
       entity: "Item", // ou "Item", "Actor", selon ton besoin
