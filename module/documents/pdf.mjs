@@ -162,8 +162,8 @@ async function prepareCompendiumTraits() {
 }
 
 async function fillCompendium(pack, item) {
-  await pack.push(item);
-  //await pack.createDocument(item);
+  //await pack.push(item);
+  await pack.createDocument(item);
 }
 
 export async function prepareCompendiumWithPDF(pdfPath) {
