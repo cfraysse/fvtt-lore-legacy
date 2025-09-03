@@ -17,7 +17,7 @@ function parseTraitsFromText(input) {
     'gmi'
   );
 
-  const results = [];
+  const results = [{full : section}];
   let match;
 
   while ((match = traitRegex.exec(section)) !== null) {
