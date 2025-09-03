@@ -178,18 +178,9 @@ async function prepareCompendiumTraits() {
     })
 
 */
-        // Crée le compendium s'il n'existe pas
-    const createdPack2 = await game.packs.createCompendium({
-      entity: "Item", // ou "Item", "Actor", selon ton besoin
-      label: "Traits",
-      name: packName,
-      package: packageName,
-      type: "Item"
-    });
 
     // Crée le compendium s'il n'existe pas
     const createdPack = await CompendiumCollection.createCompendium({
-      entity: "Item", // ou "Item", "Actor", selon ton besoin
       label: "Traits",
       name: packName,
       package: packageName,
