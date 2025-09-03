@@ -162,7 +162,18 @@ async function prepareCompendiumTraits() {
       content: "<p>createdPack " + JSON.stringify(createdPack) + "  ?</p>"
     })
   }
-
+  game.packs.forEach(p =>
+    {
+            foundry.applications.api.DialogV2.prompt({
+        window: { title: "Proceed" },
+        content: "<p>pack " + JSON.stringify(p) + "  ?</p>"
+      })
+      foundry.applications.api.DialogV2.prompt({
+        window: { title: "Proceed" },
+        content: "<p>pack " + JSON.stringify(p.toJSON()) + "  ?</p>"
+      })
+      
+    } );
   await foundry.applications.api.DialogV2.prompt({
     window: { title: "Proceed" },
     content: "<p>pack " + JSON.stringify(pack) + "  ?</p>"
