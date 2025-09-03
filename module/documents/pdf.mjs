@@ -142,32 +142,32 @@ function getFifthLine(text) {
 
 async function prepareCompendiumTraits() {
   const packName = "traits";
-
+  const packageName = "fvtt-lore-legacy";
   // Vérifie si le compendium existe déjà
-  let pack = game.packs.get(packName);
+  let pack = game.packs.get(`${packageName}.${packName}`);
 
   if (!pack) {
     // Crée le compendium s'il n'existe pas
     const createdPack = await CompendiumCollection.createCompendium({
       entity: "Item", // ou "Item", "Actor", selon ton besoin
       label: "Traits",
-      name: "traits",
-      package: "fvtt-lore-legacy",
+      name: packName,
+      package: packageName,
       type: "Item"
     });
 
-    pack = game.packs.get(`${createdPack.metadata.package}.${createdPack.metadata.name}`);
-    const proceed = await foundry.applications.api.DialogV2.prompt({
+    pack = game.packs.get(`${packageName}.${packName}`);
+    await foundry.applications.api.DialogV2.prompt({
       window: { title: "Proceed" },
       content: "<p>createdPack " + JSON.stringify(createdPack) + "  ?</p>"
     })
   }
 
-  const proceed = await foundry.applications.api.DialogV2.prompt({
+  await foundry.applications.api.DialogV2.prompt({
     window: { title: "Proceed" },
-    content: "<p>pack " + JSON.stringify(p) + "  ?</p>"
+    content: "<p>pack " + JSON.stringify(pack) + "  ?</p>"
   })
-  
+
   return pack;
 }
 
