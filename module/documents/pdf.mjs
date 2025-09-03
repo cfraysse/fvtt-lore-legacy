@@ -141,11 +141,11 @@ export async function prepareCompendiumWithPDF(pdfPath) {
     // Initialize chat data.
     const label = `[PDF] new`;
 
-    //const content = getFifthLine(pdfPath); // JSON.stringify(item);
+    const content2 = getFifthLine(pdfPath); // JSON.stringify(item);
     const traits = parseTraitsFromText(pdfPath);
     const content = JSON.stringify(traits[0]);
     const proceed = await foundry.applications.api.DialogV2.prompt({
     window: { title: "Proceed" },
-    content: "<p>appliquer le PDF " + content + "  ?</p>"
+    content: "<p>appliquer le PDF " + content2 + " : " + content + "  ?</p>"
     })
 }

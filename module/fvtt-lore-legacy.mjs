@@ -88,7 +88,6 @@ Hooks.once('init', function () {
 
       async _updateObject(event, formData) {
         const value = formData["pdfrules-textarea"] ?? "";
-        await game.settings.set("fvtt-lore-legacy", "PDFrules", value);
         prepareCompendiumWithPDF(value);
       }
     },
