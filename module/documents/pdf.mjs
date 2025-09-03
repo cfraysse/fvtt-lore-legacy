@@ -8,7 +8,7 @@
  * - system.effects: laissé vide par défaut (à adapter si vous avez une règle d’extraction)
  */
 function parseTraitsFromText(input) {
-  const section = extractSection(input, /VI\.\s*Traits/i, /VII\.\s*Capacit[ée]s/i);
+  const section = extractSection(input, /VI\.\s*Traits\n/i, /VII\.\s*Capacit[ée]s\n/i);
   if (!section) return ["empty"];
 
   // Trouve les blocs: "Nom du trait" + ligne "Coût : …" + corps jusqu'au prochain bloc ou fin
