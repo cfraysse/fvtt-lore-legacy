@@ -147,6 +147,46 @@ async function prepareCompendiumTraits() {
   let pack = game.packs.get(`${packageName}.${packName}`);
 
   if (!pack) {
+
+
+    game.packs.forEach(p =>
+      {
+              foundry.applications.api.DialogV2.prompt({
+          window: { title: "Proceed" },
+          content: "<p>pack " + JSON.stringify(p) + "  ?</p>"
+        })
+        foundry.applications.api.DialogV2.prompt({
+          window: { title: "Proceed" },
+          content: "<p>pack " + JSON.stringify(p.toJSON()) + "  ?</p>"
+        })
+        
+      } 
+    );
+    await foundry.applications.api.DialogV2.prompt({
+      window: { title: "Proceed" },
+      content: "<p>pack " + JSON.stringify(pack) + "  ?</p>"
+    })
+
+      await foundry.applications.api.DialogV2.prompt({
+      window: { title: "Proceed" },
+      content: "<p>game.packs " + JSON.stringify(game.packs.toJSON()) + "  ?</p>"
+    })
+    
+    await foundry.applications.api.DialogV2.prompt({
+      window: { title: "Proceed" },
+      content: "<p>CompendiumPacks.content " + JSON.stringify(game.packs.contents()) + "  ?</p>"
+    })
+
+
+        // Crée le compendium s'il n'existe pas
+    const createdPack2 = await game.packs.createCompendium({
+      entity: "Item", // ou "Item", "Actor", selon ton besoin
+      label: "Traits",
+      name: packName,
+      package: packageName,
+      type: "Item"
+    });
+
     // Crée le compendium s'il n'existe pas
     const createdPack = await CompendiumCollection.createCompendium({
       entity: "Item", // ou "Item", "Actor", selon ton besoin
@@ -162,32 +202,7 @@ async function prepareCompendiumTraits() {
       content: "<p>createdPack " + JSON.stringify(createdPack) + "  ?</p>"
     })
   }
-  game.packs.forEach(p =>
-    {
-            foundry.applications.api.DialogV2.prompt({
-        window: { title: "Proceed" },
-        content: "<p>pack " + JSON.stringify(p) + "  ?</p>"
-      })
-      foundry.applications.api.DialogV2.prompt({
-        window: { title: "Proceed" },
-        content: "<p>pack " + JSON.stringify(p.toJSON()) + "  ?</p>"
-      })
-      
-    } );
-  await foundry.applications.api.DialogV2.prompt({
-    window: { title: "Proceed" },
-    content: "<p>pack " + JSON.stringify(pack) + "  ?</p>"
-  })
 
-    await foundry.applications.api.DialogV2.prompt({
-    window: { title: "Proceed" },
-    content: "<p>game.packs " + JSON.stringify(game.packs.toJSON()) + "  ?</p>"
-  })
-  
-  await foundry.applications.api.DialogV2.prompt({
-    window: { title: "Proceed" },
-    content: "<p>CompendiumPacks.content " + JSON.stringify(game.packs.contents()) + "  ?</p>"
-  })
   return pack;
 }
 
