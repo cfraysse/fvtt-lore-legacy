@@ -144,7 +144,7 @@ async function prepareCompendiumTraits() {
   const packName = "traits";
   const packageName = "lorelegacy";
   // Vérifie si le compendium existe déjà
-  let pack = game.packs.get(`${packageName}.${packName}`);
+  let pack = game.packs.get(`world.${packName}`);
 
   if (!pack) {
 /*
@@ -187,7 +187,7 @@ async function prepareCompendiumTraits() {
       type: "Item"
     });
 
-    pack = game.packs.get(`${packageName}.${packName}`);
+    pack = game.packs.get(`world.${packName}`);
     await foundry.applications.api.DialogV2.prompt({
       window: { title: "Proceed" },
       content: "<p>createdPack " + JSON.stringify(createdPack) + "  ?</p>"
