@@ -7,7 +7,7 @@
  * - system.description: HTML avec <section><p>…</p></section>, incluant Coût et Effet si présents
  * - system.effects: laissé vide par défaut (à adapter si vous avez une règle d’extraction)
  */
-function parseTraitsFromText(input) {
+async function parseTraitsFromText(input) {
   const section = extractSection(input, /VI\.\s*Traits\n/i, /VII\.\s*Capacit[ée]s\n/i);
   if (!section) return ["empty"];
 
@@ -46,6 +46,12 @@ function parseTraitsFromText(input) {
       flags: {},
       permission: { default: 2 } 
     });
+    
+    await foundry.applications.api.DialogV2.prompt({
+    window: { title: "Proceed" },
+    content: "<p>appliquer le PDF " + html + "  ?</p>"
+    })
+
   }
 
   return results;
