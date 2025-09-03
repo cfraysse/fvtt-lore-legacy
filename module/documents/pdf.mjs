@@ -7,7 +7,11 @@
  * - system.description: HTML avec <section><p>…</p></section>, incluant Coût et Effet si présents
  * - system.effects: laissé vide par défaut (à adapter si vous avez une règle d’extraction)
  */
-function parseTraitsFromText(input) {
+function parseTraitsFromText(texteComplet) {
+
+  const input = extractSection(texteComplet, /VI\.\s*Traits\n/i, /VII\.\s*Capacit[ée]s\n/i);
+  if (!input) return ["empty"];
+
   const lines = input.split(/\r?\n/);
   const traits = [];
   let current = null;
