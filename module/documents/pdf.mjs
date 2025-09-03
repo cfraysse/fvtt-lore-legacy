@@ -170,7 +170,7 @@ async function prepareCompendiumTraits() {
 
     await foundry.applications.api.DialogV2.prompt({
     window: { title: "Proceed" },
-    content: "<p>game.packs " + JSON.stringify(game.packs.toJson()) + "  ?</p>"
+    content: "<p>game.packs " + JSON.stringify(game.packs.toJSON()) + "  ?</p>"
   })
   
   await foundry.applications.api.DialogV2.prompt({
