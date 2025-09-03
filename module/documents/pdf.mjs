@@ -141,7 +141,7 @@ function getFifthLine(text) {
   }
 
 async function prepareCompendiumTraits() {
-  const packName = "pdfrules-compendium-traits";
+  const packName = "fvtt-lore-legacy.pdfrules-compendium-traits";
 
   // Vérifie si le compendium existe déjà
   let pack = game.packs.get(packName);
@@ -150,7 +150,7 @@ async function prepareCompendiumTraits() {
     const createdPack = await CompendiumCollection.createCompendium({
       entity: "Item", // ou "Item", "Actor", selon ton besoin
       label: "Traits",
-      name: packName,
+      name: "pdfrules-compendium-traits",
       package: "fvtt-lore-legacy",
       type: "Item"
     });
