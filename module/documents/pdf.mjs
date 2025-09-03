@@ -8,47 +8,53 @@
  * - system.effects: laissé vide par défaut (à adapter si vous avez une règle d’extraction)
  */
 function parseTraitsFromText(input) {
-  const section = extractSection(input, /VI\.\s*Traits\n/i, /VII\.\s*Capacit[ée]s\n/i);
-  if (!section) return ["empty"];
+  const lines = input.split(/\r?\n/);
+  const traits = [];
+  let current = null;
 
-  // Trouve les blocs: "Nom du trait" + ligne "Coût : …" + corps jusqu'au prochain bloc ou fin
-  const traitRegex = new RegExp(
-    String.raw`(?:(^[^\r\n]+)\r?\n)?\s*Co[uû]t\s*:\s*([^\r\n]+)([\s\S]*?)(?=\n(?:[^\r\n]+\r?\n)?\s*Co[uû]t\s*:|\Z)`,
-    'gmi'
-  );
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
 
-  const results = [];
-  let match;
+    // Détection d’un nouveau trait
+    if (/^[A-ZÀ-ÖØ-öø-ÿ][^\n]*$/.test(line) && lines[i + 1]?.includes("Coût")) {
+      if (current) traits.push(current);
+      current = {
+        name: line,
+        cost: '',
+        body: ''
+      };
+    } else if (current) {
+      // Capture du coût
+      const costMatch = line.match(/Co[uû]t\s*:\s*(\d+)/i);
+      if (costMatch) {
+        current.cost = costMatch[1];
+      } else {
+        current.body += line + '\n';
+      }
+    }
+  }
 
-  while ((match = traitRegex.exec(section)) !== null) {
-    const rawName = cleanInline(match[1]);
-    const rawCost = cleanInline(match[2]);
-    const rawBody = match[3] || '';
+  if (current) traits.push(current);
 
-    // Séparer description avant/after "Effet :"
-    const { beforeEffet, effet } = splitEffet(rawBody);
-
-    // Normalisations de texte (césures, sauts de ligne, espaces)
+  // Traitement final
+  return traits.map(trait => {
+    const { beforeEffet, effet } = splitEffet(trait.body);
     const descText = normalizeParagraph(beforeEffet);
     const effetText = normalizeParagraph(effet);
 
-    const html = buildHtmlDescription(rawCost, descText, effetText);
-
-    results.push({
-      name: rawName,
+    return {
+      name: trait.name,
       type: 'trait',
       img: "icons/svg/aura.svg",
       system: {
-        description: html,
+        description: buildHtmlDescription(trait.cost, descText, effetText),
         effects: ''
       },
       folder: null,
       flags: {},
-      permission: { default: 2 } 
-    });
-  }
-
-  return results;
+      permission: { default: 2 }
+    };
+  });
 }
 
 /* ---------- Helpers ---------- */
