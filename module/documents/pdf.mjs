@@ -136,19 +136,19 @@ function getFifthLine(text) {
     return lines.length >= 5 ? lines[4] : null;
   }
 
-async function prepareCompendium() {
-  const packName = "fvtt-lore-legacy.pdfrules-compendium";
+async function prepareCompendiumTraits() {
+  const packName = "fvtt-lore-legacy.pdfrules-compendium-traits";
 
   // Vérifie si le compendium existe déjà
   let pack = game.packs.get(packName);
   if (!pack) {
     // Crée le compendium s'il n'existe pas
     const createdPack = await CompendiumCollection.createCompendium({
-      entity: "JournalEntry", // ou "Item", "Actor", selon ton besoin
-      label: "Règles PDF",
-      name: "pdfrules-compendium",
+      entity: "Item", // ou "Item", "Actor", selon ton besoin
+      label: "Traits",
+      name: "pdfrules-compendium-traits",
       package: "fvtt-lore-legacy",
-      type: "JournalEntry"
+      type: "Item"
     });
 
     pack = game.packs.get(`${createdPack.metadata.package}.${createdPack.metadata.name}`);
@@ -173,9 +173,9 @@ export async function prepareCompendiumWithPDF(pdfPath) {
     
     // Initialize chat data.
     const label = `[PDF] new`;
-    var pack = await prepareCompendium();
+    var packTraits = await prepareCompendiumTraits();
     const traits = parseTraitsFromText(pdfPath);
-    fillCompendium(pack, traits[1]);
+    fillCompendium(packTraits, traits[1]);
     const content = JSON.stringify(traits[1]);
     const proceed = await foundry.applications.api.DialogV2.prompt({
     window: { title: "Proceed" },
