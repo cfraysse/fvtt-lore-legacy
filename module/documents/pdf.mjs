@@ -143,8 +143,6 @@ function parseCapaciteFromText(texteComplet) {
   });
 }
 
- parseSortsFromText(text);
-
 /**
  * Extrait les capacites entre "VIII. Magie" et "IX. Combat" et renvoie un tableau d'objets.
  * - name: première ligne du bloc (titre du capacite)
@@ -214,7 +212,7 @@ function parseSortsFromText(texteComplet) {
     return {
       name: capacite.name,
       type: 'spell',
-      img: "icons/svg/open-book.png",
+      img: "icons/svg/open-book.svg",
       system: {
         description: buildHtmlDescription(capacite),
         "skillLevel": 1,
