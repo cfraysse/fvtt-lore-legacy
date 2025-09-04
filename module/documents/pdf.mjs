@@ -232,6 +232,14 @@ function buildHtmlDescription(element) {
   if (element.effetText) {
     parts.push(`<p><strong>Effet :</strong> ${escapeHtml(element.effetText)}</p>`);
   }
+  
+  if (element.dd) {
+    parts.push(`<p><strong>Degré de difficulté :</strong> ${escapeHtml(element.dd)}</p>`);
+  }
+
+  if (element.exText) {
+    parts.push(`<p><strong>Exemple :</strong> ${escapeHtml(element.exText)}</p>`);
+  }
 
   return `<section>${parts.join('')}</section>`;
 }
