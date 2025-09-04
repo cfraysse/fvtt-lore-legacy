@@ -58,7 +58,7 @@ Hooks.once('init', function () {
   });
     
   game.settings.register("fvtt-lore-legacy", "PDFrules", {
-    name: "Règles PDF",
+    name: game.i18n.localize('LORE_LEGACY.SETTINGS.RULES.pdf.name'),
     scope: "world",
     config: false,
     type: String,
@@ -66,15 +66,15 @@ Hooks.once('init', function () {
   });
 
   game.settings.registerMenu("fvtt-lore-legacy", "PDFrulesMenu", {
-    name: "Créer les compendiums",
-    label: "Copier les règles PDF",
-    hint: "Copier le texte du PDF officiel des règles. Une fois le PDF ouvert, cliquez sur un morceau de texte. Puis 'ctrl + A' pour sélectionner tout le texte, puis 'ctrl + C' pour copier le texte. Enfin coller tout avec 'ctrl + V' dans le champs ci-dessus.",
+    name: game.i18n.localize('LORE_LEGACY.SETTINGS.RULES.pdf.createCompendium'),
+    label: game.i18n.localize('LORE_LEGACY.SETTINGS.RULES.pdf.copyRules'),
+    hint: game.i18n.localize('LORE_LEGACY.SETTINGS.RULES.pdf.hint'),
     icon: "fas fa-file-alt",
     type: class PDFrulesForm extends FormApplication {
       static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
           id: "pdfrules-form",
-          title: "Règles PDF",
+          title: game.i18n.localize('LORE_LEGACY.SETTINGS.RULES.pdf.name'),
           template: "systems/fvtt-lore-legacy/templates/pdfrules-form.hbs",
           width: 600
         });

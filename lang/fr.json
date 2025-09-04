@@ -50,6 +50,16 @@
       "Poids": "Poids",
       "Bagage": "Bagage",
       "Rapidite": "Rapidité"
+    },
+    "SETTINGS": {
+      "RULES": {
+        "pdf": {
+          "name": "Règles PDF",
+          "hint": "Copier le texte du PDF officiel des règles. Une fois le PDF ouvert, cliquez sur un morceau de texte. Puis 'ctrl + A' pour sélectionner tout le texte, puis 'ctrl + C' pour copier le texte. Enfin coller tout avec 'ctrl + V' dans le champs ci-dessus.",
+          "createCompendium" : "Créer les compendiums",
+          "copyRules": "Copier les règles PDF"
+        }
+      }
     }
   },
 
@@ -73,13 +83,5 @@
     "New" : "Nouveau",
     "Delete" : "Supprimer",
     "Description" : "Description"
-  },
-  "SETTINGS.LORE_LEGACY": {
-    "RULES": {
-      "pdf": {
-        "name": "Nom du pdf des règles",
-        "hint": "Charger un pdf pour créer un compendium"
-      }
-    }
   }
 }

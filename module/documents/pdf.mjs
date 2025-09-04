@@ -180,11 +180,10 @@ async function fillCompendium(pack, item) {
 export async function prepareCompendiumWithPDF(pdfPath) {
     
     // Initialize chat data.
-    const label = `[PDF] new`;
     var packTraits = await prepareCompendiumTraits();
     const traits = parseTraitsFromText(pdfPath);
-    for (let i = 0; i < traits.length; i++) {
+    /*for (let i = 0; i < traits.length; i++) {
       await fillCompendium(packTraits, traits[i]);
-    }
-    //traits.forEach(trait => await fillCompendium(packTraits, trait));
+    }*/
+    traits.forEach(trait => fillCompendium(packTraits, trait));
 }
