@@ -124,7 +124,97 @@ function parseCapaciteFromText(texteComplet) {
     return {
       name: capacite.name,
       type: 'skill',
-      img: "icons/svg/aura.svg",
+      img: "icons/svg/skills.svg",
+      system: {
+        description: buildHtmlDescription(capacite),
+        "skillLevel": 1,
+        "formula": "@skillLevel",
+        "bfortune": false,
+        "nfortune": 0,
+        "cfortune": "unchecked",
+        "badversite": false,
+        "nadversite": 0,
+        "cadversite": "unchecked"      
+      },
+      folder: null,
+      flags: {},
+      permission: { default: 2 }
+    };
+  });
+}
+
+ parseSortsFromText(text);
+
+/**
+ * Extrait les capacites entre "VIII. Magie" et "IX. Combat" et renvoie un tableau d'objets.
+ * - name: première ligne du bloc (titre du capacite)
+ * - system.description: HTML avec <section><p>…</p></section>, incluant Coût et Effet si présents
+ * - system.effects: laissé vide par défaut (à adapter si vous avez une règle d’extraction)
+ */
+function parseSortsFromText(texteComplet) {
+
+  const input = extractSection(texteComplet, /VIII\.\s*Magie\n/, /IX\.\s*Combat\n/i);
+  if (!input) return ["empty"];
+
+  const lines = input
+  .split(/\r?\n/)
+  .map(line => line.trim())
+  .filter(line => !/^\d+$/.test(line)); // Supprime les lignes contenant uniquement un nombre
+  const sorts = [];
+  let current = null;
+  let currentCategorie = '';
+
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+
+    // Détection de catégorie  // Sortilèges de Magie Rituelle // Sortilèges de Magie Matérielle // Sortilèges de Magie Illusoire
+
+    const catMatch = line.match(/^Sortilèges de Magie \s+(.+)$/i);
+    if (catMatch) {
+      currentCategorie = line;
+      continue;
+    }
+
+    // Détection d’un nouveau sort // Nombre recommandé de participants
+    if (/^[A-ZÀ-ÖØ-öø-ÿ][^\n]*$/.test(line) && (lines[i + 1]?.includes("Coût en PM : ") || lines[i + 1]?.includes("Nombre recommandé de participants : "))) {
+      if (current) traits.push(current);
+      current = {
+        name: line,
+        cost: '',
+        body: '',
+        categorie: currentCategorie
+      };
+    } else if (current) {
+      // Capture du coût
+      const costTotalMatch = line.match(/Coût en PM total :\s*(\d+)/i);
+      const costMatch = line.match(/Coût en PM :\s*(\d+)/i);
+      const costMultiMatch = line.match(/Coût en PM par participant :\s*(\d+)/i);
+      const participantsMatch = line.match(/Nombre recommandé de participants :\s*(\d+)/i);
+
+      if (costMatch) {
+        current.cost = costMatch[1];
+      } else {
+        current.body += line + '\n';
+      }
+    }
+
+  }
+
+  if (current) sorts.push(current);
+
+  // capaciteement final
+  return sorts.map(sort => { //durée , degrée de difficulté, cible
+    const { beforeEx, exemple } = splitExemple(capacite.body);
+    const { beforeDd, dd } = splitDd(beforeEx);
+    capacite.descText = normalizeParagraph(beforeDd);
+    capacite.exText = normalizeParagraph(exemple);
+    capacite.dd = normalizeParagraph(dd);
+
+    return {
+      name: capacite.name,
+      type: 'spell',
+      img: "icons/svg/open-book.png",
       system: {
         description: buildHtmlDescription(capacite),
         "skillLevel": 1,
@@ -325,18 +415,57 @@ async function prepareCompendiumSkills() {
   return pack;
 }
 
+async function prepareCompendiumSpells() {
+  const packName = "sorts";
+  const packageName = "lorelegacy";
+  // Vérifie si le compendium existe déjà
+  let pack = game.packs.get(`world.${packName}`);
+
+  if (!pack) {
+    // Crée le compendium s'il n'existe pas
+    const createdPack = await CompendiumCollection.createCompendium({
+      label: "Sorts",
+      name: packName,
+      package: packageName,
+      type: "Item"
+    });
+
+    pack = game.packs.get(`world.${packName}`);
+  }
+
+  return pack;
+}
+
 async function fillCompendium(pack, item) {
   const doc = await pack.createDocument(item);
   await pack.importDocument(doc);
 }
 
-export async function prepareCompendiumWithPDF(text) {
-    
-    // Initialize chat data.
+async function createCompendiumTraits(text)
+{
     var packTraits = await prepareCompendiumTraits();
-    var packskills = await prepareCompendiumSkills();
     const traits = parseTraitsFromText(text);
     traits.forEach(trait => fillCompendium(packTraits, trait));
+}
+
+async function createCompendiumSkills(text)
+{
+    var packskills = await prepareCompendiumSkills();
     const skills = parseCapaciteFromText(text);
     skills.forEach(skill => fillCompendium(packskills, skill));
+}
+
+async function createCompendiumSpells(text)
+{
+    var packspells = await prepareCompendiumSpells();
+    const spells = parseSortsFromText(text);
+    spells.forEach(spell => fillCompendium(packspells, spell));
+}
+
+export async function prepareCompendiumWithPDF(text) {
+    
+    createCompendiumTraits(text);
+    createCompendiumSkills(text);
+    createCompendiumSpells(text);
+
 }
