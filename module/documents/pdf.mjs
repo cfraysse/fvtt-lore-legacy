@@ -1,7 +1,5 @@
 
 /**
- */
-/**
  * Extrait les traits entre "VI. Traits" et "VII. Capacités" et renvoie un tableau d'objets.
  * - name: première ligne du bloc (titre du trait)
  * - system.description: HTML avec <section><p>…</p></section>, incluant Coût et Effet si présents
@@ -43,16 +41,88 @@ function parseTraitsFromText(texteComplet) {
   // Traitement final
   return traits.map(trait => {
     const { beforeEffet, effet } = splitEffet(trait.body);
-    const descText = normalizeParagraph(beforeEffet);
-    const effetText = normalizeParagraph(effet);
+    trait.descText = normalizeParagraph(beforeEffet);
+    trait.effetText = normalizeParagraph(effet);
 
     return {
       name: trait.name,
       type: 'trait',
       img: "icons/svg/aura.svg",
       system: {
-        description: buildHtmlDescription(trait.cost, descText, effetText),
+        description: buildHtmlDescription(trait),
         effects: ''
+      },
+      folder: null,
+      flags: {},
+      permission: { default: 2 }
+    };
+  });
+}
+
+
+/**
+ * Extrait les capacites entre "VII. Capacités" et "VII. Capacités" et renvoie un tableau d'objets.
+ * - name: première ligne du bloc (titre du capacite)
+ * - system.description: HTML avec <section><p>…</p></section>, incluant Coût et Effet si présents
+ * - system.effects: laissé vide par défaut (à adapter si vous avez une règle d’extraction)
+ */
+function parseCapaciteFromText(texteComplet) {
+
+  const input = extractSection(texteComplet, /VII\.\s*Capacit[ée]s\n/i, /VIII\.\s*Magie\n/i);
+  if (!input) return ["empty"];
+
+  const lines = input.split(/\r?\n/);
+  const capacites = [];
+  let current = null;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+
+    // Détection d’une nouvelle capacité
+    if (/^[A-ZÀ-ÖØ-öø-ÿ][^\n]*$/.test(line) && lines[i + 1]?.includes("(P)")) {
+      if (current) capacites.push(current);
+      current = {
+        name: line,
+        active: false,
+        body: ''
+      };
+    } else if (/^[A-ZÀ-ÖØ-öø-ÿ][^\n]*$/.test(line) && lines[i + 1]?.includes("(A)")) {
+      if (current) capacites.push(current);
+      current = {
+        name: line,
+        active: true,
+        body: ''
+      };
+    } 
+    else if (current) {
+      current.body += line + '\n';
+    }
+  }
+
+  if (current) capacites.push(current);
+
+  // capaciteement final
+  return capacites.map(capacite => {
+    const { beforeExemple, exemple } = splitExemple(capacite.body);
+    const { beforeDd, dd } = splitDd(beforeExemple);
+    capacite.descText = normalizeParagraph(beforeDd);
+    capacite.exText = normalizeParagraph(exemple);
+    capacite.dd = normalizeParagraph(dd);
+
+    return {
+      name: capacite.name,
+      type: 'skill',
+      img: "icons/svg/aura.svg",
+      system: {
+        description: buildHtmlDescription(capacite),
+        "skillLevel": 1,
+        "formula": "@skillLevel",
+        "bfortune": true,
+        "nfortune": 0,
+        "cfortune": "unchecked",
+        "badversite": false,
+        "nadversite": 0,
+        "cadversite": "unchecked"      
       },
       folder: null,
       flags: {},
@@ -103,6 +173,39 @@ function normalizeParagraph(s) {
 
   return t;
 }
+/** Sépare le corps en deux: avant "Exemple :" et contenu Exemple :” (si présent). */
+function splitExemple(body) {
+  // On capte la première occurrence (variantes d'espace/accents)
+  const effetRe = /(^|\s)Exemple\s*:\s*/i;
+  const idx = body.search(effetRe);
+
+  if (idx === -1) {
+    return { beforeEx: body, exemple: '' };
+  }
+
+  // Découpage en gardant ce qui suit l’étiquette 
+  const before = body.slice(0, idx);
+  const after = body.slice(idx).replace(effetRe, '');
+
+  return { beforeEx: before, exemple: after };
+}
+
+/** Sépare le corps en deux: avant "Degré de Difficulté :" et contenu Degré de Difficulté :” (si présent). */
+function splitDd(body) {
+  // On capte la première occurrence (variantes d'espace/accents)
+  const effetRe = /(^|\s)Degré\s*de\s*Difficult[ée]\s*:\s*/i;
+  const idx = body.search(effetRe);
+
+  if (idx === -1) {
+    return { beforeDd: body, dd: '' };
+  }
+
+  // Découpage en gardant ce qui suit l’étiquette 
+  const before = body.slice(0, idx);
+  const after = body.slice(idx).replace(effetRe, '');
+
+  return { beforeDd: before, dd: after };
+}
 
 /** Sépare le corps en deux: avant "Effet :" et contenu d'“Effet :” (si présent). */
 function splitEffet(body) {
@@ -122,16 +225,18 @@ function splitEffet(body) {
 }
 
 /** Construit le HTML final attendu. */
-function buildHtmlDescription(cost, descText, effetText) {
+function buildHtmlDescription(element) {
   const parts = [];
-  parts.push(`<p><strong>Coût :</strong> ${escapeHtml(cost)}</p>`);
 
-  if (descText) {
-    parts.push(`<p>${escapeHtml(descText)}</p>`);
+  if(element.cost)
+    parts.push(`<p><strong>Coût :</strong> ${escapeHtml(element.cost)}</p>`);
+
+  if (element.descText) {
+    parts.push(`<p>${escapeHtml(element.descText)}</p>`);
   }
 
-  if (effetText) {
-    parts.push(`<p><strong>Effet :</strong> ${escapeHtml(effetText)}</p>`);
+  if (element.effetText) {
+    parts.push(`<p><strong>Effet :</strong> ${escapeHtml(element.effetText)}</p>`);
   }
 
   return `<section>${parts.join('')}</section>`;
@@ -171,19 +276,39 @@ async function prepareCompendiumTraits() {
   return pack;
 }
 
+async function prepareCompendiumSkills() {
+  const packName = "capacites";
+  const packageName = "lorelegacy";
+  // Vérifie si le compendium existe déjà
+  let pack = game.packs.get(`world.${packName}`);
+
+  if (!pack) {
+    // Crée le compendium s'il n'existe pas
+    const createdPack = await CompendiumCollection.createCompendium({
+      label: "Capacités",
+      name: packName,
+      package: packageName,
+      type: "Item"
+    });
+
+    pack = game.packs.get(`world.${packName}`);
+  }
+
+  return pack;
+}
+
 async function fillCompendium(pack, item) {
-  //await pack.push(item);
   const doc = await pack.createDocument(item);
   await pack.importDocument(doc);
 }
 
-export async function prepareCompendiumWithPDF(pdfPath) {
+export async function prepareCompendiumWithPDF(text) {
     
     // Initialize chat data.
     var packTraits = await prepareCompendiumTraits();
-    const traits = parseTraitsFromText(pdfPath);
-    /*for (let i = 0; i < traits.length; i++) {
-      await fillCompendium(packTraits, traits[i]);
-    }*/
+    var packskills = await prepareCompendiumSkills();
+    const traits = parseTraitsFromText(text);
     traits.forEach(trait => fillCompendium(packTraits, trait));
+    const skills = parseCapaciteFromText(text);
+    skills.forEach(skill => fillCompendium(packskills, skill));
 }
