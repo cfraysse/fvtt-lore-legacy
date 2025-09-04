@@ -81,9 +81,17 @@ function parseCapaciteFromText(texteComplet) {
   .filter(line => !/^\d+$/.test(line)); // Supprime les lignes contenant uniquement un nombre
   const capacites = [];
   let current = null;
+  let currentCategorie = null;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
+
+    // Détection de catégorie
+    const catMatch = line.match(/^Capacités liées (?:au|à la)\s+(.+)$/i);
+    if (catMatch) {
+      currentCategorie = catMatch[1].trim();
+      continue;
+    }
 
     // Détection d’une nouvelle capacité avec (P) ou (A) sur la même ligne
     const match = line.match(/^(.+?)\s+\((A|P)\)$/i);
@@ -92,7 +100,8 @@ function parseCapaciteFromText(texteComplet) {
       current = {
         name: match[1].trim(),
         active: match[2].toUpperCase() === 'A',
-        body: ''
+        body: '',
+        categorie: currentCategorie || 'Inconnue'
       };
     } else if (current) {
       current.body += line + '\n';
@@ -104,10 +113,10 @@ function parseCapaciteFromText(texteComplet) {
 
   // capaciteement final
   return capacites.map(capacite => {
-    const { beforeEx, ex } = splitExemple(capacite.body);
+    const { beforeEx, exemple } = splitExemple(capacite.body);
     const { beforeDd, dd } = splitDd(beforeEx);
     capacite.descText = normalizeParagraph(beforeDd);
-    capacite.exText = normalizeParagraph(ex);
+    capacite.exText = normalizeParagraph(exemple);
     capacite.dd = normalizeParagraph(dd);
     if(capacite.active) capacite.type = "Active"
     else capacite.type = "Passive"
@@ -230,6 +239,10 @@ function splitEffet(body) {
 /** Construit le HTML final attendu. */
 function buildHtmlDescription(element) {
   const parts = [];
+
+  if (element.categorie) {
+    parts.push(`<p><strong>Capacité liée au :</strong> ${escapeHtml(element.cost)}</p>`);
+  }
 
   if (element.type) {
     parts.push(`<p><strong>${escapeHtml(element.type)}</strong></p>`);
