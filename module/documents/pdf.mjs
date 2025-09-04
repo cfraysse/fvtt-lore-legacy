@@ -129,7 +129,7 @@ function parseCapaciteFromText(texteComplet) {
         description: buildHtmlDescription(capacite),
         "skillLevel": 1,
         "formula": "@skillLevel",
-        "bfortune": true,
+        "bfortune": false,
         "nfortune": 0,
         "cfortune": "unchecked",
         "badversite": false,
