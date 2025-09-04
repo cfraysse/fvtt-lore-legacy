@@ -78,20 +78,14 @@ function parseCapaciteFromText(texteComplet) {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
 
-    // Détection d’une nouvelle capacité
-    if (/^[A-ZÀ-ÖØ-öø-ÿ][^\n]*$/.test(line) && lines[i + 1]?.includes("(P)")) {
+    // Détection d’une nouvelle capacité avec (P) ou (A) sur la même ligne
+    const match = line.match(/^([A-ZÀ-ÖØ-öø-ÿ][^\(]+)\s+\((P|A)\)$/i);
+    if (match) {
       if (current) capacites.push(current);
       current = {
-        name: line,
-        active: false,
-        body: ' '
-      };
-    } else if (/^[A-ZÀ-ÖØ-öø-ÿ][^\n]*$/.test(line) && lines[i + 1]?.includes("(A)")) {
-      if (current) capacites.push(current);
-      current = {
-        name: line,
-        active: true,
-        body: ' '
+        name: match[1].trim(),
+        active: match[2].toUpperCase() === 'A',
+        body: ''
       };
     } 
     else if (current) {
