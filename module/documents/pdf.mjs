@@ -102,6 +102,8 @@ function parseCapaciteFromText(texteComplet) {
     capacite.descText = normalizeParagraph(beforeDd);
     capacite.exText = normalizeParagraph(ex);
     capacite.dd = normalizeParagraph(dd);
+    if(capacite.active) capacite.type = "Active"
+    else capacite.type = "Passive"
 
     return {
       name: capacite.name,
@@ -221,6 +223,10 @@ function splitEffet(body) {
 /** Construit le HTML final attendu. */
 function buildHtmlDescription(element) {
   const parts = [];
+  
+  if (element.type) {
+    parts.push(`<p><strong>${escapeHtml(element.type)}</strong></p>`);
+  }
 
   if(element.cost)
     parts.push(`<p><strong>Coût :</strong> ${escapeHtml(element.cost)}</p>`);
