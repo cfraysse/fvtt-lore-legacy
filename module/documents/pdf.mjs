@@ -79,7 +79,7 @@ function parseCapaciteFromText(texteComplet) {
     const line = lines[i].trim();
 
     // Détection d’une nouvelle capacité avec (P) ou (A) sur la même ligne
-    const match = line.match(/^([A-ZÀ-ÖØ-öø-ÿ][^\(]+)\s+\((P|A)\)$/i);
+    const match = line.match(/^(.+?)\s+\((A|P)\)$/i);
     if (match) {
       if (current) capacites.push(current);
       current = {
@@ -87,10 +87,10 @@ function parseCapaciteFromText(texteComplet) {
         active: match[2].toUpperCase() === 'A',
         body: ''
       };
-    } 
-    else if (current) {
+    } else if (current) {
       current.body += line + '\n';
     }
+
   }
 
   if (current) capacites.push(current);
