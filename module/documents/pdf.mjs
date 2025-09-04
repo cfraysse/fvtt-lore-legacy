@@ -84,14 +84,14 @@ function parseCapaciteFromText(texteComplet) {
       current = {
         name: line,
         active: false,
-        body: ''
+        body: ' '
       };
     } else if (/^[A-ZÀ-ÖØ-öø-ÿ][^\n]*$/.test(line) && lines[i + 1]?.includes("(A)")) {
       if (current) capacites.push(current);
       current = {
         name: line,
         active: true,
-        body: ''
+        body: ' '
       };
     } 
     else if (current) {
@@ -103,10 +103,10 @@ function parseCapaciteFromText(texteComplet) {
 
   // capaciteement final
   return capacites.map(capacite => {
-    const { beforeExemple, exemple } = splitExemple(capacite.body);
-    const { beforeDd, dd } = splitDd(beforeExemple);
+    const { beforeEx, ex } = splitExemple(capacite.body);
+    const { beforeDd, dd } = splitDd(beforeEx);
     capacite.descText = normalizeParagraph(beforeDd);
-    capacite.exText = normalizeParagraph(exemple);
+    capacite.exText = normalizeParagraph(ex);
     capacite.dd = normalizeParagraph(dd);
 
     return {
