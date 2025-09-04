@@ -10,7 +10,11 @@ function parseTraitsFromText(texteComplet) {
   const input = extractSection(texteComplet, /VI\.\s*Traits\n/i, /VII\.\s*Capacit[ée]s\n/i);
   if (!input) return ["empty"];
 
-  const lines = input.split(/\r?\n/);
+  const lines = input
+  .split(/\r?\n/)
+  .map(line => line.trim())
+  .filter(line => !/^\d+$/.test(line)); // Supprime les lignes contenant uniquement un nombre
+
   const traits = [];
   let current = null;
 
@@ -71,7 +75,10 @@ function parseCapaciteFromText(texteComplet) {
   const input = extractSection(texteComplet, /VII\.\s*Capacit[ée]s\n/i, /VIII\.\s*Magie\n/i);
   if (!input) return ["empty"];
 
-  const lines = input.split(/\r?\n/);
+  const lines = input
+  .split(/\r?\n/)
+  .map(line => line.trim())
+  .filter(line => !/^\d+$/.test(line)); // Supprime les lignes contenant uniquement un nombre
   const capacites = [];
   let current = null;
 
@@ -223,7 +230,7 @@ function splitEffet(body) {
 /** Construit le HTML final attendu. */
 function buildHtmlDescription(element) {
   const parts = [];
-  
+
   if (element.type) {
     parts.push(`<p><strong>${escapeHtml(element.type)}</strong></p>`);
   }
