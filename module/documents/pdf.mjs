@@ -81,7 +81,7 @@ function parseCapaciteFromText(texteComplet) {
   .filter(line => !/^\d+$/.test(line)); // Supprime les lignes contenant uniquement un nombre
   const capacites = [];
   let current = null;
-  let currentCategorie = null;
+  let currentCategorie = '';
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -89,7 +89,7 @@ function parseCapaciteFromText(texteComplet) {
     // Détection de catégorie
     const catMatch = line.match(/^Capacités liées (?:au|à la)\s+(.+)$/i);
     if (catMatch) {
-      currentCategorie = catMatch[1].trim();
+      currentCategorie = line;
       continue;
     }
 
@@ -101,7 +101,7 @@ function parseCapaciteFromText(texteComplet) {
         name: match[1].trim(),
         active: match[2].toUpperCase() === 'A',
         body: '',
-        categorie: currentCategorie || 'Inconnue'
+        categorie: currentCategorie
       };
     } else if (current) {
       current.body += line + '\n';
@@ -241,7 +241,7 @@ function buildHtmlDescription(element) {
   const parts = [];
 
   if (element.categorie) {
-    parts.push(`<p><strong>Capacité liée au :</strong> ${escapeHtml(element.cost)}</p>`);
+    parts.push(`<p><strong>${escapeHtml(element.categorie)}</strong></p>`);
   }
 
   if (element.type) {
