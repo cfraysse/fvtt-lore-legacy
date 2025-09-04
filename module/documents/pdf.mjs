@@ -124,7 +124,7 @@ function parseCapaciteFromText(texteComplet) {
     return {
       name: capacite.name,
       type: 'skill',
-      img: "icons/svg/skills.svg",
+      img: "systems/fvtt-lore-legacy/assets/skills.png",
       system: {
         description: buildHtmlDescription(capacite),
         "skillLevel": 1,
@@ -176,7 +176,7 @@ function parseSortsFromText(texteComplet) {
 
     // Détection d’un nouveau sort // Nombre recommandé de participants
     if (/^[A-ZÀ-ÖØ-öø-ÿ][^\n]*$/.test(line) && (lines[i + 1]?.includes("Coût en PM : ") || lines[i + 1]?.includes("Nombre recommandé de participants : "))) {
-      if (current) traits.push(current);
+      if (current) sorts.push(current);
       current = {
         name: line,
         cost: '',
@@ -203,18 +203,18 @@ function parseSortsFromText(texteComplet) {
 
   // capaciteement final
   return sorts.map(sort => { //durée , degrée de difficulté, cible
-    const { beforeEx, exemple } = splitExemple(capacite.body);
+    const { beforeEx, exemple } = splitExemple(sort.body);
     const { beforeDd, dd } = splitDd(beforeEx);
-    capacite.descText = normalizeParagraph(beforeDd);
-    capacite.exText = normalizeParagraph(exemple);
-    capacite.dd = normalizeParagraph(dd);
+    sort.descText = normalizeParagraph(beforeDd);
+    sort.exText = normalizeParagraph(exemple);
+    sort.dd = normalizeParagraph(dd);
 
     return {
-      name: capacite.name,
+      name: sort.name,
       type: 'spell',
-      img: "icons/svg/open-book.svg",
+      img: "systems/fvtt-lore-legacy/assets/open-book.png",
       system: {
-        description: buildHtmlDescription(capacite),
+        description: buildHtmlDescription(sort),
         "skillLevel": 1,
         "formula": "@skillLevel",
         "bfortune": false,
