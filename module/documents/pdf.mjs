@@ -378,7 +378,7 @@ function getFifthLine(text) {
     return lines.length >= 5 ? lines[4] : null;
   }
 
-async function prepareCompendium(packName, label, folderName) {
+async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
   // Vérifie si le dossier existe déjà
   let folder = game.folders.find(f => f.name === folderName && f.type === "Compendium");
   if (!folder) {
