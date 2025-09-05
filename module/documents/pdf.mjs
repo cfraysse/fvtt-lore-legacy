@@ -43,50 +43,29 @@ function parseTraitsFromText(texteComplet) {
   if (current) traits.push(current);
 
   // Traitement final
-  return traits.map(trait => {
-    const { beforeEffet, effet } = splitEffet(trait.body);
-    trait.descText = normalizeParagraph(beforeEffet);
-    trait.effetText = normalizeParagraph(effet);
-
-    return {
-      name: trait.name,
-      type: 'trait',
-      img: "icons/svg/aura.svg",
-      system: {
-        description: buildHtmlDescription(trait),
-        effects: ''
-      },
-      folder: null,
-      flags: {},
-      permission: { default: 2 }
-    };
+  return traits.map(trait => { 
+    return formatTrait(trait)
   });
 }
 
-function formatCapacite(capacite)
+function formatItem(item)
 {
-  const { beforeEx, exemple } = splitExemple(capacite.body);
-  const { beforeDd, dd } = splitDd(beforeEx);
-  capacite.descText = normalizeParagraph(beforeDd);
-  capacite.exText = normalizeParagraph(exemple);
-  capacite.dd = normalizeParagraph(dd);
-  if(capacite.active) capacite.type = "Active"
-  else capacite.type = "Passive"
+  const { beforeMatRec, matRec } = splitMatRec(item.body);
+  const { beforeEx, exemple } = splitExemple(beforeMatRec);
+  const { beforeEffet, effet } = splitEffet(beforeEx);
+  const { beforeDd, dd } = splitDd(beforeEffet);
+  item.effetText = normalizeParagraph(effet);
+  item.descText = normalizeParagraph(beforeDd);
+  item.exText = normalizeParagraph(exemple);
+  item.dd = normalizeParagraph(dd);
+  item.matRec = normalizeParagraph(matRec);
+  if(item.active) item.type = "Active"
+  else item.type = "Passive"
 
   return {
-    name: capacite.name,
-    type: 'skill',
-    img: "systems/fvtt-lore-legacy/assets/skills.png",
+    name: item.name,
     system: {
-      description: buildHtmlDescription(capacite),
-      "skillLevel": 1,
-      "formula": "@skillLevel",
-      "bfortune": false,
-      "nfortune": 0,
-      "cfortune": "unchecked",
-      "badversite": false,
-      "nadversite": 0,
-      "cadversite": "unchecked"      
+      description: buildHtmlDescription(item),
     },
     folder: null,
     flags: {},
@@ -94,7 +73,35 @@ function formatCapacite(capacite)
   };
 }
 
+function setTriangle(item)
+{
+  item.system.bfortune = 1;
+  item.system.nfortune = 0;
+  item.system.cfortune = "unchecked";
+  item.system.badversite = false;
+  item.system.nadversite = 0;
+  item.system.cadversite = "unchecked"
+}
 
+function formatCapacite(capacite)
+{
+  var res = formatItem(capacite);
+  res.type = 'skill';
+  res.img = "systems/fvtt-lore-legacy/assets/skills.png";
+  setTriangle(res);
+  res.skillLevel = 1;
+  res.formula = "@skillLevel";
+  return res;
+}
+
+function formatTrait(trait)
+{
+  var res = formatItem(trait);
+  res.type = 'trait';
+  res.img = "icons/svg/aura.svg";
+
+  return res;
+}
 /**
  * Extrait les capacites entre "VII. Capacités" et "VII. Capacités" et renvoie un tableau d'objets.
  * - name: première ligne du bloc (titre du capacite)
@@ -335,6 +342,25 @@ function splitEffet(body) {
 
   return { beforeEffet: before, effet: after };
 }
+
+/** Sépare le corps en deux: avant "Matériel recommandé : :" et contenu d'Matériel recommandé : :” (si présent). */
+function splitMatRec(body) {
+  // On capte la première occurrence d’"Effet :" (variantes d'espace/accents)
+  const effetRe = /(^|\s)Matériel recommandé\s*:\s*/i;
+  const idx = body.search(effetRe);
+
+  if (idx === -1) {
+    return { beforeMatRec: body, matRec: '' };
+  }
+
+  // Découpage en gardant ce qui suit l’étiquette "Effet :"
+  const before = body.slice(0, idx);
+  const after = body.slice(idx).replace(effetRe, '');
+
+  return { beforeMatRec: before, matRec: after };
+}
+
+
 
 /** Construit le HTML final attendu. */
 function buildHtmlDescription(element) {
