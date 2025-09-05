@@ -373,11 +373,8 @@ function getFifthLine(text) {
 
 async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
   // Vérifie si le dossier existe déjà
-
   let folder = game.folders.find(f => f.name === folderName && f.type === "Compendium");
-
   if (!folder) {
-    // Crée le dossier s'il n'existe pas
     folder = await Folder.create({
       name: folderName,
       type: "Compendium",
@@ -389,16 +386,19 @@ async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
   let pack = game.packs.get(`world.${packName}`);
 
   if (!pack) {
-    // Crée le compendium s'il n'existe pas
-    const createdPack = await CompendiumCollection.createCompendium({
+    // Crée le compendium
+    await CompendiumCollection.createCompendium({
       label: label,
       name: packName,
-      package: "world",
-      type: "Item",
-      folder: folder.id // Associe le compendium au dossier
+      package: "world", // ou "lorelegacy" si c'est ton module
+      type: "Item"
     });
 
+    // Récupère le compendium fraîchement créé
     pack = game.packs.get(`world.${packName}`);
+
+    // Déplace le compendium dans le dossier
+    await pack.update({ folder: folder.id });
   }
 
   return pack;
