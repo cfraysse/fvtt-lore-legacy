@@ -63,6 +63,37 @@ function parseTraitsFromText(texteComplet) {
   });
 }
 
+function formatCapacite(capacite)
+{
+  const { beforeEx, exemple } = splitExemple(capacite.body);
+  const { beforeDd, dd } = splitDd(beforeEx);
+  capacite.descText = normalizeParagraph(beforeDd);
+  capacite.exText = normalizeParagraph(exemple);
+  capacite.dd = normalizeParagraph(dd);
+  if(capacite.active) capacite.type = "Active"
+  else capacite.type = "Passive"
+
+  return {
+    name: capacite.name,
+    type: 'skill',
+    img: "systems/fvtt-lore-legacy/assets/skills.png",
+    system: {
+      description: buildHtmlDescription(capacite),
+      "skillLevel": 1,
+      "formula": "@skillLevel",
+      "bfortune": false,
+      "nfortune": 0,
+      "cfortune": "unchecked",
+      "badversite": false,
+      "nadversite": 0,
+      "cadversite": "unchecked"      
+    },
+    folder: null,
+    flags: {},
+    permission: { default: 2 }
+  };
+}
+
 
 /**
  * Extrait les capacites entre "VII. Capacités" et "VII. Capacités" et renvoie un tableau d'objets.
@@ -82,6 +113,7 @@ async function parseCapaciteFromText(texteComplet) {
   let capacites = [];
   let current = null;
   let currentCategorie = '';
+  let cat = "";
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -89,14 +121,14 @@ async function parseCapaciteFromText(texteComplet) {
     // Détection de catégorie
     const catMatch = line.match(/^Capacités liées (?:au|à la)\s+(.+)$/i);
     if (catMatch) {
-      currentCategorie = line;
       if (capacites.length != 0)
       {
-        let cat = catMatch[1].trim().toLowerCase();
         let pack = await prepareCompendium("capacites"+cat, "Capacités-" + cat, "L&L - Capacités");
-        capacites.forEach(skill => fillCompendium(pack, skill));
+        capacites.forEach(skill => fillCompendium(pack, formatCapacite(skill)));
         capacites = [];
       }
+      cat = catMatch[1].trim().toLowerCase();
+      currentCategorie = line;
       continue;
     }
 
@@ -113,41 +145,14 @@ async function parseCapaciteFromText(texteComplet) {
     } else if (current) {
       current.body += line + '\n';
     }
-
   }
 
   if (current) capacites.push(current);
-
-  // capaciteement final
-  return capacites.map(capacite => {
-    const { beforeEx, exemple } = splitExemple(capacite.body);
-    const { beforeDd, dd } = splitDd(beforeEx);
-    capacite.descText = normalizeParagraph(beforeDd);
-    capacite.exText = normalizeParagraph(exemple);
-    capacite.dd = normalizeParagraph(dd);
-    if(capacite.active) capacite.type = "Active"
-    else capacite.type = "Passive"
-
-    return {
-      name: capacite.name,
-      type: 'skill',
-      img: "systems/fvtt-lore-legacy/assets/skills.png",
-      system: {
-        description: buildHtmlDescription(capacite),
-        "skillLevel": 1,
-        "formula": "@skillLevel",
-        "bfortune": false,
-        "nfortune": 0,
-        "cfortune": "unchecked",
-        "badversite": false,
-        "nadversite": 0,
-        "cadversite": "unchecked"      
-      },
-      folder: null,
-      flags: {},
-      permission: { default: 2 }
-    };
-  });
+  if (capacites.length != 0)
+  {
+    let pack = await prepareCompendium("capacites"+cat, "Capacités-" + cat, "L&L - Capacités");
+    capacites.forEach(skill => fillCompendium(pack, formatCapacite(skill)));
+  }  
 }
 
 /**
