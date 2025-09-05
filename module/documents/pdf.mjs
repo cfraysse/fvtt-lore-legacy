@@ -127,7 +127,7 @@ async function parseCapaciteFromText(texteComplet) {
         capacites.forEach(skill => fillCompendium(pack, formatCapacite(skill)));
         capacites = [];
       }
-      cat = catMatch[1].trim().toLowerCase();
+      cat = catMatch[1].trim();
       currentCategorie = line;
       continue;
     }
@@ -234,7 +234,7 @@ function parseSortsFromText(texteComplet) {
         "cfortune": "unchecked",
         "badversite": false,
         "nadversite": 0,
-        "cadversite": "unchecked"      
+        "cadversite": "unchecked"
       },
       folder: null,
       flags: {},
