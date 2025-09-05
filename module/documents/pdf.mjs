@@ -70,7 +70,7 @@ function parseTraitsFromText(texteComplet) {
  * - system.description: HTML avec <section><p>…</p></section>, incluant Coût et Effet si présents
  * - system.effects: laissé vide par défaut (à adapter si vous avez une règle d’extraction)
  */
-function parseCapaciteFromText(texteComplet) {
+async function parseCapaciteFromText(texteComplet) {
 
   const input = extractSection(texteComplet, /VII\.\s*Capacit[ée]s\n/i, /VIII\.\s*Magie\n/i);
   if (!input) return ["empty"];
@@ -79,7 +79,7 @@ function parseCapaciteFromText(texteComplet) {
   .split(/\r?\n/)
   .map(line => line.trim())
   .filter(line => !/^\d+$/.test(line)); // Supprime les lignes contenant uniquement un nombre
-  const capacites = [];
+  let capacites = [];
   let current = null;
   let currentCategorie = '';
 
@@ -90,6 +90,12 @@ function parseCapaciteFromText(texteComplet) {
     const catMatch = line.match(/^Capacités liées (?:au|à la)\s+(.+)$/i);
     if (catMatch) {
       currentCategorie = line;
+      if (capacites.length != 0)
+      {
+        let pack = await prepareCompendium("capacites"+catMatch, "Capacités - " + catMatch, "L&L - Capacités");
+        capacites.forEach(skill => fillCompendium(pack, skill));
+        capacites = [];
+      }
       continue;
     }
 
@@ -418,9 +424,7 @@ async function createCompendiumTraits(text)
 
 async function createCompendiumSkills(text)
 {
-    const skills= parseCapaciteFromText(text);
-    var pack = await prepareCompendium("capacites", "Capacités", "L&L - Capacités");
-    skills.forEach(skill => fillCompendium(pack, skill));
+    parseCapaciteFromText(text);
 }
 
 async function createCompendiumSpells(text)
