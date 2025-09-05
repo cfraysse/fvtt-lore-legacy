@@ -441,7 +441,7 @@ async function createCompendiumSpells(text)
 }
 
 export async function prepareCompendiumWithPDF(text) {
-    createCompendiumTraits(text);
-    createCompendiumSkills(text);
-    createCompendiumSpells(text);
+    await createCompendiumTraits(text);
+    await createCompendiumSkills(text);
+    await createCompendiumSpells(text);
 }
