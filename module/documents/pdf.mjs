@@ -371,60 +371,16 @@ function getFifthLine(text) {
     return lines.length >= 5 ? lines[4] : null;
   }
 
-async function prepareCompendiumTraits() {
-  const packName = "traits";
-  const packageName = "lorelegacy";
+async function prepareCompendium(packName, label) {
   // Vérifie si le compendium existe déjà
   let pack = game.packs.get(`world.${packName}`);
 
   if (!pack) {
     // Crée le compendium s'il n'existe pas
     const createdPack = await CompendiumCollection.createCompendium({
-      label: "Traits",
+      label: label,
       name: packName,
-      package: packageName,
-      type: "Item"
-    });
-
-    pack = game.packs.get(`world.${packName}`);
-  }
-
-  return pack;
-}
-
-async function prepareCompendiumSkills() {
-  const packName = "capacites";
-  const packageName = "lorelegacy";
-  // Vérifie si le compendium existe déjà
-  let pack = game.packs.get(`world.${packName}`);
-
-  if (!pack) {
-    // Crée le compendium s'il n'existe pas
-    const createdPack = await CompendiumCollection.createCompendium({
-      label: "Capacités",
-      name: packName,
-      package: packageName,
-      type: "Item"
-    });
-
-    pack = game.packs.get(`world.${packName}`);
-  }
-
-  return pack;
-}
-
-async function prepareCompendiumSpells() {
-  const packName = "sorts";
-  const packageName = "lorelegacy";
-  // Vérifie si le compendium existe déjà
-  let pack = game.packs.get(`world.${packName}`);
-
-  if (!pack) {
-    // Crée le compendium s'il n'existe pas
-    const createdPack = await CompendiumCollection.createCompendium({
-      label: "Sorts",
-      name: packName,
-      package: packageName,
+      package: "lorelegacy",
       type: "Item"
     });
 
@@ -441,29 +397,27 @@ async function fillCompendium(pack, item) {
 
 async function createCompendiumTraits(text)
 {
-    var packTraits = await prepareCompendiumTraits();
+    var pack = await prepareCompendium("traits", "Traits");
     const traits = parseTraitsFromText(text);
-    traits.forEach(trait => fillCompendium(packTraits, trait));
+    traits.forEach(trait => fillCompendium(pack, trait));
 }
 
 async function createCompendiumSkills(text)
 {
-    var packskills = await prepareCompendiumSkills();
-    const skills = parseCapaciteFromText(text);
-    skills.forEach(skill => fillCompendium(packskills, skill));
+    const skills= parseCapaciteFromText(text);
+    var pack = await prepareCompendium("capacites", "Capacités");
+    skills.forEach(skill => fillCompendium(pack, skill));
 }
 
 async function createCompendiumSpells(text)
 {
-    var packspells = await prepareCompendiumSpells();
     const spells = parseSortsFromText(text);
-    spells.forEach(spell => fillCompendium(packspells, spell));
+    var pack = await prepareCompendium("sorts", "Sorts");
+    spells.forEach(spell => fillCompendium(pack, spell));
 }
 
 export async function prepareCompendiumWithPDF(text) {
-    
     createCompendiumTraits(text);
     createCompendiumSkills(text);
     createCompendiumSpells(text);
-
 }
