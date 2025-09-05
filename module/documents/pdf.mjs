@@ -371,7 +371,20 @@ function getFifthLine(text) {
     return lines.length >= 5 ? lines[4] : null;
   }
 
-async function prepareCompendium(packName, label) {
+async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
+  // Vérifie si le dossier existe déjà
+
+  let folder = game.folders.find(f => f.name === folderName && f.type === "Compendium");
+
+  if (!folder) {
+    // Crée le dossier s'il n'existe pas
+    folder = await Folder.create({
+      name: folderName,
+      type: "Compendium",
+      parent: null
+    });
+  }
+
   // Vérifie si le compendium existe déjà
   let pack = game.packs.get(`world.${packName}`);
 
@@ -380,8 +393,9 @@ async function prepareCompendium(packName, label) {
     const createdPack = await CompendiumCollection.createCompendium({
       label: label,
       name: packName,
-      package: "lorelegacy",
-      type: "Item"
+      package: "world",
+      type: "Item",
+      folder: folder.id // Associe le compendium au dossier
     });
 
     pack = game.packs.get(`world.${packName}`);
@@ -405,14 +419,14 @@ async function createCompendiumTraits(text)
 async function createCompendiumSkills(text)
 {
     const skills= parseCapaciteFromText(text);
-    var pack = await prepareCompendium("capacites", "Capacités");
+    var pack = await prepareCompendium("capacites", "Capacités", "L&L - Capacités");
     skills.forEach(skill => fillCompendium(pack, skill));
 }
 
 async function createCompendiumSpells(text)
 {
     const spells = parseSortsFromText(text);
-    var pack = await prepareCompendium("sorts", "Sorts");
+    var pack = await prepareCompendium("sorts", "Sorts", "L&L - Sorts");
     spells.forEach(spell => fillCompendium(pack, spell));
 }
 
