@@ -92,7 +92,8 @@ async function parseCapaciteFromText(texteComplet) {
       currentCategorie = line;
       if (capacites.length != 0)
       {
-        let pack = await prepareCompendium("capacites"+catMatch, "Capacités - " + catMatch, "L&L - Capacités");
+        let cat = catMatch[0].trim().toLowerCase();
+        let pack = await prepareCompendium("capacites"+cat, "Capacités-" + cat, "L&L - Capacités");
         capacites.forEach(skill => fillCompendium(pack, skill));
         capacites = [];
       }
