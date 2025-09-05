@@ -377,7 +377,7 @@ function getFifthLine(text) {
     return lines.length >= 5 ? lines[4] : null;
   }
 
-async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
+async function prepareCompendium(packName, label, folderName) {
   // Vérifie si le dossier existe déjà
   let folder = game.folders.find(f => f.name === folderName && f.type === "Compendium");
   if (!folder) {
@@ -396,7 +396,7 @@ async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
     await CompendiumCollection.createCompendium({
       label: label,
       name: packName,
-      package: "world", // ou "lorelegacy" si c'est ton module
+      package: "world", // ou "lorelegacy"
       type: "Item"
     });
 
@@ -404,7 +404,7 @@ async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
     pack = game.packs.get(`world.${packName}`);
 
     // Déplace le compendium dans le dossier
-    await pack.update({ folder: folder.id });
+    await pack.configure({ folder: folder.id });
   }
 
   return pack;
