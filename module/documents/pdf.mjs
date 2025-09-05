@@ -127,7 +127,7 @@ async function parseCapaciteFromText(texteComplet) {
         capacites.forEach(skill => fillCompendium(pack, formatCapacite(skill)));
         capacites = [];
       }
-      cat = catMatch[1].trim();
+      cat = catMatch[1].trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       currentCategorie = line;
       continue;
     }
@@ -385,7 +385,7 @@ function getFifthLine(text) {
 
 async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
   // Vérifie si le dossier existe déjà
-  console.log("CREATION DE COMPENDIUM : " + packName +" label : " + packName + " folderName : " + folderName)
+  console.log("CREATION DE COMPENDIUM : " + packName +" label : " + label + " folderName : " + folderName)
   let folder = game.folders.find(f => f.name === folderName && f.type === "Compendium");
   if (!folder) {
     folder = await Folder.create({
