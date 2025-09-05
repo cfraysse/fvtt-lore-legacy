@@ -385,6 +385,7 @@ function getFifthLine(text) {
 
 async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
   // Vérifie si le dossier existe déjà
+  console.log("CREATION DE COMPENDIUM : " + packName +" label : " + packName + " folderName : " + folderName)
   let folder = game.folders.find(f => f.name === folderName && f.type === "Compendium");
   if (!folder) {
     folder = await Folder.create({
@@ -412,7 +413,7 @@ async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
     // Déplace le compendium dans le dossier
     await pack.configure({ folder: folder.id });
   }
-
+  console.log(JSON.stringify(pack))
   return pack;
 }
 
