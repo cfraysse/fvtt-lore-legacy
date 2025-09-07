@@ -75,7 +75,7 @@ function formatItem(item)
 
 function setTriangle(item)
 {
-  item.system.bfortune = 1;
+  item.system.bfortune = false;
   item.system.nfortune = 0;
   item.system.cfortune = "unchecked";
   item.system.badversite = false;
@@ -91,6 +91,17 @@ function formatCapacite(capacite)
   setTriangle(res);
   res.skillLevel = 1;
   res.formula = "@skillLevel";
+  return res;
+}
+
+function formatSort(sort)
+{
+  var res = formatItem(sort);
+  res.type = 'spell';
+  res.img = "systems/fvtt-lore-legacy/assets/open-book.png";
+  setTriangle(res);
+  res.spellLevel = 1;
+  res.formula = "@spellLevel";
   return res;
 }
 
@@ -168,7 +179,7 @@ async function parseCapaciteFromText(texteComplet) {
  * - system.description: HTML avec <section><p>…</p></section>, incluant Coût et Effet si présents
  * - system.effects: laissé vide par défaut (à adapter si vous avez une règle d’extraction)
  */
-function parseSortsFromText(texteComplet) {
+async function parseSortsFromText(texteComplet) {
 
   const input = extractSection(texteComplet, /VIII\.\s*Magie\n/, /IX\.\s*Combat\n/i);
   if (!input) return ["empty"];
@@ -180,6 +191,7 @@ function parseSortsFromText(texteComplet) {
   const sorts = [];
   let current = null;
   let currentCategorie = '';
+  let cat = "";
 
 
   for (let i = 0; i < lines.length; i++) {
@@ -190,6 +202,15 @@ function parseSortsFromText(texteComplet) {
     const catMatch = line.match(/^Sortilèges de Magie \s+(.+)$/i);
     if (catMatch) {
       currentCategorie = line;
+      if (sorts.length != 0)
+        {
+          let pack = await prepareCompendium("sorts"+cat, "Sortilèges-" + cat, "L&L - Sortilèges");
+          sorts.forEach(sort => fillCompendium(pack, formatSort(sort)));
+          sorts = [];
+        }
+        cat = catMatch[1].trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        currentCategorie = line;
+        continue;
       continue;
     }
 
@@ -211,6 +232,12 @@ function parseSortsFromText(texteComplet) {
 
       if (costMatch) {
         current.cost = costMatch[1];
+      } else if (costTotalMatch) {
+        current.costTotal = costTotalMatch[1];
+      } else if (costMultiMatch) {
+        current.costMulti = costMultiMatch[1];
+      } else if (participantsMatch) {
+        current.paticipants = participantsMatch[1];
       } else {
         current.body += line + '\n';
       }
@@ -220,34 +247,11 @@ function parseSortsFromText(texteComplet) {
 
   if (current) sorts.push(current);
 
-  // capaciteement final
-  return sorts.map(sort => { //durée , degrée de difficulté, cible
-    const { beforeEx, exemple } = splitExemple(sort.body);
-    const { beforeDd, dd } = splitDd(beforeEx);
-    sort.descText = normalizeParagraph(beforeDd);
-    sort.exText = normalizeParagraph(exemple);
-    sort.dd = normalizeParagraph(dd);
-
-    return {
-      name: sort.name,
-      type: 'spell',
-      img: "systems/fvtt-lore-legacy/assets/open-book.png",
-      system: {
-        description: buildHtmlDescription(sort),
-        "skillLevel": 1,
-        "formula": "@skillLevel",
-        "bfortune": false,
-        "nfortune": 0,
-        "cfortune": "unchecked",
-        "badversite": false,
-        "nadversite": 0,
-        "cadversite": "unchecked"
-      },
-      folder: null,
-      flags: {},
-      permission: { default: 2 }
-    };
-  });
+  if (capacites.length != 0)
+  {
+    let pack = await prepareCompendium("sorts"+cat, "Sortilèges-" + cat, "L&L - Sortilèges");
+    sorts.forEach(sort => fillCompendium(pack, formatSort(sort)));
+  }  
 }
 
 /* ---------- Helpers ---------- */
@@ -377,6 +381,18 @@ function buildHtmlDescription(element) {
   if(element.cost)
     parts.push(`<p><strong>Coût :</strong> ${escapeHtml(element.cost)}</p>`);
 
+  if (element.costTotal) {
+    parts.push(`<p><strong>Coût total en PM :</strong> ${escapeHtml(element.costTotal)}</p>`);
+  }
+
+  if (element.costTotal) {
+    parts.push(`<p><strong>Coût pour chaque participants en PM :</strong> ${escapeHtml(element.costMulti)}</p>`);
+  }
+
+  if (element.costTotal) {
+    parts.push(`<p><strong>Nombre recommandé de participants :</strong> ${escapeHtml(element.paticipants)}</p>`);
+  }
+
   if (element.descText) {
     parts.push(`<p>${escapeHtml(element.descText)}</p>`);
   }
@@ -392,7 +408,7 @@ function buildHtmlDescription(element) {
   if (element.exText) {
     parts.push(`<p><strong>Exemple :</strong> ${escapeHtml(element.exText)}</p>`);
   }
-
+  
   return `<section>${parts.join('')}</section>`;
 }
 
@@ -457,14 +473,12 @@ async function createCompendiumTraits(text)
 
 async function createCompendiumSkills(text)
 {
-    parseCapaciteFromText(text);
+    await parseCapaciteFromText(text);
 }
 
 async function createCompendiumSpells(text)
 {
-    const spells = parseSortsFromText(text);
-    var pack = await prepareCompendium("sorts", "Sorts", "L&L - Sorts");
-    spells.forEach(spell => fillCompendium(pack, spell));
+    await parseSortsFromText(text);
 }
 
 export async function prepareCompendiumWithPDF(text) {
