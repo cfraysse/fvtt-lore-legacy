@@ -390,13 +390,16 @@ function buildHtmlDescription(element) {
   ];
 
   for (const { key, label, strongOnly, lowerCase } of fields) {
-    let value;
+    const value = element[key];
     if (!value) continue;
 
-    if(lowerCase)
-      value = value.toLowerCase()
+    let escaped;
 
-    const escaped = escapeHtml(value);
+    if(lowerCase)
+      escaped = escapeHtml(value.toLowerCase());
+    else
+      escaped = escapeHtml(value);
+
     if (strongOnly) {
       parts.push(`<p><strong>${escaped}</strong></p>`);
     } else if (label) {
