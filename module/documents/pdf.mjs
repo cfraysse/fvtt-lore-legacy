@@ -443,7 +443,7 @@ async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
 
   if (!pack) {
     // Crée le compendium
-    await CompendiumCollection.createCompendium({
+    await foundry.documents.collections.CompendiumCollection.createCompendium({
       label: label,
       name: packName,
       package: "world", // ou "lorelegacy"
