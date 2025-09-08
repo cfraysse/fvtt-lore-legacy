@@ -266,7 +266,8 @@ function normalizeParagraph(s) {
     .replace(/\s*([;,.:!?])\s*/g, ' $1 ')
     .replace(/\s+/g, ' ')
     .trim();
-
+  
+  t = cleanPunctuation(t);
   return t;
 }
 /** Sépare le corps en deux: avant "Exemple :" et contenu Exemple :” (si présent). */
@@ -337,6 +338,9 @@ function splitMatRec(body) {
   return { beforeMatRec: before, matRec: after };
 }
 
+function cleanPunctuation(text) {
+  return text.replace(/ \./g, '.').replace(/ ,/g, ',');
+}
 
 function extractSpecs(line, item)
 {
