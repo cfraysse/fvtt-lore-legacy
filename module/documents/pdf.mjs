@@ -188,7 +188,7 @@ async function parseSortsFromText(texteComplet) {
   .split(/\r?\n/)
   .map(line => line.trim())
   .filter(line => !/^\d+$/.test(line)); // Supprime les lignes contenant uniquement un nombre
-  const sorts = [];
+  let sorts = [];
   let current = null;
   let currentCategorie = '';
   let cat = "";
