@@ -248,7 +248,7 @@ async function parseSortsFromText(texteComplet) {
 
   if (current) sorts.push(current);
 
-  if (capacites.length != 0)
+  if (sorts.length != 0)
   {
     let pack = await prepareCompendium("sorts"+cat, "Sortilèges-" + cat, "L&L - Sortilèges");
     sorts.forEach(sort => fillCompendium(pack, formatSort(sort)));
