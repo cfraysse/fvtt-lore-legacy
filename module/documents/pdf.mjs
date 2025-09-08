@@ -377,7 +377,7 @@ function buildHtmlDescription(element) {
     { key: "active", label: null, strongOnly: true },
     { key: "cost", label: "Coût :" },
     { key: "cible", label: "Cible :" },
-    { key: "duree", label: "Durée :" },
+    { key: "duree", label: "Durée :", lowerCase: true },
     { key: "costPm", label: "Coût en PM:" },
     { key: "costTotal", label: "Coût total en PM :" },
     { key: "costMulti", label: "Coût pour chaque participants en PM :" },
@@ -389,9 +389,14 @@ function buildHtmlDescription(element) {
     { key: "descText", label: null }
   ];
 
-  for (const { key, label, strongOnly } of fields) {
-    const value = element[key];
+  for (const { key, label, strongOnly, lowerCase } of fields) {
+    let value;
+    if(lowerCase)
+      value = element[key].toLowerCase();
+    else 
+      value = element[key];
     if (!value) continue;
+
 
     const escaped = escapeHtml(value);
     if (strongOnly) {
