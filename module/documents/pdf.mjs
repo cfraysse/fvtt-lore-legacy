@@ -176,7 +176,7 @@ async function parseCapaciteFromText(texteComplet) {
  */
 async function parseSortsFromText(texteComplet) {
 
-  const input = extractSection(texteComplet, /VIII\.\s*Magie\n/, /IX\.\s*Combat\n/i);
+  const input = extractSection(texteComplet, /VIII\.\s*Magie\n/, /\nSpiritisme\n/i);
   if (!input) console.log("Section sort vide");
 
   const lines = input
