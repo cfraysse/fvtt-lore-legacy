@@ -385,8 +385,8 @@ function buildHtmlDescription(element) {
     { key: "degat", label: "Dégâts :" },
     { key: "effetText", label: "Effet :" },
     { key: "dd", label: "Degré de difficulté :" },
-    { key: "exText", label: "Exemple :" },
-    { key: "descText", label: null }
+    { key: "descText", label: null },
+    { key: "exText", label: "Exemple :" }
   ];
 
   for (const { key, label, strongOnly, lowerCase } of fields) {
