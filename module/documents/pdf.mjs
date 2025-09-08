@@ -444,7 +444,7 @@ async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
     console.log(`Compendium ${packName} déjà existant, suppression...`);
     await pack.delete(); // Supprime le compendium existant
     // Important : attendre que la suppression soit bien prise en compte
-    await new Promise(resolve => setTimeout(resolve, 200)); // petite pause pour éviter les conflits
+    await new Promise(resolve => setTimeout(resolve, 500)); // petite pause pour éviter les conflits
   }
 
   // Crée le compendium
