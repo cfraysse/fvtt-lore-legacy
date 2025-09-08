@@ -193,6 +193,7 @@ async function parseSortsFromText(texteComplet) {
   let currentCategorie = '';
   let cat = "";
 
+  console.log("Sort section lines : " + lines.length);
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
