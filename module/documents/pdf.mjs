@@ -391,12 +391,10 @@ function buildHtmlDescription(element) {
 
   for (const { key, label, strongOnly, lowerCase } of fields) {
     let value;
-    if(lowerCase)
-      value = element[key].toLowerCase();
-    else 
-      value = element[key];
     if (!value) continue;
 
+    if(lowerCase)
+      value = value.toLowerCase()
 
     const escaped = escapeHtml(value);
     if (strongOnly) {
