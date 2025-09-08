@@ -460,6 +460,15 @@ async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
 }
 
 async function fillCompendium(pack, item) {
+  // Vérifie si un document avec le même nom existe déjà
+  const existing = pack.index.find(e => e.name === item.name);
+  if (existing) {
+    console.log(`Document "${item.name}" déjà présent dans le compendium. Suppression...`);
+    const existingDoc = await pack.getDocument(existing._id);
+    await existingDoc.delete();
+  }
+
+  // Crée et importe le nouveau document
   const doc = await pack.createDocument(item);
   await pack.importDocument(doc);
 }
