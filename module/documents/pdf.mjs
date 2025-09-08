@@ -30,13 +30,7 @@ function parseTraitsFromText(texteComplet) {
         body: ''
       };
     } else if (current) {
-      // Capture du coût
-      const costMatch = line.match(/Co[uû]t\s*:\s*(\d+)/i);
-      if (costMatch) {
-        current.cost = costMatch[1];
-      } else {
-        current.body += line + '\n';
-      }
+      extractSpecs(line, current);
     }
   }
 
@@ -53,11 +47,9 @@ function formatItem(item)
   const { beforeMatRec, matRec } = splitMatRec(item.body);
   const { beforeEx, exemple } = splitExemple(beforeMatRec);
   const { beforeEffet, effet } = splitEffet(beforeEx);
-  const { beforeDd, dd } = splitDd(beforeEffet);
   item.effetText = normalizeParagraph(effet);
-  item.descText = normalizeParagraph(beforeDd);
+  item.descText = normalizeParagraph(beforeEffet);
   item.exText = normalizeParagraph(exemple);
-  item.dd = normalizeParagraph(dd);
   item.matRec = normalizeParagraph(matRec);
   if(item.active) item.type = "Active"
   else item.type = "Passive"
@@ -201,8 +193,6 @@ async function parseSortsFromText(texteComplet) {
 
     const catMatch = line.match(/^Sortil[èe]ges de Magie\s+(.+)$/i);
     if (catMatch) {
-      console.log("Nouvelle catégorie line : " + line + " catMatch " + catMatch[1]);
-
       if (sorts.length != 0)
       {
         let pack = await prepareCompendium("sorts"+cat, "Sortilèges-" + cat, "L&L - Sortilèges");
@@ -211,12 +201,7 @@ async function parseSortsFromText(texteComplet) {
       }
       cat = catMatch[1].trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       currentCategorie = line;
-      console.log("Nouvelle catégorie line : " + currentCategorie + " catMatch " + cat);
-      continue;
-    }
-
-    // Détection d’un nouveau sort // Nombre recommandé de participants
-    if (/^[A-ZÀ-ÖØ-öø-ÿ][^\n]*$/.test(line) && (lines[i + 1]?.includes("Coût en PM : ") || lines[i + 1]?.includes("Nombre recommandé de participants : "))) {
+    } else if (/^[A-ZÀ-ÖØ-öø-ÿ][^\n]*$/.test(line) && (lines[i + 1]?.includes("Coût en PM : ") || lines[i + 1]?.includes("Nombre recommandé de participants : "))) {
       if (current) sorts.push(current);
       current = {
         name: line,
@@ -225,25 +210,8 @@ async function parseSortsFromText(texteComplet) {
         categorie: currentCategorie
       };
     } else if (current) {
-      // Capture du coût
-      const costTotalMatch = line.match(/Coût en PM total :\s*(\d+)/i);
-      const costMatch = line.match(/Coût en PM :\s*(\d+)/i);
-      const costMultiMatch = line.match(/Coût en PM par participant :\s*(\d+)/i);
-      const participantsMatch = line.match(/Nombre recommandé de participants :\s*(\d+)/i);
-
-      if (costMatch) {
-        current.cost = costMatch[1];
-      } else if (costTotalMatch) {
-        current.costTotal = costTotalMatch[1];
-      } else if (costMultiMatch) {
-        current.costMulti = costMultiMatch[1];
-      } else if (participantsMatch) {
-        current.paticipants = participantsMatch[1];
-      } else {
-        current.body += line + '\n';
-      }
+      extractSpecs(line, current);
     }
-
   }
 
   if (current) sorts.push(current);
@@ -254,6 +222,7 @@ async function parseSortsFromText(texteComplet) {
     sorts.forEach(sort => fillCompendium(pack, formatSort(sort)));
   }  
 }
+
 
 /* ---------- Helpers ---------- */
 
@@ -366,50 +335,71 @@ function splitMatRec(body) {
 }
 
 
+function extractSpecs(line, item)
+{
+  const patterns = [
+    { regex: /D[ée]g[aâ]ts\s*:\s*(\d+)/i, key: "degat" },
+    { regex: /Cible\s*:\s*(\d+)/i, key: "cible" },
+    { regex: /Durée\s*:\s*(\d+)/i, key: "duree" },
+    { regex: /Co[uû]t\s*:\s*(\d+)/i, key: "cost" },
+    { regex: /Coût en PM :\s*(\d+)/i, key: "costPm" },
+    { regex: /Coût en PM total :\s*(\d+)/i, key: "costTotal" },
+    { regex: /Coût en PM par participant :\s*(\d+)/i, key: "costMulti" },
+    { regex: /Nombre recommandé de participants :\s*(\d+)/i, key: "participants" },
+    { regex: /Degr[ée] de Difficult[ée] :\s*(\d+)/i, key: "dd" }
+  ];
+
+  let matched = false;
+
+  for (const { regex, key } of patterns) {
+    const match = line.match(regex);
+    if (match) {
+      item[key] = match[1];
+      matched = true;
+      break;
+    }
+  }
+
+  if (!matched) {
+    item.body += line + '\n';
+  }
+}
 
 /** Construit le HTML final attendu. */
 function buildHtmlDescription(element) {
   const parts = [];
 
-  if (element.categorie) {
-    parts.push(`<p><strong>${escapeHtml(element.categorie)}</strong></p>`);
+  const fields = [
+    { key: "categorie", label: null, strongOnly: true },
+    { key: "type", label: null, strongOnly: true },
+    { key: "cost", label: "Coût :" },
+    { key: "cible", label: "Cible :" },
+    { key: "duree", label: "Durée :" },
+    { key: "costPm", label: "Coût en PM:" },
+    { key: "costTotal", label: "Coût total en PM :" },
+    { key: "costMulti", label: "Coût pour chaque participants en PM :" },
+    { key: "paticipants", label: "Nombre recommandé de participants :" },
+    { key: "degat", label: "Dégâts :" },
+    { key: "effetText", label: "Effet :" },
+    { key: "dd", label: "Degré de difficulté :" },
+    { key: "exText", label: "Exemple :" },
+    { key: "descText", label: null }
+  ];
+
+  for (const { key, label, strongOnly } of fields) {
+    const value = element[key];
+    if (!value) continue;
+
+    const escaped = escapeHtml(value);
+    if (strongOnly) {
+      parts.push(`<p><strong>${escaped}</strong></p>`);
+    } else if (label) {
+      parts.push(`<p><strong>${label}</strong> ${escaped}</p>`);
+    } else {
+      parts.push(`<p>${escaped}</p>`);
+    }
   }
 
-  if (element.type) {
-    parts.push(`<p><strong>${escapeHtml(element.type)}</strong></p>`);
-  }
-
-  if(element.cost)
-    parts.push(`<p><strong>Coût :</strong> ${escapeHtml(element.cost)}</p>`);
-
-  if (element.costTotal) {
-    parts.push(`<p><strong>Coût total en PM :</strong> ${escapeHtml(element.costTotal)}</p>`);
-  }
-
-  if (element.costTotal) {
-    parts.push(`<p><strong>Coût pour chaque participants en PM :</strong> ${escapeHtml(element.costMulti)}</p>`);
-  }
-
-  if (element.costTotal) {
-    parts.push(`<p><strong>Nombre recommandé de participants :</strong> ${escapeHtml(element.paticipants)}</p>`);
-  }
-
-  if (element.descText) {
-    parts.push(`<p>${escapeHtml(element.descText)}</p>`);
-  }
-
-  if (element.effetText) {
-    parts.push(`<p><strong>Effet :</strong> ${escapeHtml(element.effetText)}</p>`);
-  }
-  
-  if (element.dd) {
-    parts.push(`<p><strong>Degré de difficulté :</strong> ${escapeHtml(element.dd)}</p>`);
-  }
-
-  if (element.exText) {
-    parts.push(`<p><strong>Exemple :</strong> ${escapeHtml(element.exText)}</p>`);
-  }
-  
   return `<section>${parts.join('')}</section>`;
 }
 
