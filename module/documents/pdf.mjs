@@ -182,7 +182,7 @@ async function parseCapaciteFromText(texteComplet) {
 async function parseSortsFromText(texteComplet) {
 
   const input = extractSection(texteComplet, /VIII\.\s*Magie\n/, /IX\.\s*Combat\n/i);
-  if (!input) return ["empty"];
+  if (!input) console.log("Section sort vide");
 
   const lines = input
   .split(/\r?\n/)
@@ -201,16 +201,15 @@ async function parseSortsFromText(texteComplet) {
 
     const catMatch = line.match(/^Sortilèges de Magie \s+(.+)$/i);
     if (catMatch) {
-      currentCategorie = line;
       if (sorts.length != 0)
-        {
-          let pack = await prepareCompendium("sorts"+cat, "Sortilèges-" + cat, "L&L - Sortilèges");
-          sorts.forEach(sort => fillCompendium(pack, formatSort(sort)));
-          sorts = [];
-        }
-        cat = catMatch[1].trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        currentCategorie = line;
-        continue;
+      {
+        let pack = await prepareCompendium("sorts"+cat, "Sortilèges-" + cat, "L&L - Sortilèges");
+        sorts.forEach(sort => fillCompendium(pack, formatSort(sort)));
+        sorts = [];
+      }
+      cat = catMatch[1].trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      currentCategorie = line;
+      console.log("Nouvelle catégorie line : " + currentCategorie + " catMatch " + cat);
       continue;
     }
 
@@ -455,7 +454,6 @@ async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
     // Déplace le compendium dans le dossier
     await pack.configure({ folder: folder.id });
   }
-  console.log(JSON.stringify(pack))
   return pack;
 }
 
@@ -463,7 +461,6 @@ async function fillCompendium(pack, item) {
   // Vérifie si un document avec le même nom existe déjà
   const existing = pack.index.find(e => e.name === item.name);
   if (existing) {
-    console.log(`Document "${item.name}" déjà présent dans le compendium. Suppression...`);
     const existingDoc = await pack.getDocument(existing._id);
     await existingDoc.delete();
   }
