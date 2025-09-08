@@ -338,15 +338,15 @@ function splitMatRec(body) {
 function extractSpecs(line, item)
 {
   const patterns = [
-    { regex: /D[ée]g[aâ]ts\s*:\s*(\d+)/i, key: "degat" },
-    { regex: /Cible\s*:\s*(\d+)/i, key: "cible" },
-    { regex: /Durée\s*:\s*(\d+)/i, key: "duree" },
+    { regex: /D[ée]g[aâ]ts\s*:\s*([^\n]+)/i, key: "degat" },
+    { regex: /Cible :\s*([^\n]+)/i, key: "cible" },
+    { regex: /Durée\s*:\s*([^\n]+)/i, key: "duree" },
     { regex: /Co[uû]t\s*:\s*(\d+)/i, key: "cost" },
     { regex: /Coût en PM :\s*(\d+)/i, key: "costPm" },
     { regex: /Coût en PM total :\s*(\d+)/i, key: "costTotal" },
     { regex: /Coût en PM par participant :\s*(\d+)/i, key: "costMulti" },
     { regex: /Nombre recommandé de participants :\s*(\d+)/i, key: "participants" },
-    { regex: /Degr[ée] de Difficult[ée] :\s*(\d+)/i, key: "dd" }
+    { regex: /Degr[ée] de Difficult[ée] :\s*([^\n]+)/i, key: "dd" }
   ];
 
   let matched = false;
