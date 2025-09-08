@@ -426,9 +426,8 @@ function getFifthLine(text) {
   }
 
 async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
-  console.log("CRÉATION DE COMPENDIUM : " + packName + " label : " + label + " folderName : " + folderName);
-
   // Vérifie si le dossier existe déjà
+  console.log("CREATION DE COMPENDIUM : " + packName +" label : " + label + " folderName : " + folderName)
   let folder = game.folders.find(f => f.name === folderName && f.type === "Compendium");
   if (!folder) {
     folder = await Folder.create({
@@ -440,29 +439,25 @@ async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
 
   // Vérifie si le compendium existe déjà
   let pack = game.packs.get(`world.${packName}`);
-  if (pack) {
-    console.log(`Compendium ${packName} déjà existant, suppression...`);
-    await pack.delete(); // Supprime le compendium existant
-    // Important : attendre que la suppression soit bien prise en compte
-    await new Promise(resolve => setTimeout(resolve, 200)); // petite pause pour éviter les conflits
+
+  if (!pack) {
+    // Crée le compendium
+    await CompendiumCollection.createCompendium({
+      label: label,
+      name: packName,
+      package: "world", // ou "lorelegacy"
+      type: "Item"
+    });
+
+    // Récupère le compendium fraîchement créé
+    pack = game.packs.get(`world.${packName}`);
+
+    // Déplace le compendium dans le dossier
+    await pack.configure({ folder: folder.id });
   }
-
-  // Crée le compendium
-  await CompendiumCollection.createCompendium({
-    label: label,
-    name: packName,
-    package: "world",
-    type: "Item"
-  });
-
-  // Récupère le compendium fraîchement créé
-  pack = game.packs.get(`world.${packName}`);
-
-  // Déplace le compendium dans le dossier
-  await pack.configure({ folder: folder.id });
+  console.log(JSON.stringify(pack))
   return pack;
 }
-
 
 async function fillCompendium(pack, item) {
   const doc = await pack.createDocument(item);
