@@ -51,8 +51,6 @@ function formatItem(item)
   item.descText = normalizeParagraph(beforeEffet);
   item.exText = normalizeParagraph(exemple);
   item.matRec = normalizeParagraph(matRec);
-  if(item.active) item.type = "Active"
-  else item.type = "Passive"
 
   return {
     name: item.name,
@@ -146,9 +144,14 @@ async function parseCapaciteFromText(texteComplet) {
     const match = line.match(/^(.+?)\s+\((A|P)\)$/i);
     if (match) {
       if (current) capacites.push(current);
+      let active;
+      if (match[2].toUpperCase() === 'A')
+        active = "Active"
+      else
+        active = "Passive"
       current = {
         name: match[1].trim(),
-        active: match[2].toUpperCase() === 'A',
+        active: active,
         body: '',
         categorie: currentCategorie
       };
@@ -371,7 +374,7 @@ function buildHtmlDescription(element) {
 
   const fields = [
     { key: "categorie", label: null, strongOnly: true },
-    { key: "type", label: null, strongOnly: true },
+    { key: "active", label: null, strongOnly: true },
     { key: "cost", label: "Coût :" },
     { key: "cible", label: "Cible :" },
     { key: "duree", label: "Durée :" },
