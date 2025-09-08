@@ -197,10 +197,9 @@ async function parseSortsFromText(texteComplet) {
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
-
     // Détection de catégorie  // Sortilèges de Magie Rituelle // Sortilèges de Magie Matérielle // Sortilèges de Magie Illusoire
 
-    const catMatch = line.match(/^Sortil[èe]ges de Magie \s+(.+)$/i);
+    const catMatch = line.match(/^Sortil[èe]ges de Magie\s+(.+)$/i);
     if (catMatch) {
       console.log("Nouvelle catégorie line : " + line + " catMatch " + catMatch[1]);
 
