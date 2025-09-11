@@ -461,16 +461,16 @@ function extractSpecs(line, item)
 function isCategorie(line)
 {
   const patterns = [
-    /Armes contondantes\n/i,
-    /Dagues\n/i,
-    /Épées et sabres\n/i,
-    /Haches\n/i,
-    /Armes de trait\n/i,
-    /Armes à feu\n/i,
-    /Lances\n/i,
-    /Armes de jet\n/i
+    "Armes contondantes",
+    "Dagues",
+    "Épées et sabres",
+    "Haches",
+    "Armes de trait",
+    "Armes à feu",
+    "Lances",
+    "Armes de jet"
   ];
-  return patterns.some(regex => regex.test(line));
+  return patterns.some(pattern => pattern == line);
 }
 
 /** Construit le HTML final attendu. */
