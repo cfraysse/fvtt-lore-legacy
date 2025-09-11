@@ -1,5 +1,3 @@
-import { NULL } from "sass";
-
 /**
  * Extrait les traits entre "VI. Traits" et "VII. Capacités" et renvoie un tableau d'objets.
  * - name: première ligne du bloc (titre du trait)
@@ -299,7 +297,7 @@ async function parseArmesFromText(texteComplet) {
         armes.push(current);
         current = null;
       }
-    }  
+    }
   }
 
   if (current && current.name != '') armes.push(current);
