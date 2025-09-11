@@ -1,3 +1,4 @@
+import { NULL } from "sass";
 
 /**
  * Extrait les traits entre "VI. Traits" et "VII. Capacités" et renvoie un tableau d'objets.
@@ -278,20 +279,27 @@ async function parseArmesFromText(texteComplet) {
       }
       cat = line.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       currentCategorie = line;
-    } else if (/^[A-ZÀ-ÖØ-öø-ÿ][^\n]*$/.test(line) && (lines[i]?.includes("(2M)") || lines[i]?.includes("(1M)"))) {
-      if (current && current.name != ''){
-        extractSpecs(line, current);
-        armes.push(current);
+    } else 
+    { 
+      if(lines[i]?.includes("• "))
+      {
+        current = {
+          name: '',
+          cost: '',
+          body: '',
+          categorie: currentCategorie
+        };
       }
-      current = {
-        name: '',
-        cost: '',
-        body: '',
-        categorie: currentCategorie
-      };
-    } else if (current) {
-      extractSpecs(line, current);
-    }
+
+      if (current) {
+        extractSpecs(line, current);
+      }
+
+      if (current && current.name != '' && (lines[i]?.includes("(2M)") || lines[i]?.includes("(1M)"))) {
+        armes.push(current);
+        current = null;
+      }
+    }  
   }
 
   if (current && current.name != '') armes.push(current);
@@ -300,7 +308,7 @@ async function parseArmesFromText(texteComplet) {
   {
     let pack = await prepareCompendium("armes"+cat, currentCategorie, "L&L - Armes");
     armes.forEach(arme => fillCompendium(pack, formatArme(arme)));
-  }  
+  }
 }
 
 
@@ -455,14 +463,14 @@ function extractSpecs(line, item)
 function isCategorie(line)
 {
   const patterns = [
-    /\nArmes contondantes\n/i,
-    /\nDagues\n/i,
-    /\nÉpées et sabres\n/i,
-    /\nHaches\n/i,
-    /\nArmes de trait\n/i,
-    /\nArmes à feu\n/i,
-    /\nLances\n/i,
-    /\nArmes de jet\n/i
+    /Armes contondantes\n/i,
+    /Dagues\n/i,
+    /Épées et sabres\n/i,
+    /Haches\n/i,
+    /Armes de trait\n/i,
+    /Armes à feu\n/i,
+    /Lances\n/i,
+    /Armes de jet\n/i
   ];
   return patterns.some(regex => regex.test(line));
 }
