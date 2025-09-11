@@ -261,8 +261,8 @@ async function parseArmesFromText(texteComplet) {
   .filter(line => !/^\d+$/.test(line)); // Supprime les lignes contenant uniquement un nombre
   let armes = [];
   let current = null;
-  let currentCategorie = '';
-  let cat = "";
+  let currentCategorie = 'divers';
+  let cat = "divers";
 
   console.log("Armes section lines : " + lines.length);
 
