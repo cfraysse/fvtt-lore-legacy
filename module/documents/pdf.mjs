@@ -278,12 +278,13 @@ async function parseArmesFromText(texteComplet) {
       }
       cat = line.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       currentCategorie = line;
-    } else if (/^[A-ZÀ-ÖØ-öø-ÿ][^\n]*$/.test(line) && (lines[i + 1]?.includes("• ") || lines[i]?.includes("(2M)") || lines[i]?.includes("(1M)"))) {
-      extractSpecs(line, current);
-
-      if (current) armes.push(current);
+    } else if (/^[A-ZÀ-ÖØ-öø-ÿ][^\n]*$/.test(line) && (lines[i]?.includes("(2M)") || lines[i]?.includes("(1M)"))) {
+      if (current && current.name != ''){
+        extractSpecs(line, current);
+        armes.push(current);
+      }
       current = {
-        name: current.name,
+        name: '',
         cost: '',
         body: '',
         categorie: currentCategorie
@@ -293,7 +294,7 @@ async function parseArmesFromText(texteComplet) {
     }
   }
 
-  if (current) armes.push(current);
+  if (current && current.name != '') armes.push(current);
 
   if (armes.length != 0)
   {
