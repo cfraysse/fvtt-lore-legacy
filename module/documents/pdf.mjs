@@ -84,13 +84,24 @@ function formatCapacite(capacite)
   return res;
 }
 
+function formatArme(arme)
+{
+  var res = formatItem(arme);
+  res.type = 'item';
+  res.img = "systems/fvtt-lore-legacy/assets/sword-brandish.png";
+  setTriangle(res);
+  res.spellLevel = 0;
+  res.formula = "@spellLevel";
+  return res;
+}
+
 function formatSort(sort)
 {
   var res = formatItem(sort);
   res.type = 'spell';
   res.img = "systems/fvtt-lore-legacy/assets/open-book.png";
   setTriangle(res);
-  res.spellLevel = 1;
+  res.spellLevel = 0;
   res.formula = "@spellLevel";
   return res;
 }
@@ -226,6 +237,71 @@ async function parseSortsFromText(texteComplet) {
   }  
 }
 
+/**
+ * Extrait les capacites entre "VIII. Magie" et "IX. Combat" et renvoie un tableau d'objets.
+ * - name: première ligne du bloc (titre du capacite)
+ * - system.description: HTML avec <section><p>…</p></section>, incluant Coût et Effet si présents
+ * - system.effects: laissé vide par défaut (à adapter si vous avez une règle d’extraction)
+ * 
+
+X. Objets & Équipement
+Armes
+Armures
+XI. Montures & Véhicules
+
+*/
+async function parseArmesFromText(texteComplet) {
+
+  const input = extractSection(texteComplet, /\nArmes\n/, /\nArmures\n/i);
+  if (!input) console.log("Section arme vide");
+
+  const lines = input
+  .split(/\r?\n/)
+  .map(line => line.trim())
+  .filter(line => !/^\d+$/.test(line)); // Supprime les lignes contenant uniquement un nombre
+  let armes = [];
+  let current = null;
+  let currentCategorie = '';
+  let cat = "";
+
+  console.log("Armes section lines : " + lines.length);
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+
+    if (isCategorie(line)) {
+      if (armes.length != 0)
+      {
+        let pack = await prepareCompendium("armes"+cat, currentCategorie, "L&L - Armes");
+        armes.forEach(arme => fillCompendium(pack, formatArme(arme)));
+        armes = [];
+      }
+      cat = line.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      currentCategorie = line;
+    } else if (/^[A-ZÀ-ÖØ-öø-ÿ][^\n]*$/.test(line) && (lines[i + 1]?.includes("• ") || lines[i]?.includes("(2M)") || lines[i]?.includes("(1M)"))) {
+      extractSpecs(line, current);
+
+      if (current) armes.push(current);
+      current = {
+        name: current.name,
+        cost: '',
+        body: '',
+        categorie: currentCategorie
+      };
+    } else if (current) {
+      extractSpecs(line, current);
+    }
+  }
+
+  if (current) armes.push(current);
+
+  if (armes.length != 0)
+  {
+    let pack = await prepareCompendium("armes"+cat, currentCategorie, "L&L - Armes");
+    armes.forEach(arme => fillCompendium(pack, formatArme(arme)));
+  }  
+}
+
 
 /* ---------- Helpers ---------- */
 
@@ -353,7 +429,8 @@ function extractSpecs(line, item)
     { regex: /Coût en PM total :\s*(\d+)/i, key: "costTotal" },
     { regex: /Coût en PM par participant :\s*(\d+)/i, key: "costMulti" },
     { regex: /Nombre recommandé de participants :\s*(\d+)/i, key: "participants" },
-    { regex: /Degr[ée] de Difficult[ée] :\s*([^\n]+)/i, key: "dd" }
+    { regex: /Degr[ée] de Difficult[ée] :\s*([^\n]+)/i, key: "dd" },
+    { regex: /• (.*?) : /i, key: "name" },
   ];
 
   let matched = false;
@@ -362,7 +439,8 @@ function extractSpecs(line, item)
     const match = line.match(regex);
     if (match) {
       item[key] = match[1];
-      matched = true;
+      if(key != "name")
+        matched = true;
       break;
     }
   }
@@ -370,6 +448,22 @@ function extractSpecs(line, item)
   if (!matched) {
     item.body += line + '\n';
   }
+}
+
+
+function isCategorie(line)
+{
+  const patterns = [
+    /\nArmes contondantes\n/i,
+    /\nDagues\n/i,
+    /\nÉpées et sabres\n/i,
+    /\nHaches\n/i,
+    /\nArmes de trait\n/i,
+    /\nArmes à feu\n/i,
+    /\nLances\n/i,
+    /\nArmes de jet\n/i
+  ];
+  return patterns.some(regex => regex.test(line));
 }
 
 /** Construit le HTML final attendu. */
@@ -492,8 +586,15 @@ async function createCompendiumSpells(text)
     await parseSortsFromText(text);
 }
 
+async function createCompendiumArmes(text)
+{
+    await parseArmesFromText(text);
+}
+
 export async function prepareCompendiumWithPDF(text) {
     await createCompendiumTraits(text);
     await createCompendiumSkills(text);
     await createCompendiumSpells(text);
+    await createCompendiumArmes(text);
+
 }

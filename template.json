@@ -150,7 +150,9 @@
       "cfortune" : "unchecked",
       "badversite" : false,
       "nadversite" : 0,
-      "cadversite" : "unchecked"
+      "cadversite" : "unchecked",
+      "weight": 0,
+      "quantity": 1
     }
   }
 }
