@@ -261,7 +261,7 @@ async function parseArmesFromText(texteComplet) {
   let armes = [];
   let current = null;
   let currentCategorie = 'divers';
-  let cat = "divers";
+  let cat = "armesdivers";
 
   console.log("Armes section lines : " + lines.length);
 
@@ -271,11 +271,11 @@ async function parseArmesFromText(texteComplet) {
     if (isCategorie(line)) {
       if (armes.length != 0)
       {
-        let pack = await prepareCompendium("armes"+cat, currentCategorie, "L&L - Armes");
+        let pack = await prepareCompendium(cat, currentCategorie, "L&L - Armes");
         armes.forEach(arme => fillCompendium(pack, formatArme(arme)));
         armes = [];
       }
-      cat = line.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      cat = line.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
       currentCategorie = line;
     } else 
     { 
@@ -304,7 +304,7 @@ async function parseArmesFromText(texteComplet) {
 
   if (armes.length != 0)
   {
-    let pack = await prepareCompendium("armes"+cat, currentCategorie, "L&L - Armes");
+    let pack = await prepareCompendium(cat, currentCategorie, "L&L - Armes");
     armes.forEach(arme => fillCompendium(pack, formatArme(arme)));
   }
 }
