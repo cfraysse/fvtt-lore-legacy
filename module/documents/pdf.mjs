@@ -262,7 +262,10 @@ async function parseArmesFromText(texteComplet) {
   let current = null;
   let currentCategorie = 'divers';
   let cat = "armesdivers";
-
+  let isTableau = false;
+  let tableau = [];
+  let headers;
+  let expectedFields;
   console.log("Armes section lines : " + lines.length);
 
   for (let i = 0; i < lines.length; i++) {
@@ -271,12 +274,30 @@ async function parseArmesFromText(texteComplet) {
     if (isCategorie(line)) {
       if (armes.length != 0)
       {
+        const grouped = groupDataLines(tableau, 0, expectedFields);
+        const armesFull = grouped.map(line => parseGroupedLine(line, headers));
         let pack = await prepareCompendium(cat, currentCategorie, "L&L - Armes");
-        armes.forEach(arme => fillCompendium(pack, formatArme(arme)));
+        armes.forEach(arme => { 
+          armesFull.forEach(armeFull => {
+            if(armeFull.name == arme.name)
+            {
+              arme = { ...arme, ...armeFull };
+            }
+          })
+          fillCompendium(pack, formatArme(arme));
+        });
         armes = [];
       }
       cat = line.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
       currentCategorie = line;
+      isTableau = false;
+      tableau = [];
+    } else if(isTableauHeader(line)){
+      isTableau = true;
+      headers = buildHeaders(line);
+      expectedFields = headers.length;
+    } else if(isTableau){
+      tableau.push(line);
     } else 
     { 
       if(lines[i]?.includes("• "))
@@ -309,6 +330,198 @@ async function parseArmesFromText(texteComplet) {
   }
 }
 
+/* ---------- TABLEAUX ---------- */
+
+function endsWithCout(str) {
+  return str.trim().endsWith('coût');
+}
+
+function isTableauHeader(line) {
+  return endsWithCout(line);
+}
+
+// Utilitaires
+const isInteger = s => /^\d+$/.test(s);
+const isMun = s => /^\d+(?:\(\d+\))?\/\d+$/.test(s);
+const normalizeHeader = h => h.toLowerCase().replace(/[^\w]/g, '').replace(/é/g, 'e');
+
+// 1) Trouver l'index de l'entête (ligne contenant "enc")
+function findHeaderLineIndex(lines) {
+  const idx = lines.findIndex(l => /enc/i.test(l));
+  return idx === -1 ? 0 : idx;
+}
+
+// 2) Construire la liste normalisée des colonnes à partir de l'en-tête
+function buildHeaders(headerLine) {
+  const headerParts = headerLine.split(/\s+/);
+  const encIdx = headerParts.findIndex(p => /enc/i.test(p));
+  const rawCols = headerParts.slice(encIdx === -1 ? 0 : encIdx);
+  const headers = [];
+
+  for (let i = 0; i < rawCols.length; i++) {
+    const h = rawCols[i].toLowerCase();
+    if (h === 'p.' && rawCols[i + 1]?.toLowerCase() === 'moy') { headers.push('pmoy'); i++; continue; }
+    if (h === 'p.' && rawCols[i + 1]?.toLowerCase().startsWith('max')) { headers.push('pmax'); i++; continue; }
+    const n = normalizeHeader(h);
+    if (n.startsWith('mun')) headers.push('mun');
+    else if (n.startsWith('cout')) headers.push('cout');
+    else headers.push(n);
+  }
+
+  return headers;
+}
+
+// 3) Regrouper les lignes de données quand un nom est sur plusieurs lignes
+function groupDataLines(rawLines, startIndex, expectedFields) {
+  const dataLines = rawLines.slice(startIndex + 1);
+  const grouped = [];
+  let buffer = '';
+
+  for (const raw of dataLines) {
+    const line = raw.trim();
+    if (!line) continue;
+    buffer = buffer ? buffer + ' ' + line : line;
+    const parts = buffer.split(/\s+/);
+    const firstNumeric = parts.findIndex(p => isInteger(p));
+    const values = firstNumeric >= 0 ? parts.slice(firstNumeric) : [];
+    if (values.length >= expectedFields) {
+      grouped.push(buffer.trim());
+      buffer = '';
+    }
+  }
+  if (buffer) grouped.push(buffer.trim());
+  return grouped;
+}
+
+// 4) Fusionner petits fragments (ex. "V" "ig" => "Vig")
+function mergeFragments(tokens) {
+  const t = [...tokens];
+  let i = 0;
+  while (i < t.length - 1) {
+    if (t[i].length === 1 && /^[A-Za-z]$/.test(t[i]) &&
+        /^[A-Za-z]{1,3}$/.test(t[i+1]) && !/^\d+$/.test(t[i+1])) {
+      t[i] = t[i] + t[i+1];
+      t.splice(i+1, 1);
+      continue;
+    }
+    if (t[i].length <= 2 && t[i+1].length <= 3 && /^[A-Za-z]+$/.test(t[i]) && /^[A-Za-z]+$/.test(t[i+1])) {
+      t[i] = t[i] + t[i+1];
+      t.splice(i+1, 1);
+      continue;
+    }
+    i++;
+  }
+  return t;
+}
+
+// 5) Heuristique pour splitter center tokens en pmoy / pmax
+function splitPmoyPmax(center, headers) {
+  const out = { pmoy: '', pmax: '' };
+  if (!headers.includes('pmoy') || !headers.includes('pmax')) {
+    if (headers.includes('pmoy')) out.pmoy = center.join(' ');
+    if (headers.includes('pmax')) out.pmax = center.join(' ');
+    return out;
+  }
+
+  if (center.length === 2) {
+    out.pmoy = center[0];
+    out.pmax = center[1];
+    return out;
+  }
+
+  // regrouper autour des 'x' si présents
+  const groups = [];
+  let cur = [];
+  for (let k = 0; k < center.length; k++) {
+    cur.push(center[k]);
+    if (center[k].toLowerCase() === 'x' && k + 1 < center.length && /^\d+$/.test(center[k + 1])) {
+      cur.push(center[k + 1]);
+      groups.push(cur.join(' '));
+      cur = [];
+      k++;
+    }
+  }
+  if (cur.length) groups.push(cur.join(' '));
+
+  if (groups.length >= 2) {
+    out.pmoy = groups[0];
+    out.pmax = groups[1];
+    return out;
+  }
+
+  // cas courant "Vig x N" ou "50 100" => essayer la séparation au milieu
+  const mid = Math.ceil(center.length / 2);
+  out.pmoy = center.slice(0, mid).join(' ');
+  out.pmax = center.slice(mid).join(' ');
+  return out;
+}
+
+// 6) Parser une ligne groupée en utilisant les utilitaires
+function parseGroupedLine(line, headers) {
+  const parts = line.split(/\s+/);
+  const firstNumericIndex = parts.findIndex(p => isInteger(p));
+  const name = firstNumericIndex > 0 ? parts.slice(0, firstNumericIndex).join(' ') : parts[0];
+  let values = parts.slice(firstNumericIndex);
+
+  values = mergeFragments(values);
+
+  const obj = { name };
+  let vi = 0;
+
+  obj.enc = values[vi++] ?? null;
+
+  // cd: "1d8" or "1d8 + N"
+  if (values[vi + 1] === '+' && values[vi + 2]) {
+    obj.cd = `${values[vi]} + ${values[vi + 2]}`;
+    vi += 3;
+  } else {
+    obj.cd = values[vi] ?? null;
+    vi += 1;
+  }
+
+  obj.dur = values[vi++] ?? null;
+
+  const rem = values.slice(vi);
+  const out = {};
+
+  // cout = last token
+  out.cout = rem.length ? rem[rem.length - 1] : null;
+
+  // mun detection (penche vers rem[-2] si pattern)
+  const munCandidate = rem.length >= 2 ? rem[rem.length - 2] : null;
+  if (munCandidate && isMun(munCandidate)) {
+    out.mun = munCandidate;
+    var center = rem.slice(0, rem.length - 2);
+  } else if (headers.includes('mun') && rem.length >= 3) {
+    out.mun = munCandidate;
+    var center = rem.slice(0, rem.length - 2);
+  } else {
+    out.mun = null;
+    var center = rem.slice(0, rem.length - 1);
+  }
+
+  const pm = splitPmoyPmax(center, headers);
+  out.pmoy = pm.pmoy;
+  out.pmax = pm.pmax;
+
+  obj.pmoy = out.pmoy ?? '';
+  obj.pmax = out.pmax ?? '';
+  obj.mun = out.mun ?? '';
+  obj.cout = out.cout ?? '';
+
+  return obj;
+}
+
+// Fonction principale orchestratrice
+function parseFlexibleTableSmart(tableString) {
+  const rawLines = tableString.replace(/\r/g, '').split('\n');
+  const headerLineIndex = findHeaderLineIndex(rawLines);
+  const headerLine = rawLines[headerLineIndex].trim();
+  const headers = buildHeaders(headerLine);
+  const expectedFields = headers.length;
+  const grouped = groupDataLines(rawLines, headerLineIndex, expectedFields);
+  return grouped.map(line => parseGroupedLine(line, headers));
+}
 
 /* ---------- Helpers ---------- */
 
@@ -468,7 +681,10 @@ function isCategorie(line)
     "Armes de trait",
     "Armes à feu",
     "Lances",
-    "Armes de jet"
+    "Armes de jet",
+    "Armes à distance",
+    "Armes à distance au corps à corps",
+    "Variantes enchantées"
   ];
   return patterns.some(pattern => pattern == line);
 }
