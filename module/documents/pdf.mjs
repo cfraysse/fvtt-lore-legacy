@@ -87,7 +87,7 @@ function formatArme(arme)
 {
   console.log(JSON.stringify(arme));
   var res = formatItem(arme);
-  res.type = 'item';
+  res.type = 'spell';
   res.img = "systems/fvtt-lore-legacy/assets/sword-brandish.png";
   setTriangle(res);
   res.spellLevel = 0;
