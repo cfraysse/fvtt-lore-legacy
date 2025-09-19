@@ -90,7 +90,7 @@ function formatArme(arme)
   res.type = 'spell';
   res.img = "systems/fvtt-lore-legacy/assets/sword-brandish.png";
   setTriangle(res);
-  const catMatch = arme.cd.match(/^1d8\s+(.+)$/i);
+  const catMatch = arme.cd.match(/^1d8\s*\+\s*(\d+)$/i);
   if (catMatch) {
     res.spellLevel = parseInt(catMatch[1], 10) || 0;
   }
