@@ -85,6 +85,7 @@ function formatCapacite(capacite)
 
 function formatArme(arme)
 {
+  console.log(JSON.stringify(arme));
   var res = formatItem(arme);
   res.type = 'item';
   res.img = "systems/fvtt-lore-legacy/assets/sword-brandish.png";
@@ -113,6 +114,7 @@ function formatTrait(trait)
 
   return res;
 }
+
 /**
  * Extrait les capacites entre "VII. Capacités" et "VII. Capacités" et renvoie un tableau d'objets.
  * - name: première ligne du bloc (titre du capacite)
@@ -507,7 +509,7 @@ function parseGroupedLine(line, headers) {
   obj.pmoy = out.pmoy ?? '';
   obj.pmax = out.pmax ?? '';
   obj.mun = out.mun ?? '';
-  obj.cout = out.cout ?? '';
+  obj.cost = out.cout ?? '';
 
   return obj;
 }
@@ -707,7 +709,13 @@ function buildHtmlDescription(element) {
     { key: "effetText", label: "Effet :" },
     { key: "dd", label: "Degré de difficulté :" },
     { key: "descText", label: null },
-    { key: "exText", label: "Exemple :" }
+    { key: "exText", label: "Exemple :" },
+    { key: "pmoy", label: "Portée Moyenne :" },
+    { key: "pmax", label: "Portée Maximum :" },
+    { key: "mun", label: "Munitions :" },
+    { key: "enc", label: "Encombrement :" },
+    { key: "dur", label: "Durabilité :" },
+    { key: "cd", label: "Dégâts :" }
   ];
 
   for (const { key, label, strongOnly, lowerCase } of fields) {
