@@ -297,7 +297,7 @@ async function parseArmesFromText(texteComplet) {
     if (isCategorie(line)) {
       if (armes.length != 0)
       {
-        const grouped = groupDataLines(tableau, 0, expectedFields);
+        const grouped = groupDataLines(tableau, expectedFields);
         const armesFull = grouped.map(line => parseGroupedLine(line, headers));
         let pack = await prepareCompendium(cat, currentCategorie, "L&L - Armes");
         armes.forEach(arme => { 
@@ -395,8 +395,7 @@ function buildHeaders(headerLine) {
 }
 
 // 3) Regrouper les lignes de données quand un nom est sur plusieurs lignes
-function groupDataLines(rawLines, startIndex, expectedFields) {
-  const dataLines = rawLines.slice(startIndex + 1);
+function groupDataLines(dataLines, expectedFields) {
   const grouped = [];
   let buffer = '';
 
@@ -542,7 +541,7 @@ function parseFlexibleTableSmart(tableString) {
   const headerLine = rawLines[headerLineIndex].trim();
   const headers = buildHeaders(headerLine);
   const expectedFields = headers.length;
-  const grouped = groupDataLines(rawLines, headerLineIndex, expectedFields);
+  //const grouped = groupDataLines(rawLines, headerLineIndex, expectedFields);
   return grouped.map(line => parseGroupedLine(line, headers));
 }
 
