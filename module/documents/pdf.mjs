@@ -90,8 +90,16 @@ function formatArme(arme)
   res.type = 'spell';
   res.img = "systems/fvtt-lore-legacy/assets/sword-brandish.png";
   setTriangle(res);
-  res.spellLevel = 0;
+  const catMatch = arme.cd.match(/^1d8\s+(.+)$/i);
+  if (catMatch) {
+    res.spellLevel = parseInt(catMatch[1], 10) || 0;
+  }
+  else
+  {
+    res.spellLevel = 0;
+  }
   res.formula = "@spellLevel";
+  res.weight = arme.enc ? parseInt(arme.enc, 10) : 0;
   return res;
 }
 
@@ -103,6 +111,7 @@ function formatSort(sort)
   setTriangle(res);
   res.spellLevel = 0;
   res.formula = "@spellLevel";
+  res.weight = 0;
   return res;
 }
 

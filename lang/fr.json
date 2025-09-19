@@ -16,7 +16,8 @@
       "Spell": {
         "SpellLVL": "Niveau {level} Sorts",
         "AddLVL": "Ajoute Niveau {level}",
-        "bonus": "Bonus de dégat"
+        "bonus": "Bonus de dégat",
+        "enc" : "Encombrement"
       }
     },
     "Effect": {
