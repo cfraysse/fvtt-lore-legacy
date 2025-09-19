@@ -100,7 +100,7 @@ function formatArme(arme)
   console.log(catMatch);
 
   if (catMatch) {
-    res.spellLevel = parseInt(catMatch[1], 10) || 0;
+    res.spellLevel = parseInt(catMatch[1], 10);
   }
   else
   {
