@@ -101,6 +101,7 @@ function formatArme(arme)
 
   if (catMatch) {
     res.spellLevel = parseInt(catMatch[1], 10);
+    console.log("spellLevel " + catMatch[1]);
   }
   else
   {
@@ -108,6 +109,9 @@ function formatArme(arme)
   }
   res.formula = "@spellLevel";
   res.weight = arme.enc ? parseInt(arme.enc, 10) : 0;
+
+  console.log(JSON.stringify(res));
+
   return res;
 }
 
