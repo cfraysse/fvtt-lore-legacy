@@ -301,12 +301,11 @@ async function parseArmesFromText(texteComplet) {
         const armesFull = grouped.map(line => parseGroupedLine(line, headers));
         let pack = await prepareCompendium(cat, currentCategorie, "L&L - Armes");
         armes.forEach(arme => { 
-          armesFull.forEach(armeFull => {
-            if(armeFull.name == arme.name)
-            {
-              arme = { ...arme, ...armeFull };
-            }
-          })
+          const normName = normalizeName(arme.name);
+          const match = armesFull.find(armeFull => normalizeName(armeFull.name) === normName);
+          if (match) {
+            arme = { ...arme, ...match };
+          }
           fillCompendium(pack, formatArme(arme));
         });
         armes = [];
@@ -349,7 +348,14 @@ async function parseArmesFromText(texteComplet) {
   if (armes.length != 0)
   {
     let pack = await prepareCompendium(cat, currentCategorie, "L&L - Armes");
-    armes.forEach(arme => fillCompendium(pack, formatArme(arme)));
+    armes.forEach(arme => { 
+      const normName = normalizeName(arme.name);
+      const match = armesFull.find(armeFull => normalizeName(armeFull.name) === normName);
+      if (match) {
+        arme = { ...arme, ...match };
+      }
+      fillCompendium(pack, formatArme(arme));
+    });
   }
 }
 
@@ -400,17 +406,22 @@ function groupDataLines(dataLines, expectedFields) {
   let buffer = '';
 
   for (const raw of dataLines) {
-    const line = raw.trim();
+    const line = raw.trim().replace(/-$/, "");
     if (!line) continue;
+
     buffer = buffer ? buffer + ' ' + line : line;
+
     const parts = buffer.split(/\s+/);
     const firstNumeric = parts.findIndex(p => isInteger(p));
     const values = firstNumeric >= 0 ? parts.slice(firstNumeric) : [];
+
+    // Si on a assez de champs numériques, on considère que la ligne est complète
     if (values.length >= expectedFields) {
       grouped.push(buffer.trim());
       buffer = '';
     }
   }
+
   if (buffer) grouped.push(buffer.trim());
   return grouped;
 }
@@ -532,6 +543,15 @@ function parseGroupedLine(line, headers) {
   obj.cost = out.cout ?? '';
 
   return obj;
+}
+
+function normalizeName(str) {
+  return str
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // retire accents
+    .replace(/['’]/g, "'") // unifie apostrophes
+    .replace(/\s+/g, " ") // espaces multiples → simple espace
+    .trim();
 }
 
 // Fonction principale orchestratrice
