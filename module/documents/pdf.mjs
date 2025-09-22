@@ -288,7 +288,7 @@ async function parseArmesFromText(texteComplet) {
   .filter(line => !/^\d+$/.test(line)); // Supprime les lignes contenant uniquement un nombre
   let armes = [];
   let current = null;
-  let currentCategorie = 'divers';
+  let currentCategorie = 'Armes divers';
   let cat = "armesdivers";
   let isTableau = false;
   let tableau = [];
@@ -314,7 +314,7 @@ async function parseArmesFromText(texteComplet) {
         });
         armes = [];
       }
-      cat = line.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
+      cat = "armes" + line.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
       currentCategorie = line;
       isTableau = false;
       tableau = [];
@@ -378,7 +378,7 @@ async function parseArmuresFromText(texteComplet) {
   .filter(line => !/^\d+$/.test(line)); // Supprime les lignes contenant uniquement un nombre
   let armures = [];
   let current = null;
-  let currentCategorie = 'divers';
+  let currentCategorie = 'Armures divers';
   let cat = "armuresdivers";
   let isTableau = false;
   let tableau = [];
@@ -405,7 +405,7 @@ async function parseArmuresFromText(texteComplet) {
         });
         armures = [];
       }
-      cat = line.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
+      cat = "armures" + line.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
       currentCategorie = line;
       isTableau = false;
       tableau = [];
