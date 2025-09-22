@@ -110,6 +110,18 @@ function formatArme(arme)
   return res;
 }
 
+function formatArmure(armure)
+{
+  var res = formatItem(armure);
+  res.type = 'item';
+  res.img = "systems/fvtt-lore-legacy/assets/armore-vest.png";
+
+  res.system.effects = armure.cd;
+  res.system.weight = armure.enc ? parseInt(armure.enc, 10) : 0;
+  res.system.quantity = 1;
+  return res;
+}
+
 function formatSort(sort)
 {
   var res = formatItem(sort);
