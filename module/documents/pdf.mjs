@@ -340,6 +340,8 @@ async function parseArmesFromText(texteComplet) {
   if (armes.length != 0)
   {
     let pack = await prepareCompendium(cat, currentCategorie, "L&L - Armes");
+    const grouped = groupDataLines(tableau, expectedFields);
+    const armesFull = grouped.map(line => parseGroupedLine(line, headers));
     armes.forEach(arme => { 
       const normName = normalizeName(arme.name);
       const match = armesFull.find(armeFull => normalizeName(armeFull.name) === normName);
@@ -436,6 +438,8 @@ async function parseArmuresFromText(texteComplet) {
 
   if (armures.length != 0)
   {
+    const grouped = groupDataLines(tableau, expectedFields);
+    const armuresFull = grouped.map(line => parseGroupedLine(line, headers));
     let pack = await prepareCompendium(cat, currentCategorie, "L&L - Armures");
     armures.forEach(armure => { 
       const normName = normalizeName(armure.name);
