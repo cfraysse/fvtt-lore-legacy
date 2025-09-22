@@ -351,6 +351,103 @@ async function parseArmesFromText(texteComplet) {
   }
 }
 
+/*
+*/
+async function parseArmuresFromText(texteComplet) {
+
+  const input = extractSection(texteComplet, /\nArmures\n/, /\nArcanotech\n/i);
+  if (!input) console.log("Section armure vide");
+
+  const lines = input
+  .split(/\r?\n/)
+  .map(line => line.trim())
+  .filter(line => !/^\d+$/.test(line)); // Supprime les lignes contenant uniquement un nombre
+  let armures = [];
+  let current = null;
+  let currentCategorie = 'divers';
+  let cat = "armuresdivers";
+  let isTableau = false;
+  let tableau = [];
+  let headers;
+  let expectedFields;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+
+    if (isCategorie(line)) {
+      if (armures.length != 0)
+      {
+
+        const grouped = groupDataLines(tableau, expectedFields);
+        const armuresFull = grouped.map(line => parseGroupedLine(line, headers));
+        let pack = await prepareCompendium(cat, currentCategorie, "L&L - Armures");
+        armures.forEach(armure => { 
+          const normName = normalizeName(armure.name);
+          const match = armuresFull.find(armureFull => normalizeName(armureFull.name) === normName);
+          if (match) {
+            armure = { ...armure, ...match };
+          }
+          fillCompendium(pack, formatArmure(armure));
+        });
+        armures = [];
+      }
+      cat = line.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
+      currentCategorie = line;
+      isTableau = false;
+      tableau = [];
+    } else if(isTableauStart(line)){
+      isTableau = true;
+      tableau.push(line);
+    }
+    else if(isTableauHeader(line)){
+      isTableau = true;
+      tableau.push(line);
+      const header = buildHeaderLine(tableau); //      \s
+      headers = buildHeaders(header);
+      expectedFields = headers.length;
+      tableau = [];
+
+    } else if(isTableau){
+      tableau.push(line);
+    } else 
+    { 
+      if(lines[i]?.includes("• "))
+      {
+        current = {
+          name: '',
+          cost: '',
+          body: '',
+          categorie: currentCategorie
+        };
+      }
+
+      if (current) {
+        extractSpecs(line, current);
+      }
+
+      if (current && current.name != '' && (lines[i]?.includes("(2M)") || lines[i]?.includes("(1M)"))) {
+        armures.push(current);
+        current = null;
+      }
+    }
+  }
+
+  if (current && current.name != '') armures.push(current);
+
+  if (armures.length != 0)
+  {
+    let pack = await prepareCompendium(cat, currentCategorie, "L&L - Armures");
+    armures.forEach(armure => { 
+      const normName = normalizeName(armure.name);
+      const match = armuresFull.find(armureFull => normalizeName(armureFull.name) === normName);
+      if (match) {
+        armure = { ...armure, ...match };
+      }
+      fillCompendium(pack, formatArmure(armure));
+    });
+  }
+}
+
 /* ---------- TABLEAUX ---------- */
 
 function endsWithCout(str) {
@@ -362,6 +459,7 @@ function isTableauHeader(line) {
 }
 
 // Utilitaires
+const isTableauStart = s => s.includes(" Enc. ");
 const isInteger = s => /^\d+$/.test(s);
 const isMun = s => /^\d+(?:\(\d+\))?\/\d+$/.test(s);
 const normalizeHeader = h => h.toLowerCase().replace(/[^\w]/g, '').replace(/é/g, 'e');
@@ -371,6 +469,13 @@ function findHeaderLineIndex(lines) {
   const idx = lines.findIndex(l => /enc/i.test(l));
   return idx === -1 ? 0 : idx;
 }
+
+function buildHeaderLine(tableau) {
+  return tableau
+    .map(str => str.replace(/[\r\n]/g, '')) // Supprime \r et \n
+    .join(' ')                             // Concatène avec un espace
+    .trim();   
+};
 
 // 2) Construire la liste normalisée des colonnes à partir de l'en-tête
 function buildHeaders(headerLine) {
@@ -718,7 +823,11 @@ function isCategorie(line)
     "Armes de jet",
     "Armes à distance",
     "Armes à distance au corps à corps",
-    "Variantes enchantées"
+    "Variantes enchantées",
+    "Accessoires",
+    "Boucliers",
+    "Armures lourdes",
+    "Armures légères"
   ];
   return patterns.some(pattern => pattern == line);
 }
@@ -854,10 +963,15 @@ async function createCompendiumArmes(text)
     await parseArmesFromText(text);
 }
 
+async function createCompendiumArmures(text)
+{
+    await parseArmuresFromText(text);
+}
+
 export async function prepareCompendiumWithPDF(text) {
     await createCompendiumTraits(text);
     await createCompendiumSkills(text);
     await createCompendiumSpells(text);
     await createCompendiumArmes(text);
-
+    await createCompendiumArmures(text);
 }
