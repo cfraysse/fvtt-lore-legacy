@@ -18,7 +18,11 @@
         "AddLVL": "Ajoute Niveau {level}",
         "bonus": "Bonus de dégat",
         "enc" : "Encombrement"
-      }
+      },
+      "Attributes": "Attributs",
+      "Quantity": "Quantité",
+      "Encombrement": "Encombrement"
+
     },
     "Effect": {
       "Source": "Source",
@@ -56,6 +60,7 @@
       "RULES": {
         "pdf": {
           "name": "Règles PDF",
+          "save": "Enregistrer",
           "hint": "Copier le texte du PDF officiel des règles. Une fois le PDF ouvert, cliquez sur un morceau de texte. Puis 'ctrl + A' pour sélectionner tout le texte, puis 'ctrl + C' pour copier le texte. Enfin coller tout avec 'ctrl + V' dans le champs ci-dessus.",
           "createCompendium" : "Créer les compendiums",
           "copyRules": "Copier les règles PDF"
