@@ -85,7 +85,6 @@ function formatCapacite(capacite)
 
 function formatArme(arme)
 {
-  console.log(JSON.stringify(arme));
   var res = formatItem(arme);
   res.type = 'spell';
   res.img = "systems/fvtt-lore-legacy/assets/sword-brandish.png";
@@ -97,11 +96,9 @@ function formatArme(arme)
   else if (arme.degat)
     catMatch = arme.degat.match(/^1d8\s*\+\s*(\d+)$/i);
 
-  console.log(catMatch);
 
   if (catMatch) {
     res.system.spellLevel = parseInt(catMatch[1], 10);
-    console.log("spellLevel " + catMatch[1]);
   }
   else
   {
@@ -109,8 +106,6 @@ function formatArme(arme)
   }
   res.system.formula = "@spellLevel";
   res.system.weight = arme.enc ? parseInt(arme.enc, 10) : 0;
-
-  console.log(JSON.stringify(res));
 
   return res;
 }
@@ -221,8 +216,6 @@ async function parseSortsFromText(texteComplet) {
   let currentCategorie = '';
   let cat = "";
 
-  console.log("Sort section lines : " + lines.length);
-
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
     // Détection de catégorie  // Sortilèges de Magie Rituelle // Sortilèges de Magie Matérielle // Sortilèges de Magie Illusoire
@@ -289,7 +282,6 @@ async function parseArmesFromText(texteComplet) {
   let tableau = [];
   let headers;
   let expectedFields;
-  console.log("Armes section lines : " + lines.length);
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
