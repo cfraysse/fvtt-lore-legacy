@@ -410,6 +410,11 @@ async function parseArmuresFromText(texteComplet) {
       isTableau = false;
       tableau = [];
     } else if(isTableauStart(line)){
+      if (current && current.name != '') {
+        armures.push(current);
+        current = null;
+      }
+        
       isTableau = true;
       tableau.push(line);
     }
@@ -427,6 +432,11 @@ async function parseArmuresFromText(texteComplet) {
     { 
       if(lines[i]?.includes("• "))
       {
+        if (current && current.name != '') {
+          armures.push(current);
+          current = null;
+        }
+
         current = {
           name: '',
           cost: '',
@@ -439,10 +449,7 @@ async function parseArmuresFromText(texteComplet) {
         extractSpecs(line, current);
       }
 
-      if (current && current.name != '' && (lines[i]?.includes("(2M)") || lines[i]?.includes("(1M)"))) {
-        armures.push(current);
-        current = null;
-      }
+
     }
   }
 
