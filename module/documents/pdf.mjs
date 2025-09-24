@@ -656,6 +656,10 @@ function parseGroupedLine(rawLine, headers) {
     vi += 1;
   }
 
+  if (headers.includes("modrap")) {
+    obj.modrap = values[vi++] ?? null;
+  }
+
   obj.dur = values[vi++] ?? null;
 
   const rem = values.slice(vi);
@@ -905,7 +909,9 @@ function buildHtmlDescription(element) {
     { key: "dur", label: "Durabilité :" },
     { key: "cd", label: "Dégâts :" },
     { key: "cp", label: "Code de protection :" },
-    { key: "modrap", label: "Modificateur de rapidité :" }
+    { key: "modrap", label: "Modificateur de rapidité :" },
+    { key: "effet", label: "Effet : " },
+
   ];
 
   for (const { key, label, strongOnly, lowerCase } of fields) {
