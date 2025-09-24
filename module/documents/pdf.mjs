@@ -918,7 +918,7 @@ function buildHtmlDescription(element) {
     { key: "cd", label: "Dégâts :" },
     { key: "cp", label: "Code de protection :" },
     { key: "modrap", label: "Modificateur de rapidité :" },
-    { key: "effet", label: "Effet : " },
+    { key: "effets", label: "Effet : " },
 
   ];
 
