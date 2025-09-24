@@ -112,7 +112,6 @@ function formatArme(arme)
 
 function formatArmure(armure)
 {
-  console.log(armure);
   armure.cp = armure.cd;
   delete armure.cd;
   var res = formatItem(armure);
@@ -122,7 +121,6 @@ function formatArmure(armure)
   res.system.effects = armure.cd;
   res.system.weight = armure.enc ? parseInt(armure.enc, 10) : 0;
   res.system.quantity = 1;
-  console.log(res);
   return res;
 }
 
@@ -629,7 +627,9 @@ function nettoyerResistances(str) {
 
 // 6) Parser une ligne groupée en utilisant les utilitaires
 function parseGroupedLine(rawLine, headers) {
+  console.log(rawLine);
   const line = nettoyerResistances(rawLine);
+  console.log(line);
   const parts = line.split(/\s+/);
   const firstNumericIndex = parts.findIndex(p => isInteger(p));
   const name = firstNumericIndex > 0 ? parts.slice(0, firstNumericIndex).join(' ') : parts[0];
