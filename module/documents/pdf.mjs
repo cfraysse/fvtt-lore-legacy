@@ -515,7 +515,7 @@ function buildHeaders(headerLine) {
     if (h === 'p.' && rawCols[i + 1]?.toLowerCase().startsWith('max')) { headers.push('pmax'); i++; continue; }
     if (h === 'code' && rawCols[i + 1]?.toLowerCase().startsWith('de') && rawCols[i + 2]?.toLowerCase().startsWith('protection')) { headers.push('cd'); i++; i++; continue; }
     if (h === 'mod.' && rawCols[i + 1]?.toLowerCase().startsWith('rap.')) { headers.push('modrap'); i++; continue; }
-    if (h === 'E' && rawCols[i + 1]?.toLowerCase() === 'ffets') { headers.push('effets'); i++; continue; }
+    if (h.toLowerCase() === 'e' && rawCols[i + 1]?.toLowerCase() === 'ffets') { headers.push('effets'); i++; continue; }
 
     const n = normalizeHeader(h);
     if (n.startsWith('mun')) headers.push('mun');
