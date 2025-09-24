@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2.2.0
+
+- La création de compendium à partir des règles en pdf crée maintenant des compendiums armes et armures.
+
+
 ## 2.1.1
 
 - Fix bug dés d'adversité et de forturne incohérent pour les capacités.
