@@ -630,9 +630,10 @@ function nettoyerResistances(str) {
 
 // 6) Parser une ligne groupée en utilisant les utilitaires
 function parseGroupedLine(rawLine, headers) {
-  console.log(rawLine);
   const line = nettoyerResistances(rawLine);
   console.log(line);
+  console.log(headers);
+
   const parts = line.split(/\s+/);
   const firstNumericIndex = parts.findIndex(p => isInteger(p));
   const name = firstNumericIndex > 0 ? parts.slice(0, firstNumericIndex).join(' ') : parts[0];
