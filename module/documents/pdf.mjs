@@ -112,6 +112,8 @@ function formatArme(arme)
 
 function formatArmure(armure)
 {
+  armure.cp = armure.cd;
+  delete armure.cd;
   var res = formatItem(armure);
   res.type = 'item';
   res.img = "systems/fvtt-lore-legacy/assets/armore-vest.png";
@@ -511,6 +513,9 @@ function buildHeaders(headerLine) {
     const h = rawCols[i].toLowerCase();
     if (h === 'p.' && rawCols[i + 1]?.toLowerCase() === 'moy') { headers.push('pmoy'); i++; continue; }
     if (h === 'p.' && rawCols[i + 1]?.toLowerCase().startsWith('max')) { headers.push('pmax'); i++; continue; }
+    if (h === 'code' && rawCols[i + 1]?.toLowerCase().startsWith('de') && rawCols[i + 2]?.toLowerCase().startsWith('protection')) { headers.push('cd'); i++; i++; continue; }
+    if (h === 'mod.' && rawCols[i + 1]?.toLowerCase().startsWith('rap.')) { headers.push('modrap'); i++; continue; }
+
     const n = normalizeHeader(h);
     if (n.startsWith('mun')) headers.push('mun');
     else if (n.startsWith('cout')) headers.push('cout');
@@ -609,8 +614,20 @@ function splitPmoyPmax(center, headers) {
   return out;
 }
 
+function nettoyerResistances(str) {
+  return str
+    // Supprimer les espaces après "Rés." et avant le type (phys., Ment., etc.)
+    .replace(/(Rés\.\s*)(\w+)/gi, (match, p1, p2) => p1 + p2)
+    // Supprimer les espaces autour des opérateurs + ou -
+    .replace(/([+\-])\s*/g, '$1')
+    // Supprimer les espaces après les doubles tirets
+    .replace(/--\s*/g, '-')
+    .replace(/1d8\s*/g, '1d8');
+}
+
 // 6) Parser une ligne groupée en utilisant les utilitaires
 function parseGroupedLine(line, headers) {
+  nettoyerResistances(line);
   const parts = line.split(/\s+/);
   const firstNumericIndex = parts.findIndex(p => isInteger(p));
   const name = firstNumericIndex > 0 ? parts.slice(0, firstNumericIndex).join(' ') : parts[0];
@@ -879,7 +896,9 @@ function buildHtmlDescription(element) {
     { key: "mun", label: "Munitions :" },
     { key: "enc", label: "Encombrement :" },
     { key: "dur", label: "Durabilité :" },
-    { key: "cd", label: "Dégâts :" }
+    { key: "cd", label: "Dégâts :" },
+    { key: "cp", label: "Code de protection :" },
+    { key: "modrap", label: "Modificateur de rapidité :" }
   ];
 
   for (const { key, label, strongOnly, lowerCase } of fields) {
