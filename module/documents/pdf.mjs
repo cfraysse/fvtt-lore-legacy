@@ -618,8 +618,8 @@ function nettoyerResistances(str) {
   return str
     // Coller "Rés." avec le type (ex: "Rés.phys.")
     .replace(/Rés\.\s*([A-Za-zÉéèêÊûÛôÔïÏçÇ]+)\./gi, 'Rés.$1.')
-    // Remplacer les "--" par 0
-    .replace(/--\s*/g, '0')
+    // Remplacer les "--" par "0 " (avec espace)
+    .replace(/--\s*/g, '0 ')
     // Supprimer les espaces autour des opérateurs + ou -
     .replace(/([+\-])\s*/g, '$1')
     // Supprimer les espaces après "1d8"
