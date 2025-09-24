@@ -663,6 +663,14 @@ function parseGroupedLine(rawLine, headers) {
   obj.dur = values[vi++] ?? null;
 
   const rem = values.slice(vi);
+
+  // valeurs intermédiaires entre dur et cost
+  if (headers.includes("effets")) {
+    const middle = rem.slice(0, -1);
+    // si plusieurs effets, on peut les joindre par un espace
+    obj.effets = middle.join(" ");
+  }
+
   const out = {};
 
   // cout = last token
