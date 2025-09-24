@@ -112,6 +112,7 @@ function formatArme(arme)
 
 function formatArmure(armure)
 {
+  console.log(armure);
   armure.cp = armure.cd;
   delete armure.cd;
   var res = formatItem(armure);
@@ -121,6 +122,7 @@ function formatArmure(armure)
   res.system.effects = armure.cd;
   res.system.weight = armure.enc ? parseInt(armure.enc, 10) : 0;
   res.system.quantity = 1;
+  console.log(res);
   return res;
 }
 
