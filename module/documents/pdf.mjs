@@ -116,7 +116,7 @@ function formatArmure(armure)
   delete armure.cd;
   var res = formatItem(armure);
   res.type = 'item';
-  res.img = "systems/fvtt-lore-legacy/assets/armore-vest.png";
+  res.img = "systems/fvtt-lore-legacy/assets/armor-vest.png";
 
   res.system.effects = armure.effets ? armure.cp + " " + armure.effets : armure.cp;
   res.system.weight = armure.enc ? parseInt(armure.enc, 10) : 0;
