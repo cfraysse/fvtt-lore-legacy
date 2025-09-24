@@ -616,12 +616,13 @@ function splitPmoyPmax(center, headers) {
 
 function nettoyerResistances(str) {
   return str
-    // Supprimer les espaces après "Rés." et avant le type (phys., Ment., etc.)
-    .replace(/(Rés\.\s*)(\w+)/gi, (match, p1, p2) => p1 + p2)
+    // Coller "Rés." avec le type (ex: "Rés.phys.")
+    .replace(/Rés\.\s*([A-Za-zÉéèêÊûÛôÔïÏçÇ]+)\./gi, 'Rés.$1.')
+    // Remplacer les "--" par 0
+    .replace(/--\s*/g, '0')
     // Supprimer les espaces autour des opérateurs + ou -
     .replace(/([+\-])\s*/g, '$1')
-    // Supprimer les espaces après les doubles tirets
-    .replace(/--\s*/g, '-')
+    // Supprimer les espaces après "1d8"
     .replace(/1d8\s*/g, '1d8');
 }
 
