@@ -1,6 +1,13 @@
-# LoreLegacy System
+    # LoreLegacy System
 
-![Foundry v11](https://img.shields.io/badge/foundry-v11-green)
+![Foundry v13](https://img.shields.io/badge/foundry-v11-green)
+
+Game system for the french RPG Lore & Legacy by Julien Pirou. 
+English version let you create character, item and abilities.
+
+Ce system permet la création de personnages, d'objet, de capacité compatible avec les règles du jeu Lore & Legacy.
+Les feuilles de personnages sont interactive et permettent les lancer de dés respectant le système 3D.
+Ce système propose aussi une option dans ses paramètres permettant de créer des compendium de capacités, de traits, d'arme et d'armures à partir des règles officiel en pdf. 
 
 Lore & Legacy est un jeu de rôle sur table de science-fantasy se trouvant au croisement de multiples sources d’inspiration. 
 Lore & Legacy est un jeu de rôle de Julien Pirou édité par Empyreal Media Productions.
