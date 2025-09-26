@@ -315,7 +315,7 @@ async function parseArmesFromText(texteComplet) {
           if (match) {
             arme = { ...arme, ...match };
           }
-          journalContent += "<tr><td>" + arme.name + "</td><td>"+ arme.cost + "</td><td>"+ arme.cd + + "</td>";
+          journalContent += "<tr><td>" + arme.name + "</td><td>"+ arme.cost + "</td><td>"+ arme.cd + "</td>";
           fillCompendium(pack, formatArme(arme));
         });
         journalContent += "</tbody></table>"
@@ -368,7 +368,7 @@ async function parseArmesFromText(texteComplet) {
       if (match) {
         arme = { ...arme, ...match };
       }
-      journalContent += "<tr><td>" + arme.name + "</td><td>"+ arme.cost + "</td><td>"+ arme.cd + + "</td>";
+      journalContent += "<tr><td>" + arme.name + "</td><td>"+ arme.cost + "</td><td>"+ arme.cd + "</td>";
       fillCompendium(pack, formatArme(arme));
     });
     journalContent += "</tbody></table>";
@@ -381,7 +381,7 @@ async function parseArmesFromText(texteComplet) {
   if (page) {
     await journal.deleteEmbeddedDocuments("JournalEntryPage", [page.id]);
   }
-  
+
   await journal.createEmbeddedDocuments("JournalEntryPage", [{
     name: "Armes",
     type: "text", // types possibles : "text", "image", "video", "pdf", "code"
