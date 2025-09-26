@@ -378,7 +378,7 @@ async function parseArmesFromText(texteComplet) {
   console.log(journalContent);
 
   const journal = game.journal.getName("Equipement");
-
+/*
   await journal.createEmbeddedDocuments("JournalEntryPage", [{
     name: "Armes",
     type: "text", // types possibles : "text", "image", "video", "pdf", "code"
@@ -387,7 +387,7 @@ async function parseArmesFromText(texteComplet) {
       format: 1
     }
   }]);
-
+*/
   journal.sheet.render(true);
 }
 
