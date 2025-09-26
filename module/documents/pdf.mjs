@@ -376,7 +376,7 @@ async function parseArmesFromText(texteComplet) {
     name: "Armes",
     content: journalContent,
     folder: folder?.id ?? null,
-    permission: { default: CONST.DOCUMENT_PERMISSION_LEVELS.NONE }
+    permission: { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE }
   });
 
   const journal = game.journal.getName("Armes");
