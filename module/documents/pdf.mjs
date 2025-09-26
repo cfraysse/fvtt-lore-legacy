@@ -1,3 +1,5 @@
+import { Logger } from "sass";
+
 /**
  * Extrait les traits entre "VI. Traits" et "VII. Capacités" et renvoie un tableau d'objets.
  * - name: première ligne du bloc (titre du trait)
@@ -358,6 +360,7 @@ async function parseArmesFromText(texteComplet) {
 
   if (armes.length != 0)
   {
+    journalContent += "<h3>" + currentCategorie + "</h3>";
     let pack = await prepareCompendium(cat, currentCategorie, "L&L - Armes");
     const grouped = groupDataLines(tableau, expectedFields);
     const armesFull = grouped.map(line => parseGroupedLine(line, headers));
@@ -367,10 +370,12 @@ async function parseArmesFromText(texteComplet) {
       if (match) {
         arme = { ...arme, ...match };
       }
+      journalContent += "<p>" + arme.name + " cout : "+ arme.cost + "<p>";
       fillCompendium(pack, formatArme(arme));
     });
   }
 
+  console.log(journalContent);
   const folder = game.folders.find(f => f.name === "L&L" && f.type === "JournalEntry");
   await JournalEntry.create({
     name: "Armes",
