@@ -376,15 +376,18 @@ async function parseArmesFromText(texteComplet) {
   }
 
   console.log(journalContent);
-  const folder = game.folders.find(f => f.name === "L&L" && f.type === "JournalEntry");
-  await JournalEntry.create({
-    name: "Armes",
-    content: journalContent,
-    folder: folder?.id ?? null,
-    permission: { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE }
-  });
 
-  const journal = game.journal.getName("Armes");
+  const journal = game.journal.getName("Equipement");
+
+  await journal.createEmbeddedDocuments("JournalEntryPage", [{
+    name: "Liste des armes",
+    type: "text", // types possibles : "text", "image", "video", "pdf", "code"
+    text: {
+      content: journalContent,
+      format: 1
+    }
+  }]);
+
   journal?.sheet.render(true);
 }
 
@@ -1054,8 +1057,8 @@ async function createCompendiumArmures(text)
 
 async function createJounalFolder()
 {
-  let folder = game.folders.find(f => f.name === "L&L" && f.type === "JournalEntry");
-  if (!folder) {
+  let folder_ = game.folders.find(f => f.name === "L&L" && f.type === "JournalEntry");
+  if (!folder_) {
     await Folder.create({
       name: "L&L", // Nom du dossier
       type: "JournalEntry", // Type de document que le dossier contiendra
@@ -1065,6 +1068,19 @@ async function createJounalFolder()
       folder: null // Optionnel : dossier parent
     });
   }
+
+  const folder = game.folders.find(f => f.name === "L&L" && f.type === "JournalEntry");
+
+  const journal = game.journal.getName("Equipement");
+  if (!journal) {
+    await JournalEntry.create({
+      name: "Equipement",
+      content: "Liste des équipements",
+      folder: folder?.id ?? null,
+      permission: { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE }
+    });
+  }
+
 }
 export async function prepareCompendiumWithPDF(text) {
     await createJounalFolder()
