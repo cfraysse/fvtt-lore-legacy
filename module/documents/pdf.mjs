@@ -284,6 +284,7 @@ async function parseArmesFromText(texteComplet) {
   const input = extractSection(texteComplet, /\nArmes\n/, /\nArmures\n/i);
   if (!input) console.log("Section arme vide");
 
+
   const lines = input
   .split(/\r?\n/)
   .map(line => line.trim())
@@ -296,6 +297,7 @@ async function parseArmesFromText(texteComplet) {
   let tableau = [];
   let headers;
   let expectedFields;
+  let journalContent = <h2>Liste des armes</h2>;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -306,12 +308,15 @@ async function parseArmesFromText(texteComplet) {
         const grouped = groupDataLines(tableau, expectedFields);
         const armesFull = grouped.map(line => parseGroupedLine(line, headers));
         let pack = await prepareCompendium(cat, currentCategorie, "L&L - Armes");
+        journalContent += "<h3>" + currentCategorie + "</h3>";
         armes.forEach(arme => { 
           const normName = normalizeName(arme.name);
           const match = armesFull.find(armeFull => normalizeName(armeFull.name) === normName);
           if (match) {
             arme = { ...arme, ...match };
           }
+          journalContent += "<p>" + arme.name + " cout : "+ arme.cost + "<p>";
+
           fillCompendium(pack, formatArme(arme));
         });
         armes = [];
@@ -365,6 +370,14 @@ async function parseArmesFromText(texteComplet) {
       fillCompendium(pack, formatArme(arme));
     });
   }
+
+  await JournalEntry.create({
+    name: "Armes",
+    content: journalContent,
+    folder: "L&L", // ou l'ID d’un dossier
+    permission: { default: CONST.DOCUMENT_PERMISSION_LEVELS.NONE }
+  });
+
 }
 
 /*
