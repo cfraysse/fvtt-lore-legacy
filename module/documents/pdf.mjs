@@ -297,7 +297,7 @@ async function parseArmesFromText(texteComplet) {
   let tableau = [];
   let headers;
   let expectedFields;
-  let journalContent = <h2>Liste des armes</h2>;
+  let journalContent = "<h2>Liste des armes</h2>";
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
