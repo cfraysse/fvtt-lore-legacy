@@ -371,13 +371,16 @@ async function parseArmesFromText(texteComplet) {
     });
   }
 
+  const folder = game.folders.find(f => f.name === "L&L" && f.type === "JournalEntry");
   await JournalEntry.create({
     name: "Armes",
     content: journalContent,
-    folder: "L&L", // ou l'ID d’un dossier
+    folder: folder?.id ?? null,
     permission: { default: CONST.DOCUMENT_PERMISSION_LEVELS.NONE }
   });
 
+  const journal = game.journal.getName("Armes");
+  journal?.sheet.render(true);
 }
 
 /*
@@ -1044,7 +1047,22 @@ async function createCompendiumArmures(text)
     await parseArmuresFromText(text);
 }
 
+async function createJounalFolder()
+{
+  let folder = game.folders.find(f => f.name === "L&L" && f.type === "JournalEntry");
+  if (!folder) {
+    await Folder.create({
+      name: "L&L", // Nom du dossier
+      type: "JournalEntry", // Type de document que le dossier contiendra
+      parent: null, // ou l'ID d’un dossier parent si tu veux imbriquer
+      color: "#ff9900", // Optionnel : couleur du dossier
+      sorting: "m", // "a" pour alphabétique, "m" pour manuel
+      folder: null // Optionnel : dossier parent
+    });
+  }
+}
 export async function prepareCompendiumWithPDF(text) {
+    await createJounalFolder()
     await createCompendiumTraits(text);
     await createCompendiumSkills(text);
     await createCompendiumSpells(text);
