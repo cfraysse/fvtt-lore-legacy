@@ -1,5 +1,3 @@
-import { Logger } from "sass";
-
 /**
  * Extrait les traits entre "VI. Traits" et "VII. Capacités" et renvoie un tableau d'objets.
  * - name: première ligne du bloc (titre du trait)
@@ -378,7 +376,7 @@ async function parseArmesFromText(texteComplet) {
   console.log(journalContent);
 
   const journal = game.journal.getName("Equipement");
-/*
+
   await journal.createEmbeddedDocuments("JournalEntryPage", [{
     name: "Armes",
     type: "text", // types possibles : "text", "image", "video", "pdf", "code"
@@ -387,7 +385,7 @@ async function parseArmesFromText(texteComplet) {
       format: 1
     }
   }]);
-*/
+
   journal.sheet.render(true);
 }
 
