@@ -308,17 +308,17 @@ async function parseArmesFromText(texteComplet) {
         const grouped = groupDataLines(tableau, expectedFields);
         const armesFull = grouped.map(line => parseGroupedLine(line, headers));
         let pack = await prepareCompendium(cat, currentCategorie, "L&L - Armes");
-        journalContent += "<h3>" + currentCategorie + "</h3>";
+        journalContent += "<h3>" + currentCategorie + '</h3> <table border="1"> <thead><tr><th>Nom</th><th>Cout</th><th>Dégats</th></tr></thead><tbody>';
         armes.forEach(arme => { 
           const normName = normalizeName(arme.name);
           const match = armesFull.find(armeFull => normalizeName(armeFull.name) === normName);
           if (match) {
             arme = { ...arme, ...match };
           }
-          journalContent += "<p>" + arme.name + " cout : "+ arme.cost + "</p>";
-
+          journalContent += "<tr><td>" + arme.name + "</td><td>"+ arme.cost + "</td><td>"+ arme.cd + + "</td>";
           fillCompendium(pack, formatArme(arme));
         });
+        journalContent += "</tbody></table>"
         armes = [];
       }
       cat = "armes" + line.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
@@ -358,7 +358,7 @@ async function parseArmesFromText(texteComplet) {
 
   if (armes.length != 0)
   {
-    journalContent += "<h3>" + currentCategorie + "</h3>";
+    journalContent += "<h3>" + currentCategorie + '</h3> <table border="1"> <thead><tr><th>Nom</th><th>Cout</th><th>Dégats</th></tr></thead><tbody>';
     let pack = await prepareCompendium(cat, currentCategorie, "L&L - Armes");
     const grouped = groupDataLines(tableau, expectedFields);
     const armesFull = grouped.map(line => parseGroupedLine(line, headers));
@@ -368,15 +368,20 @@ async function parseArmesFromText(texteComplet) {
       if (match) {
         arme = { ...arme, ...match };
       }
-      journalContent += "<p>" + arme.name + " cout : "+ arme.cost + "</p>";
+      journalContent += "<tr><td>" + arme.name + "</td><td>"+ arme.cost + "</td><td>"+ arme.cd + + "</td>";
       fillCompendium(pack, formatArme(arme));
     });
+    journalContent += "</tbody></table>";
   }
 
   console.log(journalContent);
 
   const journal = game.journal.getName("Equipement");
-
+  const page = journal.pages.find(p => p.name === "Armes");
+  if (page) {
+    await journal.deleteEmbeddedDocuments("JournalEntryPage", [page.id]);
+  }
+  
   await journal.createEmbeddedDocuments("JournalEntryPage", [{
     name: "Armes",
     type: "text", // types possibles : "text", "image", "video", "pdf", "code"
