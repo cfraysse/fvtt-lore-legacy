@@ -413,6 +413,7 @@ async function parseArmuresFromText(texteComplet) {
   let tableau = [];
   let headers;
   let expectedFields;
+  let journalContent = "<h2>Liste des armures</h2>";
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -424,14 +425,17 @@ async function parseArmuresFromText(texteComplet) {
         const grouped = groupDataLines(tableau, expectedFields);
         const armuresFull = grouped.map(line => parseGroupedLine(line, headers));
         let pack = await prepareCompendium(cat, currentCategorie, "L&L - Armures");
+        journalContent += "<h3>" + currentCategorie + '</h3> <table border="1"> <thead><tr><th>Nom</th><th>Cout</th><th>Protection</th></tr></thead><tbody>';
         armures.forEach(armure => { 
           const normName = normalizeName(armure.name);
           const match = armuresFull.find(armureFull => normalizeName(armureFull.name) === normName);
           if (match) {
             armure = { ...armure, ...match };
           }
+          journalContent += "<tr><td>" + armure.name + "</td><td>"+ armure.cost + "</td><td>"+ armure.cd + "</td>";
           fillCompendium(pack, formatArmure(armure));
         });
+        journalContent += "</tbody></table>"
         armures = [];
       }
       cat = "armures" + line.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
@@ -486,6 +490,7 @@ async function parseArmuresFromText(texteComplet) {
 
   if (armures.length != 0)
   {
+    journalContent += "<h3>" + currentCategorie + '</h3> <table border="1"> <thead><tr><th>Nom</th><th>Cout</th><th>Protection</th></tr></thead><tbody>';
     const grouped = groupDataLines(tableau, expectedFields);
     const armuresFull = grouped.map(line => parseGroupedLine(line, headers));
     let pack = await prepareCompendium(cat, currentCategorie, "L&L - Armures");
@@ -495,9 +500,28 @@ async function parseArmuresFromText(texteComplet) {
       if (match) {
         armure = { ...armure, ...match };
       }
+      journalContent += "<tr><td>" + arme.name + "</td><td>"+ arme.cost + "</td><td>"+ arme.cd + "</td>";
       fillCompendium(pack, formatArmure(armure));
     });
+    journalContent += "</tbody></table>";
   }
+
+  const journal = game.journal.getName("Equipement");
+  const page = journal.pages.find(p => p.name === "Armures");
+  if (page) {
+    await journal.deleteEmbeddedDocuments("JournalEntryPage", [page.id]);
+  }
+
+  await journal.createEmbeddedDocuments("JournalEntryPage", [{
+    name: "Armures",
+    type: "text", // types possibles : "text", "image", "video", "pdf", "code"
+    text: {
+      content: journalContent,
+      format: 1
+    }
+  }]);
+
+  journal.sheet.render(true);
 }
 
 /* ---------- TABLEAUX ---------- */
