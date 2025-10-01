@@ -41,7 +41,7 @@ function parseTraitsFromText(texteComplet) {
   });
 }
 
-function formatItem(item)
+function formatItem(item, displayCost = true)
 {
   const { beforeMatRec, matRec } = splitMatRec(item.body);
   const { beforeEx, exemple } = splitExemple(beforeMatRec);
@@ -54,7 +54,7 @@ function formatItem(item)
   return {
     name: item.name,
     system: {
-      description: buildHtmlDescription(item),
+      description: buildHtmlDescription(item, displayCost),
     },
     folder: null,
     flags: {},
@@ -85,7 +85,7 @@ function formatCapacite(capacite)
 
 function formatArme(arme)
 {
-  var res = formatItem(arme);
+  var res = formatItem(arme, false);
   res.type = 'spell';
   res.img = "systems/fvtt-lore-legacy/assets/sword-brandish.png";
   setTriangle(res);
@@ -114,7 +114,7 @@ function formatArmure(armure)
 {
   armure.cp = armure.cd;
   delete armure.cd;
-  var res = formatItem(armure);
+  var res = formatItem(armure, false);
   res.type = 'item';
   res.img = "systems/fvtt-lore-legacy/assets/armor-vest.png";
 
@@ -373,8 +373,6 @@ async function parseArmesFromText(texteComplet) {
     });
     journalContent += "</tbody></table>";
   }
-
-  console.log(journalContent);
 
   const journal = game.journal.getName("Equipement");
   const page = journal.pages.find(p => p.name === "Armes");
@@ -683,8 +681,6 @@ function nettoyerResistances(str) {
 // 6) Parser une ligne groupée en utilisant les utilitaires
 function parseGroupedLine(rawLine, headers) {
   const line = nettoyerResistances(rawLine);
-  console.log(line);
-  console.log(headers);
 
   const parts = line.split(/\s+/);
   const firstNumericIndex = parts.findIndex(p => isInteger(p));
@@ -943,7 +939,7 @@ function isCategorie(line)
 }
 
 /** Construit le HTML final attendu. */
-function buildHtmlDescription(element) {
+function buildHtmlDescription(element, displayCost) {
   const parts = [];
 
   const fields = [
@@ -975,8 +971,7 @@ function buildHtmlDescription(element) {
 
   for (const { key, label, strongOnly, lowerCase } of fields) {
     const value = element[key];
-    if (!value) continue;
-
+    if (!value || (!displayCost && key == "cost")) continue;
     let escaped;
 
     if(lowerCase)
