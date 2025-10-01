@@ -10,6 +10,9 @@ import { LoreLegacyItemSheet } from './sheets/item-sheet.mjs';
 import { preloadHandlebarsTemplates } from './helpers/templates.mjs';
 import { LORE_LEGACY } from './helpers/config.mjs';
 
+const Actors = foundry.documents.collections.Actors;
+const Items = foundry.documents.collections.Items;
+const ItemSheet = foundry.appv1.sheets.ItemSheet;
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */

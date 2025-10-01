@@ -97,7 +97,7 @@ export class LoreLegacyActor extends Actor {
         ability.cadversite = "unchecked";
       }
     }
-
+/*
     for (let [key, skill] of Object.entries(systemData.skills)) {
 
       //skill.prepareTriangle(systemData.attributes.badversite, systemData.attributes.bfortune);
@@ -109,6 +109,7 @@ export class LoreLegacyActor extends Actor {
 
       // TODO
     }
+*/
   }
 
   /**
