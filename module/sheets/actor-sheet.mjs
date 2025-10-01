@@ -3,6 +3,8 @@ import {
   prepareActiveEffectCategories,
 } from '../helpers/effects.mjs';
 
+const ActorSheet = foundry.appv1.sheets.ActorSheet;
+
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}

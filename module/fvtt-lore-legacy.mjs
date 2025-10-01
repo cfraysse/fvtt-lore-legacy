@@ -13,6 +13,7 @@ import { LORE_LEGACY } from './helpers/config.mjs';
 const Actors = foundry.documents.collections.Actors;
 const Items = foundry.documents.collections.Items;
 const ItemSheet = foundry.appv1.sheets.ItemSheet;
+const ActorSheet = foundry.appv1.sheets.ActorSheet;
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
