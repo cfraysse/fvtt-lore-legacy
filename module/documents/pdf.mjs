@@ -500,7 +500,7 @@ async function parseArmuresFromText(texteComplet) {
       if (match) {
         armure = { ...armure, ...match };
       }
-      journalContent += "<tr><td>" + arme.name + "</td><td>"+ arme.cost + "</td><td>"+ arme.cd + "</td>";
+      journalContent += "<tr><td>" + armure.name + "</td><td>"+ armure.cost + "</td><td>"+ armure.cd + "</td>";
       fillCompendium(pack, formatArmure(armure));
     });
     journalContent += "</tbody></table>";
