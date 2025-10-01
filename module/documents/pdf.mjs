@@ -388,8 +388,6 @@ async function parseArmesFromText(texteComplet) {
       format: 1
     }
   }]);
-
-  journal.sheet.render(true);
 }
 
 /*
@@ -518,8 +516,6 @@ async function parseArmuresFromText(texteComplet) {
       format: 1
     }
   }]);
-
-  journal.sheet.render(true);
 }
 
 /* ---------- TABLEAUX ---------- */
