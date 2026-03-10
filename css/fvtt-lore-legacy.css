@@ -448,13 +448,41 @@
   width: 3ch;
   text-align: center;
 }
+.fvtt-lore-legacy .jauges .resource {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 4px 0;
+}
 .fvtt-lore-legacy .jauges .resource-label {
-  margin-right: 0px;
-  margin: 0 0ch; /* Réduit l’espace horizontal */
+  font-weight: bold;
+  margin-bottom: 2px;
+  text-align: center;
+}
+.fvtt-lore-legacy .jauges .resource-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center;
+  gap: 2px;
 }
 .fvtt-lore-legacy .jauges input[type=text] {
-  width: 2ch;
+  width: 3ch;
   text-align: center;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 1em;
+  line-height: 1.2em;
+}
+.fvtt-lore-legacy .jauges input[type=text]:focus {
+  border-bottom: 1px solid var(--color-text-light-highlight);
+  background: rgba(251, 255, 0, 0.1);
+}
+.fvtt-lore-legacy .jauges span {
+  font-weight: bold;
+  line-height: 1em;
 }
 .fvtt-lore-legacy .capacitesecond .resource-label {
   font-size: 12px;

@@ -23,6 +23,11 @@
           "min": 0,
           "max": 2
         },
+        "bagage": {
+          "value": 0,
+          "min": 0,
+          "max": 9
+        },
         "biography": "<p>Peuple : </p> <p>Description : Historique, particularité, notes... A remplir</p>"
       }
     },
