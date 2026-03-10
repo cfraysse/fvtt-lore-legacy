@@ -42,7 +42,7 @@
   "packs": [],
   "packFolders": [],
   "socket": false,
-  "manifest": "https://raw.githubusercontent.com/cfraysse/fvtt-lore-legacy/main/system.json",
+  "manifest": "https://raw.githubusercontent.com/cfraysse/fvtt-lore-legacy/versionTest/system.json",
   "download": "https://github.com/cfraysse/fvtt-lore-legacy/releases/download/2.4.1/lore-legacy-release-2.4.1.zip",
   "background": "systems/fvtt-lore-legacy/assets/loreAndLegacyCouv.jpg",
   "gridDistance": 20,
