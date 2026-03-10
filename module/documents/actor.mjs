@@ -5,10 +5,6 @@
 export class LoreLegacyActor extends Actor {
   /** @override */
   prepareData() {
-    // Prepare data for the actor. Calling the super version of this executes
-    // the following, in order: data reset (to clear active effects),
-    // prepareBaseData(), prepareEmbeddedDocuments() (including active effects),
-    // prepareDerivedData().
     super.prepareData();
   }
 
@@ -20,22 +16,33 @@ export class LoreLegacyActor extends Actor {
 
   /**
    * @override
-   * Augment the actor source data with additional dynamic data. Typically,
-   * you'll want to handle most of your calculated/derived data in this step.
-   * Data calculated in this step should generally not exist in template.json
-   * (such as ability modifiers rather than ability scores) and should be
-   * available both inside and outside of character sheets (such as if an actor
-   * is queried and has a roll executed directly from it).
+   * Augment the actor source data with additional dynamic data.
    */
   prepareDerivedData() {
     const actorData = this;
     const systemData = actorData.system;
     const flags = actorData.flags.fvttlorelegacy || {};
 
-    // Make separate methods for each Actor type (character, npc, etc.) to keep
-    // things organized.
+    // Données spécifiques au type
     this._prepareCharacterData(actorData);
     this._prepareNpcData(actorData);
+
+    // 🔢 Calcul automatique du bagage (poids total de l'inventaire)
+    if (systemData?.bagage) {
+      let totalWeight = 0;
+
+      for (const item of this.items) {
+        const itemSystem = item.system ?? {};
+        const qty = Number(itemSystem.quantity ?? 1);
+        const weight = Number(itemSystem.weight ?? 0);
+
+        if (!Number.isNaN(qty) && !Number.isNaN(weight)) {
+          totalWeight += qty * weight;
+        }
+      }
+
+      systemData.bagage.value = totalWeight;
+    }
   }
 
   /**
@@ -44,7 +51,6 @@ export class LoreLegacyActor extends Actor {
   _prepareCharacterData(actorData) {
     if (actorData.type !== 'character') return;
 
-    // Make modifications to data here. For example:
     const systemData = actorData.system;
 
     if (systemData.attributes.bfortune == true) {
@@ -67,14 +73,14 @@ export class LoreLegacyActor extends Actor {
 
     // Loop through ability scores, and add their modifiers to our sheet output.
     for (let [key, ability] of Object.entries(systemData.abilities)) {
-      // Lore & legacy add value of ability to d6.
       ability.mod = ability.value;
+
       if (ability.bfortune == true) {
         ability.nfortune = 1;
         ability.cfortune = "checked";
       }
       else {
-        if(systemData.attributes.bfortune == true) {
+        if (systemData.attributes.bfortune == true) {
           ability.nfortune = 1;
         }
         else {
@@ -88,7 +94,7 @@ export class LoreLegacyActor extends Actor {
         ability.cadversite = "checked";
       }
       else {
-        if(systemData.attributes.badversite == true) {
+        if (systemData.attributes.badversite == true) {
           ability.nadversite = 1;
         }
         else {
@@ -97,19 +103,6 @@ export class LoreLegacyActor extends Actor {
         ability.cadversite = "unchecked";
       }
     }
-/*
-    for (let [key, skill] of Object.entries(systemData.skills)) {
-
-      //skill.prepareTriangle(systemData.attributes.badversite, systemData.attributes.bfortune);
-      // TODO ??? skill.prepareTriangle(systemData.attributes.badversite, systemData.attributes.bfortune)
-      // Lore & legacy add value of skill to d10.
-    }
-
-    for (let [key, capsec] of Object.entries(systemData.capsecs)) {
-
-      // TODO
-    }
-*/
   }
 
   /**
@@ -118,7 +111,6 @@ export class LoreLegacyActor extends Actor {
   _prepareNpcData(actorData) {
     if (actorData.type !== 'npc') return;
 
-    // Make modifications to data here. For example:
     const systemData = actorData.system;
     systemData.xp = systemData.cr * systemData.cr * 100;
   }
@@ -127,10 +119,8 @@ export class LoreLegacyActor extends Actor {
    * Override getRollData() that's supplied to rolls.
    */
   getRollData() {
-    // Starts off by populating the roll data with a shallow copy of `this.system`
     const data = { ...this.system };
 
-    // Prepare character roll data.
     this._getCharacterRollData(data);
     this._getNpcRollData(data);
 
@@ -143,8 +133,6 @@ export class LoreLegacyActor extends Actor {
   _getCharacterRollData(data) {
     if (this.type !== 'character') return;
 
-    // Copy the ability scores to the top level, so that rolls can use
-    // formulas like `@vig.mod + 4`.
     if (data.abilities) {
       for (let [k, v] of Object.entries(data.abilities)) {
         data[k] = foundry.utils.deepClone(v);
@@ -162,7 +150,7 @@ export class LoreLegacyActor extends Actor {
         data[k] = foundry.utils.deepClone(v);
       }
     }
-    // Add level for easier access, or fall back to 0.
+
     if (data.attributes.level) {
       data.lvl = data.attributes.level.value ?? 0;
     }
@@ -179,8 +167,6 @@ export class LoreLegacyActor extends Actor {
    */
   _getNpcRollData(data) {
     if (this.type !== 'npc') return;
-
-    // Process additional NPC data here.
   }
 
   getNFortune() {
