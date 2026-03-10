@@ -392,15 +392,6 @@ function formatPnjs(pnj)
         },
         img: "systems/fvtt-lore-legacy/assets/checkbox-tree.png",
       },
-      {
-        name: "Bagage",
-        type: "capsec",
-        system: {
-          description: "",
-          capsecLevel: pnj.specs.secondaires.resPhysique
-        },
-        img: "systems/fvtt-lore-legacy/assets/checkbox-tree.png",
-      },
       ],
       folder: null,
       flags: {},

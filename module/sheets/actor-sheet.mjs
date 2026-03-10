@@ -141,14 +141,7 @@ export class LoreLegacyActorSheet extends ActorSheet {
       }
     }
 
-    if(capsecs.length < 7)
-    {
-      capsecs = this._createCapsecs();
-    }
-    else if(capsecs.length > 7)
-    {
-      capsecs = capsecs.slice(0, 7); // TODO Vérifier plutôt les différents capsecs
-    }
+    capsecs = this._ensureCapsecs(capsecs);
     // Assign and return
     context.gear = gear;
     context.features = features;
@@ -220,6 +213,64 @@ export class LoreLegacyActorSheet extends ActorSheet {
   /**
    * @private
    */
+  _ensureCapsecs(existingCapsecs) {
+
+    const EXPECTED = [
+      game.i18n.localize('LORE_LEGACY.CapSec.ResPhys'),
+      game.i18n.localize('LORE_LEGACY.CapSec.ResMent'),
+      game.i18n.localize('LORE_LEGACY.CapSec.ResMag'),
+      game.i18n.localize('LORE_LEGACY.CapSec.SeuilBlessure'),
+      game.i18n.localize('LORE_LEGACY.CapSec.Poids'),
+      game.i18n.localize('LORE_LEGACY.CapSec.Rapidite')
+    ];
+
+    // --- 1) Détection des doublons ---
+    const grouped = {};
+    for (const cap of existingCapsecs) {
+      if (!grouped[cap.name]) grouped[cap.name] = [];
+      grouped[cap.name].push(cap);
+    }
+
+    // Supprimer les doublons (garder la première)
+    for (const name in grouped) {
+      const list = grouped[name];
+      if (list.length > 1) {
+        // garder la première
+        const keep = list[0];
+
+        // supprimer les autres via l'acteur
+        for (let i = 1; i < list.length; i++) {
+          const id = list[i]._id;
+          const item = this.actor.items.get(id);
+          if (item) item.delete();
+        }
+
+        grouped[name] = [keep];
+      }
+    }
+
+    // Liste nettoyée
+    const cleaned = Object.values(grouped).map(arr => arr[0]);
+
+    // --- 2) Vérifier les capsecs attendues ---
+    const finalList = [];
+
+    for (const expectedName of EXPECTED) {
+      const found = cleaned.find(c => c.name === expectedName);
+      if (found) {
+        finalList.push(found);
+      } else {
+        // Manquante → création (sans await)
+        this._createCapsec(expectedName);
+      }
+    }
+
+    return finalList;
+  }
+
+  /**
+   * @private
+   */
   _createCapsecs() {
     const capsecs = [];
     capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.ResPhys')));
@@ -227,7 +278,6 @@ export class LoreLegacyActorSheet extends ActorSheet {
     capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.ResMag')));
     capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.SeuilBlessure')));
     capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.Poids')));
-    capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.Bagage')));
     capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.Rapidite')));
     return capsecs;
   }
