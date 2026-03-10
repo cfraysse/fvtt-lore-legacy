@@ -5,7 +5,7 @@
     <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100" />
     <div class="header-fields">
       <div class="resources grid grid-2col">
-        <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
+        <h1 class="charname flexrow flex-center flex-between"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
 
         <div class="resource flex-group-center">
           <section class="grid grid-3col">
@@ -47,9 +47,9 @@
         center all of its child elements content and text. --}}
         <div class="resource flex-group-center">
           <label for="system.health.value" class="resource-label">{{localize 'LORE_LEGACY.Property.Health'}}</label>
-          <div class="resource-content">
+          <div class="resource-content flexrow flex-center flex-between">
             <input type="text" name="system.health.value" value="{{system.health.value}}" data-dtype="Number" />
-            <span>—</span>
+            <span>/</span>
             <input type="text" name="system.health.max" value="{{system.health.max}}" data-dtype="Number" />
           </div>
         </div>
@@ -58,34 +58,34 @@
           <label for="system.lastchance.value" class="resource-label">{{localize 'LORE_LEGACY.Property.LastChance'}}</label>
           <div class="resource-content">
             <input type="text" name="system.lastchance.value" value="{{system.lastchance.value}}" data-dtype="Number" />
-            <span>—</span>
+            <span>/</span>
             <input type="text" name="system.lastchance.max" value="{{system.lastchance.max}}" data-dtype="Number" />
           </div>
         </div>
 
-        <div class="resource flex-group-center">
+        <div class="resource flex-group-center flexrow flex-center flex-between">
           <label for="system.power.value" class="resource-label">{{localize 'LORE_LEGACY.Property.Magic'}}</label>
           <div class="resource-content">
             <input type="text" name="system.power.value" value="{{system.power.value}}" data-dtype="Number" />
-            <span>—</span>
+            <span>/</span>
             <input type="text" name="system.power.max" value="{{system.power.max}}" data-dtype="Number" />
           </div>
         </div>
 
-        <div class="resource flex-group-center">
+        <div class="resource flex-group-center flexrow flex-center flex-between">
           <label for="system.fortune.value" class="resource-label">{{localize 'LORE_LEGACY.Property.Fortune'}}</label>
           <div class="resource-content">
             <input type="text" name="system.fortune.value" value="{{system.fortune.value}}" data-dtype="Number" />
-            <span>—</span>
+            <span>/</span>
             <input type="text" name="system.fortune.max" value="{{system.fortune.max}}" data-dtype="Number" />
           </div>
         </div>
 
-        <div class="resource flex-group-center">
+        <div class="resource flex-group-center flexrow flex-center flex-between">
           <label for="system.bagage.value" class="resource-label">{{localize 'LORE_LEGACY.Property.Bagage'}}</label>
           <div class="resource-content">
             <input type="text" name="system.bagage.value" value="{{system.bagage.value}}" data-dtype="Number" />
-            <span>—</span>
+            <span>/</span>
             <input type="text" name="system.bagage.max" value="{{system.bagage.max}}" data-dtype="Number" />
           </div>
         </div>
