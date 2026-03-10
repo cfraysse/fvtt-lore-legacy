@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 2.4.3
+
+- Calcul automatique des bagages
+- Meilleur gestion des cap secondaires
+
+## 2.4.2
+
+- centrer les jauges
+
+## 2.4.1
+
+- Jauge vertical
+- Ajout de la jauge bagage
+ 
 ## 2.4.0
 
 - Glisser une arme dans la barre de raccourcis crée une macro de lancer de dés de dégats
