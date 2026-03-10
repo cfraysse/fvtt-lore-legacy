@@ -1,3 +1,217 @@
+function extractSpecsPnj(pnj) {
+  const lines = pnj.raw.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+
+  const specs = {
+    caracs: {},
+    traits: [],
+    capacites: {},
+    armes: {},
+    sortileges: [],
+    secondaires: {},
+    stats: {},
+    danger: null,
+    name: null
+  };
+
+  let currentSection = null; // type en cours: "traits", "capacites", "armes", "sortileges"
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // --- Caractéristiques principales ---
+    if (/^(car|dis|maî|pre|rob|vig|for)\s+/i.test(line)) {
+      const [key, val] = line.split(/\s+/);
+      specs.caracs[key.toLowerCase()] = parseInt(val, 10);
+      currentSection = null;
+      continue;
+    }
+
+    // --- Début d'une section ---
+    if (/^traits/i.test(line)) {
+      currentSection = "traits";
+      const traitsStr = line.replace(/^traits\s*/i, "");
+      specs.traits.push(...traitsStr.split(/[,;]/).map(t => t.trim()).filter(Boolean));
+      continue;
+    }
+    if (/^capacités/i.test(line)) {
+      currentSection = "capacites";
+      const capStr = line.replace(/^capacités\s*/i, "");
+      const [nom, val] = capStr.split(":").map(s => s.trim());
+      if (nom && val) specs.capacites[nom] = parseInt(val, 10);
+      else if (nom) specs.capacites[nom] = 0;
+      continue;
+    }
+    if (/^armes/i.test(line)) {
+      currentSection = "armes";
+      const armesStr = line.replace(/^armes\s*/i, "");
+      const [nom, val] = armesStr.split(" (cd : 1d8 + ").map(s => s.trim());
+      if (nom && val) specs.armes[nom] = parseInt(val, 10);
+      else if (nom) specs.armes[nom] = 0;
+      continue;
+    }
+    if (/^sortil/i.test(line)) {
+      currentSection = "sortileges";
+      const sortStr = line.replace(/^sortil[eè]ges?\s*/i, "");
+      specs.sortileges.push(...sortStr.split(/[,;]/).map(s => s.trim()).filter(Boolean));
+      continue;
+    }
+
+    // --- Rapidité / Sprint / Charge ---
+    if (/^rapidité/i.test(line)) {
+      specs.secondaires.rapidite = parseInt(line.replace(/^rapidité\s*/i, ""), 10);
+      currentSection = null;
+      continue;
+    }
+    if (/^[-]sprint/i.test(line)) {
+      const parts = line.split(/\s+/);
+      specs.secondaires.sprintCharge = parts[parts.length - 1];
+      currentSection = null;
+      continue;
+    }
+
+    // --- Résistances éclatées sur plusieurs lignes ---
+    if (/^résistance$/i.test(line)) {
+      const next = lines[i+1]?.trim().toLowerCase();
+      const valLine = lines[i+2]?.trim();
+      if (next && valLine && /^\d+$/.test(valLine)) {
+        if (/mag/i.test(next)) specs.secondaires.resMagique = parseInt(valLine, 10);
+        else if (/ment/i.test(next)) specs.secondaires.resMentale = parseInt(valLine, 10);
+        else if (/phys/i.test(next)) specs.secondaires.resPhysique = /^\d+$/.test(valLine) ? parseInt(valLine, 10) : null;
+        i += 2;
+      }
+      currentSection = null;
+      continue;
+    }
+
+    // --- PV / RDC / PM ---
+    if (/^pv\s+/i.test(line)) {
+      const match = line.match(/pv\s+(\d+)/i);
+      if (match) specs.stats.pv = parseInt(match[1], 10);
+      const rdc = line.match(/rdc\s+(\d+)/i);
+      if (rdc) specs.stats.rdc = parseInt(rdc[1], 10);
+      const pm = line.match(/pm\s+(\d+)/i);
+      if (pm) specs.stats.pm = parseInt(pm[1], 10);
+      currentSection = null;
+      continue;
+    }
+
+    // --- Nom + Danger ---
+    // --- Nom + Danger ---
+    // Ligne nettoyée pour détecter le danger
+    const cleaned = line
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, " ")
+      .toLowerCase();
+
+    console.log("danger ??????? " + cleaned);
+
+    // Détection du danger (sur la ligne nettoyée)
+    // NOTE: on tolère "i ndice"
+    const dangerMatch = cleaned.match(/i\s*ndice de danger\s*:\s*(\d+)/);
+    if (dangerMatch) {
+      console.log("danger " + cleaned);
+      specs.danger = parseInt(dangerMatch[1], 10);
+
+      // Extraction du nom depuis la ligne ORIGINALE
+      const name = line.replace(/i\s*ndice\s+de\s+danger.*$/i, "").trim();
+      specs.name = name;
+
+      currentSection = null;
+      continue;
+    }
+
+
+
+
+        // --- Ajout dans la section en cours ---
+    if (currentSection === "traits") {
+      specs.traits.push(...line.split(/[,;]/).map(t => t.trim()).filter(Boolean));
+      continue;
+    }
+    if (currentSection === "capacites") {
+      const [nom, val] = line.split(":").map(s => s.trim());
+      if (nom && val) specs.capacites[nom] = parseInt(val, 10);
+      else if(nom) specs.capacites[nom] = 0;
+      continue;
+    }
+    if (currentSection === "armes") {
+      const [nom, val] = line.split(" (cd : 1d8 + ").map(s => s.trim());
+      if (nom && val) specs.armes[nom] = parseInt(val, 10);
+      else if (nom) specs.armes[nom] = 0;
+      continue;
+    }
+    if (currentSection === "sortileges") {
+      specs.sortileges.push(...line.split(/[,;]/).map(s => s.trim()).filter(Boolean));
+      continue;
+    }
+  }
+
+  pnj.specs = specs;
+}
+
+function parsePnjsFromText(texteComplet) {
+  if (!texteComplet) return ["empty"];
+
+  const lines = texteComplet.split(/\r?\n/); // découpe en lignes
+  const pnjs = [];
+  let buffer = [];
+  let current = null;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim().toLowerCase();
+    const cleaned = line
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, "");
+
+    // Détection du début d’un PNJ
+    if (line.startsWith("car ")) {
+      // Si on avait déjà un PNJ en cours, on le termine
+      if (current) {
+        current.raw = buffer.join("\n");
+        extractSpecsPnj(current);
+        pnjs.push(current);
+      }
+      // Nouveau PNJ
+      current = { raw: "", specs: {} };
+      buffer = [line];
+    }
+    // Détection de la fin d’un PNJ (uniquement si un PNJ est en cours)
+    else if (
+      /indicededanger:\d+/.test(cleaned)
+    ) {
+      buffer.push(line);
+      current.raw = buffer.join("\n");
+      extractSpecsPnj(current);
+      pnjs.push(current);
+      current = null;
+      buffer = [];
+    }
+    // Sinon, on accumule les lignes dans le buffer
+    else if (current) {
+      buffer.push(line);
+
+      // Sécurité : si un PNJ dépasse 100 lignes, on l'abandonne
+      if (buffer.length > 100) {
+        current = null;
+        buffer = [];
+      }
+    }
+  }
+
+  // Si un PNJ était en cours mais pas terminé
+  if (current) {
+    current.raw = buffer.join("\n");
+    extractSpecsPnj(current);
+    pnjs.push(current);
+  }
+  console.log(JSON.stringify(pnjs))
+  // Traitement final
+  return pnjs.map(pnj => formatPnjs(pnj));
+}
+
+
 /**
  * Extrait les traits entre "VI. Traits" et "VII. Capacités" et renvoie un tableau d'objets.
  * - name: première ligne du bloc (titre du trait)
@@ -70,6 +284,176 @@ function setTriangle(item)
   item.system.badversite = false;
   item.system.nadversite = 0;
   item.system.cadversite = "unchecked"
+}
+
+function formatPnjs(pnj)
+{
+  if(pnj && pnj.specs && pnj.specs.name)
+  {
+    var res = 
+    {
+      type: "character",
+      name: pnj.specs.name,
+      system: {
+        health: {
+          value: pnj.specs.stats.pv,
+          min: 0,
+          max: pnj.specs.stats.pv
+        },
+        lastchance: {
+          value: pnj.specs.stats.rdc,
+          min: 0,
+          max: pnj.specs.stats.rdc
+        },
+        power: {
+          value: pnj.specs.stats.pm,
+          min: 0,
+          max: pnj.specs.stats.pm
+        },
+        fortune: {
+          value: pnj.specs.caracs.for,
+          min: 0,
+          max: pnj.specs.caracs.for
+        },
+        description: "",
+        abilities: {
+          vig: {
+            value: pnj.specs.caracs.vig,
+          },
+          mai: {
+            value: pnj.specs.caracs.mai,
+          },
+          rob: {
+            value: pnj.specs.caracs.rob,
+          },
+          pre: {
+            value: pnj.specs.caracs.pre,
+          },
+          dis: {
+            value: pnj.specs.caracs.dis,
+          },
+          car: {
+            value: pnj.specs.caracs.car,
+          },
+        },
+      },
+      items:  [
+        {
+        name: "Rés. physique",
+        type: "capsec",
+        system: {
+          description: "",
+          capsecLevel: pnj.specs.secondaires.resPhysique
+        },
+        img: "systems/fvtt-lore-legacy/assets/checkbox-tree.png",
+      },
+      {
+        name: "Rés. mentale",
+        type: "capsec",
+        system: {
+          description: "",
+          capsecLevel: pnj.specs.secondaires.resMentale
+        },
+        img: "systems/fvtt-lore-legacy/assets/checkbox-tree.png",
+      },
+      {
+        name: "Rés. magique",
+        type: "capsec",
+        system: {
+          description: "",
+          capsecLevel: pnj.specs.secondaires.resMagique
+        },
+        img: "systems/fvtt-lore-legacy/assets/checkbox-tree.png",
+      },
+      {
+        name: "Rapidité",
+        type: "capsec",
+        system: {
+          description: "",
+          capsecLevel: pnj.specs.secondaires.rapidite
+        },
+        img: "systems/fvtt-lore-legacy/assets/checkbox-tree.png",
+      },
+            {
+        name: "Seuil blessure",
+        type: "capsec",
+        system: {
+          description: "",
+          capsecLevel: pnj.specs.secondaires.resPhysique
+        },
+        img: "systems/fvtt-lore-legacy/assets/checkbox-tree.png",
+      },
+      {
+        name: "Poids",
+        type: "capsec",
+        system: {
+          description: "",
+          capsecLevel: pnj.specs.secondaires.resPhysique
+        },
+        img: "systems/fvtt-lore-legacy/assets/checkbox-tree.png",
+      },
+      {
+        name: "Bagage",
+        type: "capsec",
+        system: {
+          description: "",
+          capsecLevel: pnj.specs.secondaires.resPhysique
+        },
+        img: "systems/fvtt-lore-legacy/assets/checkbox-tree.png",
+      },
+      ],
+      folder: null,
+      flags: {},
+      permission: { default: 2 }
+    };
+    pnj.specs.traits.forEach(trait => {
+      res.items.push(      {
+        name: trait,
+        type: "trait",
+        system: {
+          description: "",
+        },
+        img: "icons/svg/aura.svg",
+      })
+    });
+    Object.entries(pnj.specs.armes).forEach(([nom, val])=> {
+      res.items.push(      {
+        name: nom,
+        type: "spell",
+        system: {
+          spellLevel: val,
+          description: "",
+        },
+        img: "systems/fvtt-lore-legacy/assets/sword-brandish.png",
+      })
+    });
+
+    pnj.specs.sortileges.forEach(sortilege => {
+      res.items.push(      {
+        name: sortilege,
+        type: "spell",
+        system: {
+          description: "",
+        },
+        img: "systems/fvtt-lore-legacy/assets/sword-brandish.png",
+      })
+    });
+    Object.entries(pnj.specs.capacites).forEach(([nom, val])=> {
+      res.items.push(      {
+        name: nom,
+        type: "skill",
+        system: {
+          skillLevel: val,
+          description: "",
+        },
+        img: "systems/fvtt-lore-legacy/assets/skills.png",
+      })
+    });
+    console.log(JSON.stringify(pnj) + " \n >> \n"+ JSON.stringify(res));
+    return res;
+  }
+  else 
+    return null;
 }
 
 function formatCapacite(capacite)
@@ -219,7 +603,10 @@ async function parseCapaciteFromText(texteComplet) {
 async function parseSortsFromText(texteComplet) {
 
   const input = extractSection(texteComplet, /VIII\.\s*Magie\n/, /\nSpiritisme\n/i);
-  if (!input) console.log("Section sort vide");
+  if (!input) {
+    console.log("Section sort vide");
+    return
+  }
 
   const lines = input
   .split(/\r?\n/)
@@ -282,8 +669,10 @@ XI. Montures & Véhicules
 async function parseArmesFromText(texteComplet) {
 
   const input = extractSection(texteComplet, /\nArmes\n/, /\nArmures\n/i);
-  if (!input) console.log("Section arme vide");
-
+  if (!input) {
+    console.log("Section arme vide");
+    return;
+  }
 
   const lines = input
   .split(/\r?\n/)
@@ -395,7 +784,10 @@ async function parseArmesFromText(texteComplet) {
 async function parseArmuresFromText(texteComplet) {
 
   const input = extractSection(texteComplet, /\nArmures\n/, /\nArcanotech\n/i);
-  if (!input) console.log("Section armure vide");
+  if (!input){ 
+    console.log("Section armure vide");
+    return;
+  }
 
   const lines = input
   .split(/\r?\n/)
@@ -1000,7 +1392,7 @@ function getFifthLine(text) {
     return lines.length >= 5 ? lines[4] : null;
   }
 
-async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
+async function prepareCompendium(packName, label, folderName, type = "Item") {
   // Vérifie si le dossier existe déjà
   console.log("CREATION DE COMPENDIUM : " + packName +" label : " + label + " folderName : " + folderName)
   let folder = game.folders.find(f => f.name === folderName && f.type === "Compendium");
@@ -1021,7 +1413,7 @@ async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
       label: label,
       name: packName,
       package: "world", // ou "lorelegacy"
-      type: "Item"
+      type: type
     });
 
     // Récupère le compendium fraîchement créé
@@ -1035,6 +1427,8 @@ async function prepareCompendium(packName, label, folderName = "L&L - Divers") {
 
 async function fillCompendium(pack, item) {
   // Vérifie si un document avec le même nom existe déjà
+  if(!item || !item.name)
+    return;
   const existing = pack.index.find(e => e.name === item.name);
   if (existing) {
     const existingDoc = await pack.getDocument(existing._id);
@@ -1048,19 +1442,29 @@ async function fillCompendium(pack, item) {
 
 async function createCompendiumTraits(text)
 {
-    var pack = await prepareCompendium("traits", "Traits");
+    var pack = await prepareCompendium("traits", "Traits", "L&L - Divers");
     const traits = parseTraitsFromText(text);
     traits.forEach(trait => fillCompendium(pack, trait));
 }
 
 async function createCompendiumSkills(text)
 {
+    var pack = game.packs.get(`world.${"traits"}`);
+    if (pack)
+      return;
     await parseCapaciteFromText(text);
 }
 
 async function createCompendiumSpells(text)
 {
     await parseSortsFromText(text);
+}
+
+async function createCompendiumPnjs(text)
+{
+    var pack = await prepareCompendium("pnjs", "Pnjs", "L&L - Divers", "Actor");
+    const pnjs = parsePnjsFromText(text);
+    pnjs.forEach(pnj => fillCompendium(pack, pnj));
 }
 
 async function createCompendiumArmes(text)
@@ -1098,8 +1502,8 @@ async function createJounalFolder()
       permission: { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE }
     });
   }
-
 }
+
 export async function prepareCompendiumWithPDF(text) {
     await createJounalFolder();
     await createCompendiumTraits(text);
@@ -1107,4 +1511,6 @@ export async function prepareCompendiumWithPDF(text) {
     await createCompendiumSpells(text);
     await createCompendiumArmes(text);
     await createCompendiumArmures(text);
+    await createCompendiumPnjs(text);
+
 }

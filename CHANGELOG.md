@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2.4.0
+
+- Glisser une arme dans la barre de raccourcis crée une macro de lancer de dés de dégats
+- Récupères les PNJs et crée un nouveau compendium lors du parsing du pdf 
+
 ## 2.3.0
 
 - La création de compendium à partir des règles en pdf crée maintenant une page de journal contenant un tableau des armes et des armures avec leur prix. Ce tableau n'est accessible qu'au MJ. Les coùts ne sont plus affiché dans la description de l'item accessible aux joueurs. 
