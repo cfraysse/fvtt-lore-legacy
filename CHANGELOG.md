@@ -2,6 +2,10 @@
 
 ## 2.4.3
 
+- Fix errors
+
+## 2.4.3
+
 - Calcul automatique des bagages
 - Meilleur gestion des cap secondaires
 

@@ -141,7 +141,6 @@ export class LoreLegacyActorSheet extends ActorSheet {
       }
     }
 
-    capsecs = this._ensureCapsecs(capsecs);
     // Assign and return
     context.gear = gear;
     context.features = features;
@@ -151,7 +150,69 @@ export class LoreLegacyActorSheet extends ActorSheet {
     context.capsecs = capsecs;
   }
 
-  /* -------------------------------------------- */
+async _fixCapsecsSafe() {
+    const actor = this.actor;
+
+    const EXPECTED = [
+      game.i18n.localize('LORE_LEGACY.CapSec.ResPhys'),
+      game.i18n.localize('LORE_LEGACY.CapSec.ResMent'),
+      game.i18n.localize('LORE_LEGACY.CapSec.ResMag'),
+      game.i18n.localize('LORE_LEGACY.CapSec.SeuilBlessure'),
+      game.i18n.localize('LORE_LEGACY.CapSec.Poids'),
+      game.i18n.localize('LORE_LEGACY.CapSec.Rapidite')
+    ];
+
+    const capsecs = actor.items.filter(i => i.type === "capsec");
+
+    const grouped = {};
+    for (const cap of capsecs) {
+      if (!grouped[cap.name]) grouped[cap.name] = [];
+      grouped[cap.name].push(cap);
+    }
+
+    const toDelete = [];
+    const toCreate = [];
+
+    // Doublons → garder la première, marquer les autres
+    for (const name in grouped) {
+      const list = grouped[name];
+      for (let i = 1; i < list.length; i++) {
+        toDelete.push(list[i].id);
+      }
+    }
+
+    // Manquantes
+    for (const expectedName of EXPECTED) {
+      const found = capsecs.find(c => c.name === expectedName);
+      if (!found) {
+        toCreate.push(expectedName);
+      }
+    }
+
+    // Ne supprimer que les IDs encore existants
+    const existingToDelete = toDelete.filter(id => actor.items.get(id));
+
+    if (existingToDelete.length > 0) {
+      await actor.deleteEmbeddedDocuments("Item", existingToDelete);
+    }
+
+    for (const name of toCreate) {
+      await actor.createEmbeddedDocuments("Item", [{
+        name,
+        type: "capsec",
+        img: "systems/fvtt-lore-legacy/assets/checkbox-tree.png",
+        system: { capsecLevel: 0 }
+      }]);
+    }
+
+    // On relâche le verrou
+    this._fixingCapsecs = false;
+
+    if (existingToDelete.length > 0 || toCreate.length > 0) {
+      this.render(false);
+    }
+  }
+
 
   /** @override */
   activateListeners(html) {
@@ -208,11 +269,16 @@ export class LoreLegacyActorSheet extends ActorSheet {
         li.addEventListener('dragstart', handler, false);
       });
     }
+
+    if (this._fixingCapsecs) return;
+    this._fixingCapsecs = true;
+
+    setTimeout(() => this._fixCapsecsSafe(), 10);
   }
 
   /**
    * @private
-   */
+  */
   _ensureCapsecs(existingCapsecs) {
 
     const EXPECTED = [
@@ -224,49 +290,42 @@ export class LoreLegacyActorSheet extends ActorSheet {
       game.i18n.localize('LORE_LEGACY.CapSec.Rapidite')
     ];
 
-    // --- 1) Détection des doublons ---
     const grouped = {};
     for (const cap of existingCapsecs) {
       if (!grouped[cap.name]) grouped[cap.name] = [];
       grouped[cap.name].push(cap);
     }
 
-    // Supprimer les doublons (garder la première)
-    for (const name in grouped) {
-      const list = grouped[name];
-      if (list.length > 1) {
-        // garder la première
-        const keep = list[0];
-
-        // supprimer les autres via l'acteur
-        for (let i = 1; i < list.length; i++) {
-          const id = list[i]._id;
-          const item = this.actor.items.get(id);
-          if (item) item.delete();
-        }
-
-        grouped[name] = [keep];
-      }
-    }
-
-    // Liste nettoyée
-    const cleaned = Object.values(grouped).map(arr => arr[0]);
-
-    // --- 2) Vérifier les capsecs attendues ---
+    const toDelete = [];
+    const toCreate = [];
     const finalList = [];
 
-    for (const expectedName of EXPECTED) {
-      const found = cleaned.find(c => c.name === expectedName);
-      if (found) {
-        finalList.push(found);
-      } else {
-        // Manquante → création (sans await)
-        this._createCapsec(expectedName);
+    // Doublons
+    for (const name in grouped) {
+      const list = grouped[name];
+      finalList.push(list[0]); // garder la première
+      for (let i = 1; i < list.length; i++) {
+        toDelete.push(list[i]._id);
       }
     }
 
-    return finalList;
+    // Manquantes
+    for (const expectedName of EXPECTED) {
+      const found = finalList.find(c => c.name === expectedName);
+      if (!found) {
+        toCreate.push(expectedName);
+      }
+    }
+
+    // FinalList doit être dans l'ordre EXPECTED
+    const orderedFinalList = EXPECTED.map(name =>
+      finalList.find(c => c.name === name)
+    ).filter(c => c);
+
+    return { finalList: orderedFinalList, toDelete, toCreate };
   }
+
+
 
   /**
    * @private
