@@ -297,10 +297,12 @@
   }
 
   .resource-content {
-    display: flex !important;
-    flex-direction: column !important;
     align-items: center;
     gap: 2px;
+    span {
+      font-size: 0.7em;
+      margin: -1px 0;
+    }
   }
 
   input[type="text"] {
@@ -321,8 +323,8 @@
   }
 
   span {
-    font-weight: bold;
-    line-height: 1em;
+    font-size: 0.7em;
+    margin: -1px 0;
   }
 }
 

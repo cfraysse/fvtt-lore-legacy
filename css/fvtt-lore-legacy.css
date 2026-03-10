@@ -460,10 +460,12 @@
   text-align: center;
 }
 .fvtt-lore-legacy .jauges .resource-content {
-  display: flex !important;
-  flex-direction: column !important;
   align-items: center;
   gap: 2px;
+}
+.fvtt-lore-legacy .jauges .resource-content span {
+  font-size: 0.7em;
+  margin: -1px 0;
 }
 .fvtt-lore-legacy .jauges input[type=text] {
   width: 3ch;
@@ -481,8 +483,8 @@
   background: rgba(251, 255, 0, 0.1);
 }
 .fvtt-lore-legacy .jauges span {
-  font-weight: bold;
-  line-height: 1em;
+  font-size: 0.7em;
+  margin: -1px 0;
 }
 .fvtt-lore-legacy .capacitesecond .resource-label {
   font-size: 12px;
