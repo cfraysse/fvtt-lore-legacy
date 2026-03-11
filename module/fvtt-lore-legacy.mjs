@@ -124,6 +124,24 @@ Hooks.once('ready', function () {
   });
 });
 
+Hooks.on("preCreateItem", async (item, data, options, userId) => {
+  const llFlags = data.flags?.["fvtt-lore-legacy"] || {};
+  const fromActor = llFlags.fromActor;
+  const fromItem  = llFlags.fromItem;
+
+  console.log("PRECREATE ITEM +", fromItem, fromActor);
+
+  if (fromActor && fromItem) {
+    const sourceActor = game.actors.get(fromActor);
+    const sourceItem  = sourceActor?.items.get(fromItem);
+
+    if (sourceItem) {
+      await sourceItem.delete();
+    }
+  }
+});
+
+
 /* -------------------------------------------- */
 /*  Hotbar Macros                               */
 /* -------------------------------------------- */

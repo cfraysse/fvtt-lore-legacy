@@ -26,6 +26,42 @@ export class LoreLegacyActorSheet extends ActorSheet {
     });
   }
 
+  async _onDrop(event) {
+    event.preventDefault();
+
+    const data = TextEditor.getDragEventData(event);
+
+    // On ne traite que les items
+    if (data.type !== "Item") {
+      return super._onDrop(event);
+    }
+
+    // Récupérer l’item source (celui qu’on glisse)
+    const sourceItem = await Item.implementation.fromDropData(data);
+    if (!sourceItem) return;
+
+    const fromActor = sourceItem.parent?.id ?? null;
+    const fromItem  = sourceItem.id ?? null;
+
+    console.log("onDrop", fromItem, fromActor);
+
+    // On part des vraies données de l'item source
+    const itemData = sourceItem.toObject();
+
+    // On enlève l'id pour que Foundry crée un nouvel item
+    delete itemData._id;
+
+    // On ajoute nos infos dans les flags
+    itemData.flags = itemData.flags || {};
+    itemData.flags["fvtt-lore-legacy"] = {
+      fromActor,
+      fromItem
+    };  
+
+    // Création standard dans l'acteur cible
+    return this.actor.createEmbeddedDocuments("Item", [itemData]);
+  }
+
   /** @override */
   get template() {
     return `systems/fvtt-lore-legacy/templates/actor/actor-${this.actor.type}-sheet.hbs`;
@@ -276,89 +312,6 @@ async _fixCapsecsSafe() {
     setTimeout(() => this._fixCapsecsSafe(), 10);
   }
 
-  /**
-   * @private
-  */
-  _ensureCapsecs(existingCapsecs) {
-
-    const EXPECTED = [
-      game.i18n.localize('LORE_LEGACY.CapSec.ResPhys'),
-      game.i18n.localize('LORE_LEGACY.CapSec.ResMent'),
-      game.i18n.localize('LORE_LEGACY.CapSec.ResMag'),
-      game.i18n.localize('LORE_LEGACY.CapSec.SeuilBlessure'),
-      game.i18n.localize('LORE_LEGACY.CapSec.Poids'),
-      game.i18n.localize('LORE_LEGACY.CapSec.Rapidite')
-    ];
-
-    const grouped = {};
-    for (const cap of existingCapsecs) {
-      if (!grouped[cap.name]) grouped[cap.name] = [];
-      grouped[cap.name].push(cap);
-    }
-
-    const toDelete = [];
-    const toCreate = [];
-    const finalList = [];
-
-    // Doublons
-    for (const name in grouped) {
-      const list = grouped[name];
-      finalList.push(list[0]); // garder la première
-      for (let i = 1; i < list.length; i++) {
-        toDelete.push(list[i]._id);
-      }
-    }
-
-    // Manquantes
-    for (const expectedName of EXPECTED) {
-      const found = finalList.find(c => c.name === expectedName);
-      if (!found) {
-        toCreate.push(expectedName);
-      }
-    }
-
-    // FinalList doit être dans l'ordre EXPECTED
-    const orderedFinalList = EXPECTED.map(name =>
-      finalList.find(c => c.name === name)
-    ).filter(c => c);
-
-    return { finalList: orderedFinalList, toDelete, toCreate };
-  }
-
-
-
-  /**
-   * @private
-   */
-  _createCapsecs() {
-    const capsecs = [];
-    capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.ResPhys')));
-    capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.ResMent')));
-    capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.ResMag')));
-    capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.SeuilBlessure')));
-    capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.Poids')));
-    capsecs.push(this._createCapsec(game.i18n.localize('LORE_LEGACY.CapSec.Rapidite')));
-    return capsecs;
-  }
-
-  /**
-   * @private
-   */
-  _createCapsec(name) {
-    // Prepare the item object.
-    const itemData = {
-      name: name,
-      type: "capsec",
-      system: {"capsecLevel": 0},
-      img: "systems/fvtt-lore-legacy/assets/checkbox-tree.png",
-    };
-
-    // Remove the type from the dataset since it's in the itemData.type prop.
-    delete itemData.system['type'];
-
-    // Finally, create the item!
-    return Item.create(itemData, { parent: this.actor });
-  }
 
 
 
