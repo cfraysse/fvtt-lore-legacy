@@ -1,6 +1,10 @@
 # CHANGELOG
 
-## 2.4.3
+## 2.4.5
+
+- MOve items between actors instead of copy
+
+## 2.4.4
 
 - Fix errors
 
