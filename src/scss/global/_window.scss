@@ -1,12 +1,35 @@
 .window-app {
   font-family: $font-primary;
+  background: $c-dark;
+  color: $c-white;
+  border: 1px solid $c-faint;
+  box-shadow: 0 0 12px rgba(0,0,0,0.7);
 }
 
 .rollable {
+  transition: 0.2s ease;
+
   &:hover,
   &:focus {
-    color: #000;
-  text-shadow: 0 0 12px rgba(245, 228, 0, 0.5);
+    color: $c-beige;
+    text-shadow: 0 0 8px rgba(212,180,106,0.4);
     cursor: pointer;
   }
+}
+
+
+/* Force un fond sombre sur toutes les fenêtres Foundry */
+.window-app,
+.window-app .window-content,
+.app,
+.app .window-content {
+  background: $c-dark !important;
+  color: $c-white !important;
+  box-shadow: none !important;
+}
+
+/* Supprime le fond jaune/ombré par défaut */
+.window-content {
+  background-image: none !important;
+  background-color: $c-dark !important;
 }

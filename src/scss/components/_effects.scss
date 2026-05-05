@@ -1,11 +1,15 @@
 .effects .item {
+  background: $c-dark-alt;
+  border-bottom: 1px solid $c-faint;
+
   .effect-source,
   .effect-duration,
   .effect-controls {
     text-align: center;
-    border-left: 1px solid #c9c7b8;
-    border-right: 1px solid #c9c7b8;
+    border-left: 1px solid $c-faint;
+    border-right: 1px solid $c-faint;
     font-size: 12px;
+    color: $c-tan;
   }
 
   .effect-controls {

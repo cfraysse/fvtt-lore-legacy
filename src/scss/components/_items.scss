@@ -1,131 +1,69 @@
-// Section Header
 .items-header {
   height: 28px;
   margin: 2px 0;
-  padding: 0;
+  padding: 0 6px;
   align-items: center;
-  background: rgba(0, 0, 0, 0.05);
-  border: $border-groove;
+  background: $c-dark-alt;
+  border: 1px solid $c-faint;
   font-weight: bold;
+  color: $c-beige;
+
   > * {
     font-size: 14px;
     text-align: center;
   }
+
   .item-name {
-    font-weight: bold;
     padding-left: 5px;
     text-align: left;
-    display: flex;
-    // font-size: 16px;
   }
 }
-
-// -----------------------------------------
-// Items Lists
-// -----------------------------------------
 
 .items-list {
   list-style: none;
   margin: 0;
   padding: 0;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  color: $c-tan;
+  color: $c-white;
 
-  // Child lists
-  .item-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  // Item Name
-  .item-name {
-    flex: 2;
-    margin: 0;
-    overflow: hidden;
-    font-size: 13px;
-    text-align: left;
-    align-items: center;
-    display: flex;
-    h3, h4 {
-      margin: 0;
-      white-space: nowrap;
-      overflow-x: hidden;
-    }
-  }
-
-  // Control Buttons
-  .item-controls {
-    display: flex;
-    flex: 0 0 100px;
-    justify-content: flex-end;
-    a {
-      font-size: 12px;
-      text-align: center;
-      margin: 0 6px;
-    }
-  }
-
-  .capsecedit {
-    display: flex;
-    justify-content: flex-end;
-    a {
-      font-size: 12px;
-      text-align: center;
-      margin: 0 6px;
-    }
-  }
-
-  // Individual Item
   .item {
     align-items: center;
-    padding: 0 2px; // to align with the header border
+    padding: 4px 6px;
     border-bottom: 1px solid $c-faint;
-    &:last-child { border-bottom: none; }
+    background: $c-dark-soft;
+    transition: 0.15s ease;
+
+    &:hover {
+      background: $c-dark-alt;
+      box-shadow: inset 0 0 6px rgba(212,180,106,0.2);
+    }
+
     .item-name {
-      color: $c-dark;
-      .item-image {
-        flex: 0 0 30px;
-        height: 30px;
-        background-size: 30px;
-        border: none;
-        margin-right: 5px;
+      flex: 2;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      .item-image img {
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        border: 1px solid $c-faint;
+        object-fit: cover;
+      }
+
+      h4 {
+        margin: 0;
+        color: $c-white;
       }
     }
   }
 
-  .item-prop {
-    text-align: center;
-    border-left: 1px solid #c9c7b8;
-    border-right: 1px solid #c9c7b8;
+  .item-controls a {
     font-size: 12px;
-  }
+    color: $c-beige;
 
-  // Section Header
-  .items-header {
-    height: 28px;
-    margin: 2px 0;
-    padding: 0;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.05);
-    border: $border-groove;
-    font-weight: bold;
-    > * {
-      font-size: 12px;
-      text-align: center;
-    }
-    .item-name {
-      padding-left: 5px;
-      text-align: left;
-      // font-size: 16px;
+    &:hover {
+      color: $c-white;
     }
   }
-}
-
-// Example style for LoreLegacy (can be removed if not needed).
-.item-formula {
-  
-  flex: 0 0 200px;
-  padding: 0 8px;
 }
