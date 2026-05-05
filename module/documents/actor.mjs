@@ -9,10 +9,7 @@ export class LoreLegacyActor extends Actor {
   }
 
   /** @override */
-  prepareBaseData() {
-    // Data modifications in this step occur before processing embedded
-    // documents or derived data.
-  }
+  prepareBaseData() {}
 
   /**
    * @override
@@ -21,13 +18,14 @@ export class LoreLegacyActor extends Actor {
   prepareDerivedData() {
     const actorData = this;
     const systemData = actorData.system;
-    const flags = actorData.flags.fvttlorelegacy || {};
 
     // Données spécifiques au type
     this._prepareCharacterData(actorData);
     this._prepareNpcData(actorData);
 
-    // 🔢 Calcul automatique du bagage (poids total de l'inventaire)
+    // ---------------------------------------------------------------------
+    // 🔢 CALCUL AUTOMATIQUE DU BAGAGE
+    // ---------------------------------------------------------------------
     if (systemData?.bagage) {
       let totalWeight = 0;
 
@@ -42,6 +40,70 @@ export class LoreLegacyActor extends Actor {
       }
 
       systemData.bagage.value = totalWeight;
+    }
+
+    // ---------------------------------------------------------------------
+    // 🔥 CALCUL AUTOMATIQUE DES CAPACITÉS SECONDAIRES
+    // ---------------------------------------------------------------------
+
+    const capsecs = this.items.filter(i => i.type === "capsec");
+
+    // Raccourci pour récupérer une valeur d’attribut
+    const A = (attr) => Number(this.system.abilities?.[attr]?.value ?? 0);
+
+    // Récupérer une capsec par son nom localisé
+    const getCap = (label) =>
+      capsecs.find(c => c.name === game.i18n.localize(label));
+
+    // Récupérer la compétence Endurance (si elle existe)
+    const endurance = this.items.find(i => i.type === "skill" && i.name === "Endurance");
+    const ENDURANCE_VALUE = endurance ? Number(endurance.system?.skillLevel ?? 0) : 0;
+
+    // Formules des capsecs (sans Poids, sans RDC)
+    const FORMULAS = {
+      "LORE_LEGACY.CapSec.ResPhys": () => A("rob") * 3,
+      "LORE_LEGACY.CapSec.ResMag": () => (A("dis") + A("mai")) * 2,
+      "LORE_LEGACY.CapSec.ResMent": () => (A("car") + A("pre")) * 2,
+      "LORE_LEGACY.CapSec.SeuilBlessure": () => A("rob") * 2 + ENDURANCE_VALUE,
+      "LORE_LEGACY.CapSec.Rapidite": () => A("mai") + A("vig")
+      // Poids = laissé au joueur → pas de formule
+    };
+
+    // Application des formules
+    for (const key in FORMULAS) {
+      const cap = getCap(key);
+      if (cap) {
+        const newValue = FORMULAS[key]();
+        if (cap.system.capsecLevel !== newValue) {
+          cap.update({ "system.capsecLevel": newValue });
+        }
+      }
+    }
+
+    // ---------------------------------------------------------------------
+    // 🔥 CALCUL AUTOMATIQUE DES VALEURS MAX : PV, PM, RDC
+    // ---------------------------------------------------------------------
+
+    if (systemData.health) {
+      systemData.health.max = (A("rob") + A("vig")) * 2;
+      if (systemData.health.value > systemData.health.max) {
+        systemData.health.value = systemData.health.max;
+      }
+    }
+
+    if (systemData.power) {
+      systemData.power.max = (A("car") + A("dis"));
+      if (systemData.power.value > systemData.power.max) {
+        systemData.power.value = systemData.power.max;
+      }
+    }
+
+    if (systemData.lastchance) {
+      const FORTUNE = Number(systemData.fortune?.value ?? 0);
+      systemData.lastchance.max = FORTUNE + A("vig");
+      if (systemData.lastchance.value > systemData.lastchance.max) {
+        systemData.lastchance.value = systemData.lastchance.max;
+      }
     }
   }
 
@@ -71,7 +133,6 @@ export class LoreLegacyActor extends Actor {
       systemData.attributes.cadversite = "unchecked";
     }
 
-    // Loop through ability scores, and add their modifiers to our sheet output.
     for (let [key, ability] of Object.entries(systemData.abilities)) {
       ability.mod = ability.value;
 
@@ -80,12 +141,7 @@ export class LoreLegacyActor extends Actor {
         ability.cfortune = "checked";
       }
       else {
-        if (systemData.attributes.bfortune == true) {
-          ability.nfortune = 1;
-        }
-        else {
-          ability.nfortune = 0;
-        }
+        ability.nfortune = systemData.attributes.bfortune ? 1 : 0;
         ability.cfortune = "unchecked";
       }
 
@@ -94,12 +150,7 @@ export class LoreLegacyActor extends Actor {
         ability.cadversite = "checked";
       }
       else {
-        if (systemData.attributes.badversite == true) {
-          ability.nadversite = 1;
-        }
-        else {
-          ability.nadversite = 0;
-        }
+        ability.nadversite = systemData.attributes.badversite ? 1 : 0;
         ability.cadversite = "unchecked";
       }
     }
@@ -127,9 +178,6 @@ export class LoreLegacyActor extends Actor {
     return data;
   }
 
-  /**
-   * Prepare character roll data.
-   */
   _getCharacterRollData(data) {
     if (this.type !== 'character') return;
 
@@ -162,9 +210,6 @@ export class LoreLegacyActor extends Actor {
     }
   }
 
-  /**
-   * Prepare NPC roll data.
-   */
   _getNpcRollData(data) {
     if (this.type !== 'npc') return;
   }
