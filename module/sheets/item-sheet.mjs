@@ -1,95 +1,119 @@
 import {
   onManageActiveEffect,
   prepareActiveEffectCategories,
-} from '../helpers/effects.mjs';
+} from "../helpers/effects.mjs";
 
-const ItemSheet = foundry.appv1.sheets.ItemSheet;
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
- * Extend the basic ItemSheet with some very simple modifications
- * @extends {ItemSheet}
+ * ItemSheet V2 – Compatible Foundry VTT 14.0
  */
-export class LoreLegacyItemSheet extends ItemSheet {
-  /** @override */
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['fvtt-lore-legacy', 'sheet', 'item'],
+export class LoreLegacyItemSheet extends HandlebarsApplicationMixin(ApplicationV2) {
+
+  /* -------------------------------------------- */
+  /*  DEFAULT OPTIONS                             */
+  /* -------------------------------------------- */
+  static DEFAULT_OPTIONS = {
+    id: "lorelegacy-item-sheet",
+    tag: "form",
+    classes: ["fvtt-lore-legacy", "sheet", "item"],
+
+    form: {
+      handler: "formHandler",
+      closeOnSubmit: true
+    },
+
+    position: {
       width: 520,
-      height: 480,
-      tabs: [
-        {
-          navSelector: '.sheet-tabs',
-          contentSelector: '.sheet-body',
-          initial: 'description',
-        },
-      ],
-    });
-  }
+      height: 480
+    },
 
-  /** @override */
-  get template() {
-    const path = 'systems/fvtt-lore-legacy/templates/item';
-    // Return a single sheet for all item types.
-    // return `${path}/item-sheet.hbs`;
+    window: {
+      title: "LORE_LEGACY.ItemSheet",
+      icon: "fas fa-scroll",
+      contentClasses: ["standard-form"]
+    },
 
-    // Alternatively, you could use the following return statement to do a
-    // unique item sheet by type, like `weapon-sheet.hbs`.
-    return `${path}/item-${this.item.type}-sheet.hbs`;
+    actions: {
+      "effect-control": LoreLegacyItemSheet._onEffectControl
+    }
+  };
+
+  /* -------------------------------------------- */
+  /*  PARTS                                       */
+  /* -------------------------------------------- */
+  static PARTS = {
+    main: {
+      template: (sheet) =>
+        `systems/fvtt-lore-legacy/templates/item/item-${sheet.document.type}-sheet.hbs`
+    },
+    footer: {
+      template: "templates/generic/form-footer.hbs"
+    }
+  };
+
+  /* -------------------------------------------- */
+  /*  DOCUMENT ACCESSOR                           */
+  /* -------------------------------------------- */
+  get document() {
+    return this.object;
   }
 
   /* -------------------------------------------- */
-
-  /** @override */
-  async getData() {
-    // Retrieve base data structure.
-    const context = super.getData();
-
-    // Use a safe clone of the item data for further operations.
+  /*  CONTEXT                                     */
+  /* -------------------------------------------- */
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
     const itemData = this.document.toObject(false);
 
-    // Enrich description info for display
-    // Enrichment turns text like `[[/r 1d20]]` into buttons
-    context.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(
-      this.item.system.description,
-      {
-        // Whether to show secret blocks in the finished html
-        secrets: this.document.isOwner,
-        // Necessary in v11, can be removed in v12
-        async: true,
-        // Data to fill in for inline rolls
-        rollData: this.item.getRollData(),
-        // Relative UUID resolution
-        relativeTo: this.item,
-      }
-    );
+    const enrichedDescription =
+      await foundry.applications.ux.TextEditor.implementation.enrichHTML(
+        this.document.system.description,
+        {
+          secrets: this.document.isOwner,
+          async: true,
+          rollData: this.document.getRollData(),
+          relativeTo: this.document
+        }
+      );
 
-    // Add the item's data to context.data for easier access, as well as flags.
-    context.system = itemData.system;
-    context.flags = itemData.flags;
-
-    // Adding a pointer to CONFIG.LORE_LEGACY
-    context.config = CONFIG.LORE_LEGACY;
-
-    // Prepare active effects for easier access
-    context.effects = prepareActiveEffectCategories(this.item.effects);
-
-    return context;
+    return {
+      ...context,
+      system: itemData.system,
+      flags: itemData.flags,
+      enrichedDescription,
+      config: CONFIG.LORE_LEGACY,
+      effects: prepareActiveEffectCategories(this.document.effects),
+      buttons: [
+        { type: "submit", icon: "fa-solid fa-save", label: "SETTINGS.Save" }
+      ]
+    };
   }
 
   /* -------------------------------------------- */
+  /*  RENDER LISTENERS                            */
+  /* -------------------------------------------- */
+  _onRender(context, options) {
+    for (const el of this.element.querySelectorAll(".effect-control")) {
+      el.addEventListener("click", (ev) =>
+        LoreLegacyItemSheet._onEffectControl.call(this, ev)
+      );
+    }
+  }
 
-  /** @override */
-  activateListeners(html) {
-    super.activateListeners(html);
+  /* -------------------------------------------- */
+  /*  ACTIONS                                     */
+  /* -------------------------------------------- */
+  static _onEffectControl(event) {
+    event.preventDefault();
+    onManageActiveEffect(event, this.document);
+  }
 
-    // Everything below here is only needed if the sheet is editable
-    if (!this.isEditable) return;
-
-    // Roll handlers, click handlers, etc. would go here.
-
-    // Active Effect management
-    html.on('click', '.effect-control', (ev) =>
-      onManageActiveEffect(ev, this.item)
-    );
+  /* -------------------------------------------- */
+  /*  SUBMIT HANDLER                              */
+  /* -------------------------------------------- */
+  async formHandler(event, form, formData) {
+    const expanded = foundry.utils.expandObject(formData.object);
+    await this.document.update(expanded);
   }
 }

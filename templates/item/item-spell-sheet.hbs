@@ -1,62 +1,79 @@
-<form class="{{cssClass}}" autocomplete="off">
+<form class="fvtt-lore-legacy sheet item" autocomplete="off">
   <header class="sheet-header">
-    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+    <img class="profile-img"
+         src="{{document.img}}"
+         data-edit="img"
+         title="{{document.name}}" />
+
     <div class="header-fields">
-        <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
+      <h1 class="charname">
+        <input name="name"
+               type="text"
+               value="{{document.name}}"
+               placeholder="Name" />
+      </h1>
+
       <div class="resources grid grid-3col">
-        <div class=" resource flex-group-center">
-          <label for="system.spellLevel" class="resource-label">{{localize 'LORE_LEGACY.Item.Spell.bonus'}}</label>
+        <div class="resource flex-group-center">
+          <label for="system.spellLevel" class="resource-label">
+            {{localize "LORE_LEGACY.Item.Spell.bonus"}}
+          </label>
           <h2 class="charname flexrow flex-center flex-between">
-            <input
-                    type='text'
-                    name='system.spellLevel'
-                    value='{{system.spellLevel}}'
-                    data-dtype='Number'
-                    placeholder="Niveau" 
-            />
+            <input type="text"
+                   name="system.spellLevel"
+                   value="{{system.spellLevel}}"
+                   data-dtype="Number"
+                   placeholder="Niveau" />
           </h2>
         </div>
+
         <div class="triangle-group resource flex-group-center">
           <div class="adversitebigtriangle flexcol">
-            <input type="checkbox" id='system.badversite'
-              name="system.badversite" {{system.cadversite}}>
+            <input type="checkbox"
+                   id="system.badversite"
+                   name="system.badversite"
+                   {{system.cadversite}} />
             <label for="system.badversite"></label>
-            </input>
           </div>
+
           <div class="fortunebigtriangle flexcol">
-            <input type="checkbox" id='system.bfortune' name="system.bfortune"
-              {{system.cfortune}}>
+            <input type="checkbox"
+                   id="system.bfortune"
+                   name="system.bfortune"
+                   {{system.cfortune}} />
             <label for="system.bfortune"></label>
-            </input>
           </div>
         </div>
-        <div class='resource flex-group-center'>
-          <label class='resource-label'>{{localize 'LORE_LEGACY.Item.Spell.enc'}}</label>
-          <input
-            type='text'
-            name='system.weight'
-            value='{{system.weight}}'
-            data-dtype='Number'
-          />
+
+        <div class="resource flex-group-center">
+          <label class="resource-label">
+            {{localize "LORE_LEGACY.Item.Spell.enc"}}
+          </label>
+          <input type="text"
+                 name="system.weight"
+                 value="{{system.weight}}"
+                 data-dtype="Number" />
         </div>
       </div>
     </div>
   </header>
 
-  {{!-- Sheet Tab Navigation --}}
+  {{!-- Navigation des onglets --}}
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="description">{{localize 'DOCUMENT.Description'}}</a>
+    <a class="item" data-tab="description">
+      {{localize "DOCUMENT.Description"}}
+    </a>
   </nav>
 
-  {{!-- Sheet Body --}}
+  {{!-- Corps de la fiche --}}
   <section class="sheet-body">
-
-    {{!-- Description Tab --}}
     <div class="tab" data-group="primary" data-tab="description">
-      {{!-- Editors must receive enriched text data from getData to properly handle rolls --}}
-      {{editor enrichedDescription target="system.description" engine="prosemirror" button=true editable=editable}}
+      {{!-- Editor reçoit du HTML enrichi --}}
+      {{editor enrichedDescription
+               target="system.description"
+               engine="prosemirror"
+               button=true
+               editable=true}}
     </div>
-
   </section>
-
 </form>

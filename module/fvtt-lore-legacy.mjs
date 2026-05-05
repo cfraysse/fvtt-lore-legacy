@@ -12,8 +12,7 @@ import { LORE_LEGACY } from './helpers/config.mjs';
 
 const Actors = foundry.documents.collections.Actors;
 const Items = foundry.documents.collections.Items;
-const ItemSheet = foundry.appv1.sheets.ItemSheet;
-const ActorSheet = foundry.appv1.sheets.ActorSheet;
+
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
@@ -49,18 +48,19 @@ Hooks.once('init', function () {
   // if the transfer property on the Active Effect is true.
   CONFIG.ActiveEffect.legacyTransferral = false;
 
-  // Register sheet application classes
-  Actors.unregisterSheet('core', ActorSheet);
-  Actors.registerSheet('fvtt-lore-legacy', LoreLegacyActorSheet, {
-    makeDefault: true,
-    label: 'LORE_LEGACY.SheetLabels.Actor',
+
+// Plus besoin de const Actors/Items ici pour les sheets v2
+  DocumentSheetConfig.registerSheet(Actor, "fvtt-lore-legacy", LoreLegacyActorSheet, {
+    label: "LORE_LEGACY.SheetLabels.Actor",
+    makeDefault: true
   });
-  Items.unregisterSheet('core', ItemSheet);
-  Items.registerSheet('fvtt-lore-legacy', LoreLegacyItemSheet, {
+
+  DocumentSheetConfig.registerSheet(Item, "fvtt-lore-legacy", LoreLegacyItemSheet, {
+    label: "LORE_LEGACY.SheetLabels.Item",
     makeDefault: true,
-    label: 'LORE_LEGACY.SheetLabels.Item',
+    types: ["skill", "spell", "weapon", "armor", "equipment", "feat"] // adapte à tes types
   });
-    
+
   game.settings.register("fvtt-lore-legacy", "PDFrules", {
     name: game.i18n.localize('LORE_LEGACY.SETTINGS.RULES.pdf.name'),
     scope: "world",
@@ -139,7 +139,10 @@ Hooks.on("preCreateItem", async (item, data, options, userId) => {
       await sourceItem.delete();
     }
   }
+
+  return true;   // <-- indispensable !
 });
+
 
 
 /* -------------------------------------------- */
