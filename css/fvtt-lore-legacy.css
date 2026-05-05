@@ -224,6 +224,21 @@
 .fvtt-lore-legacy .item-form {
   font-family: "Roboto", sans-serif;
 }
+.fvtt-lore-legacy .small-btn {
+  width: auto;
+  padding: 2px 6px;
+  font-size: 12px;
+  line-height: 12px;
+  border: 1px solid #666;
+  border-radius: 4px;
+  background: #ddd;
+  cursor: pointer;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+.fvtt-lore-legacy .small-btn:hover {
+  background: #ccc;
+}
 .fvtt-lore-legacy .sheet-header {
   flex: 0 auto;
   overflow: hidden;

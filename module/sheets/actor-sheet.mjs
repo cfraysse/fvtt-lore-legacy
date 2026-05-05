@@ -252,6 +252,13 @@ export class LoreLegacyActorSheet extends ActorSheet {
       });
     }
 
+    html.on('click', '.recalc-values', async (ev) => {
+      ev.preventDefault();
+      await this.actor.recalculateDerivedValues();
+      ui.notifications.info("Valeurs recalculées !");
+      this.render(false);
+    });
+
     if (this._fixingCapsecs) return;
     this._fixingCapsecs = true;
 
