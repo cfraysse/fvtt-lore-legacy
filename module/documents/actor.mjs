@@ -41,246 +41,6 @@ export class LoreLegacyActor extends Actor {
 
       systemData.bagage.value = totalWeight;
     }
-
-    /*
-    // ---------------------------------------------------------------------
-    // 🔥 CALCUL DES CAPACITÉS SECONDAIRES (base, sans effets)
-    // ---------------------------------------------------------------------
-
-    const capsecs = this.items.filter(i => i.type === "capsec");
-
-    const A = (attr) => Number(this.system.abilities?.[attr]?.value ?? 0);
-
-    const getCap = (label) =>
-      capsecs.find(c => c.name === game.i18n.localize(label));
-
-    const endurance = this.items.find(i => i.type === "skill" && i.name === "Endurance");
-    const ENDURANCE_VALUE = endurance ? Number(endurance.system?.skillLevel ?? 0) : 0;
-
-    // Valeurs de base (sans bonus d’objets)
-    let baseResPhys = A("rob") * 3;
-    let baseResMag  = (A("dis") + A("mai")) * 2;
-    let baseResMent = (A("car") + A("pre")) * 2;
-    let baseSB      = A("rob") * 2 + ENDURANCE_VALUE;
-    let baseRap     = A("mai") + A("vig");
-// ------------------------------------------------------------
-// 🔧 Normalisation : accents, casse, espaces
-// ------------------------------------------------------------
-function normalizeEffectString(str) {
-  return str
-    .normalize("NFD")                 // sépare les accents
-    .replace(/[\u0300-\u036f]/g, "")  // supprime les accents
-    .toLowerCase()                    // casse insensible
-    .replace(/\s+/g, " ")             // espaces multiples → 1 espace
-    .trim();
-}
-
-// ------------------------------------------------------------
-// 🔧 Synonymes → clé standard
-// ------------------------------------------------------------
-const synonyms = {
-  // ---------------------------------------------------------
-  // Résistance Physique
-  // ---------------------------------------------------------
-  "res phys": "resphys",
-  "res phy": "resphys",
-  "res.phys": "resphys",
-  "res.physique": "resphys",
-  "res physique": "resphys",
-  "resistance physique": "resphys",
-  "resistance phys": "resphys",
-  "resistance phy": "resphys",
-  "resphys": "resphys",
-  "resistancephysique": "resphys",
-
-  // ---------------------------------------------------------
-  // Résistance Mentale
-  // ---------------------------------------------------------
-  "res ment": "resment",
-  "res men": "resment",
-  "res.ment": "resment",
-  "res.mental": "resment",
-  "res mentale": "resment",
-  "res mental": "resment",
-  "resistance mentale": "resment",
-  "resistance mental": "resment",
-  "resistancementale": "resment",
-  "resment": "resment",
-
-  // ---------------------------------------------------------
-  // Résistance Magique
-  // ---------------------------------------------------------
-  "res mag": "resmag",
-  "res ma": "resmag",
-  "res.mag": "resmag",
-  "res.magique": "resmag",
-  "res magique": "resmag",
-  "resistance magique": "resmag",
-  "resistance mag": "resmag",
-  "resistancemagique": "resmag",
-  "resmag": "resmag",
-
-  // ---------------------------------------------------------
-  // Rapidité
-  // ---------------------------------------------------------
-  "rapidite": "rapidite",
-  "rapide": "rapidite",
-  "vitesse": "rapidite",
-  "rap": "rapidite",
-
-  // ---------------------------------------------------------
-  // Seuil de Blessure
-  // ---------------------------------------------------------
-  "sb": "sb",
-  "seuil blessure": "sb",
-  "seuil de blessure": "sb",
-  "seuilblessure": "sb",
-  "blessure": "sb",
-
-  // ---------------------------------------------------------
-  // PV / PM / RDC
-  // ---------------------------------------------------------
-  "pv": "pv",
-  "pvs": "pv",
-  "points de vie": "pv",
-  "point de vie": "pv",
-
-  "pm": "pm",
-  "pms": "pm",
-  "points de magie": "pm",
-  "point de magie": "pm",
-
-  "rdc": "rdc",
-  "reserve derniere chance": "rdc",
-  "reserve de derniere chance": "rdc",
-  "derniere chance": "rdc",
-
-  // ---------------------------------------------------------
-  // Bagage
-  // ---------------------------------------------------------
-  "bagage": "bagage",
-  "bag": "bagage",
-  "charge": "bagage",
-  "capacite de charge": "bagage"
-};
-
-
-// ------------------------------------------------------------
-// 🔥 Parsing des effets d’items
-// ------------------------------------------------------------
-let bonusResPhys = 0;
-let bonusResMag  = 0;
-let bonusResMent = 0;
-let bonusPV      = 0;
-let bonusPM      = 0;
-let bonusRDC     = 0;
-let bonusBagage  = 0;
-let bonusRap     = 0;
-let bonusSB      = 0;
-let baseBagage   = 9;
-
-for (const item of this.items) {
-  const eff = item.system?.effects;
-  if (!eff || typeof eff !== "string") continue;
-
-  // Normalisation
-  let txt = normalizeEffectString(eff);
-
-  // Ignorer les effets contenant un jet (ex: 1d8)
-  if (txt.match(/\d+d\d+/)) continue;
-
-  // Remplacement des synonymes
-  for (const key in synonyms) {
-    const value = synonyms[key];
-    const regex = new RegExp(key, "gi");
-    txt = txt.replace(regex, value);
-  }
-
-  // Recherche générique : "<clé> + <nombre>" ou "<clé> - <nombre>"
-  const regex = /([a-z]+)\s*\.?\s*([+-])\s*(\d+)/gi;
-  let match;
-
-  while ((match = regex.exec(txt)) !== null) {
-    const key = match[1];
-    const sign = match[2] === "-" ? -1 : 1;
-    const value = Number(match[3]) * sign;
-
-    switch (key) {
-      case "resphys": bonusResPhys += value; break;
-      case "resment": bonusResMent += value; break;
-      case "resmag":  bonusResMag  += value; break;
-      case "pv":      bonusPV      += value; break;
-      case "pm":      bonusPM      += value; break;
-      case "rdc":     bonusRDC     += value; break;
-      case "bagage":  bonusBagage  += value; break;
-      case "rapidite":bonusRap     += value; break;
-      case "sb":      bonusSB      += value; break;
-    }
-  }
-}
-
-
-    // ---------------------------------------------------------------------
-    // 🧮 APPLICATION DES VALEURS FINALES
-    // ---------------------------------------------------------------------
-
-    // Bagage
-    if (systemData?.bagage) {
-      systemData.bagage.max = baseBagage + bonusBagage;
-    }
-
-    // Capsecs
-    const finalResPhys = baseResPhys + bonusResPhys;
-    const finalResMag  = baseResMag  + bonusResMag;
-    const finalResMent = baseResMent + bonusResMent;
-    const finalSB      = baseSB      + bonusSB;
-    const finalRap     = baseRap     + bonusRap;
-
-    const capResPhys = getCap("LORE_LEGACY.CapSec.ResPhys");
-    if (capResPhys) capResPhys.update({ "system.capsecLevel": finalResPhys });
-
-    const capResMag = getCap("LORE_LEGACY.CapSec.ResMag");
-    if (capResMag) capResMag.update({ "system.capsecLevel": finalResMag });
-
-    const capResMent = getCap("LORE_LEGACY.CapSec.ResMent");
-    if (capResMent) capResMent.update({ "system.capsecLevel": finalResMent });
-
-    const capSB = getCap("LORE_LEGACY.CapSec.SeuilBlessure");
-    if (capSB) capSB.update({ "system.capsecLevel": finalSB });
-
-    const capRap = getCap("LORE_LEGACY.CapSec.Rapidite");
-    if (capRap) capRap.update({ "system.capsecLevel": finalRap });
-
-    // ---------------------------------------------------------------------
-    // ❤️ PV / 🔮 PM / ⭐ RDC (max)
-    // ---------------------------------------------------------------------
-
-    const basePV  = (A("rob") + A("vig")) * 2;
-    const basePM  = (A("car") + A("dis"));
-    const fortune = Number(systemData.fortune?.value ?? 0);
-    const baseRDC = fortune + A("vig");
-
-    if (systemData.health) {
-      systemData.health.max = basePV + bonusPV;
-      if (systemData.health.value > systemData.health.max) {
-        systemData.health.value = systemData.health.max;
-      }
-    }
-
-    if (systemData.power) {
-      systemData.power.max = basePM + bonusPM;
-      if (systemData.power.value > systemData.power.max) {
-        systemData.power.value = systemData.power.max;
-      }
-    }
-
-    if (systemData.lastchance) {
-      systemData.lastchance.max = baseRDC + bonusRDC;
-      if (systemData.lastchance.value > systemData.lastchance.max) {
-        systemData.lastchance.value = systemData.lastchance.max;
-      }
-    }
-    */
   }
 
 
@@ -465,22 +225,36 @@ for (const item of this.items) {
     // ------------------------------------------------------------
     // Valeurs de base
     // ------------------------------------------------------------
-    let basePV  = (A("rob") + A("vig")) * 2;
-    let basePM  = (A("car") + A("dis"));
-    let baseRDC = Number(systemData.fortune?.value ?? 0) + A("vig");
 
-    // CapSecs
+        // CapSecs
     const endurance = this.items.find(i => i.type === "skill" && i.name === "Endurance");
     const ENDURANCE_VALUE = endurance ? Number(endurance.system?.skillLevel ?? 0) : 0;
+    const concentration = this.items.find(i => i.type === "skill" && i.name === "Concentration");
+    const CONCENTRATION_VALUE = concentration ? Number(concentration.system?.skillLevel ?? 0) : 0;
+    const EspritCritique = this.items.find(i => i.type === "skill" && i.name === "Esprit Critique");
+    const ESPRIT_CRITIQUE_VALUE = EspritCritique ? Number(EspritCritique.system?.skillLevel ?? 0) : 0;
+    const mysticisme = this.items.find(i => i.type === "skill" && i.name === "Mysticisme");
+    const MYSTICISME_VALUE = mysticisme ? Number(mysticisme.system?.skillLevel ?? 0) : 0;
+    const optimisation = this.items.find(i => i.type === "skill" && i.name === "Optimisation");
+    const OPTIMISATION_VALUE = optimisation ? Number(optimisation.system?.skillLevel ?? 0) : 0;
+    const armurelegere = this.items.find(i => i.type === "skill" && i.name === "Armure Légère");
+    const ARMURE_LEGERE_VALUE = armurelegere ? Number(armurelegere.system?.skillLevel ?? 0) : 0;
+    const armurelourde = this.items.find(i => i.type === "skill" && i.name === "Armure Lourde");
+    const ARMURE_LOURDE_VALUE = armurelourde ? Number(armurelourde.system?.skillLevel ?? 0) : 0;
+    const esquive = this.items.find(i => i.type === "skill" && i.name === "Esquive");
+    const ESQUIVE_VALUE = esquive ? Number(esquive.system?.skillLevel ?? 0) : 0;
 
-    let baseResPhys = A("rob") * 3;
-    let baseResMag  = (A("dis") + A("mai")) * 2;
-    let baseResMent = (A("car") + A("pre")) * 2;
+    let basePV  = (A("rob") + A("vig")) * 2 + ENDURANCE_VALUE;
+    let basePM  = (A("car") + A("dis")) + CONCENTRATION_VALUE + MYSTICISME_VALUE*2;
+    let baseRDC = Number(systemData.fortune?.value ?? 0) + A("vig");
+
+    let baseResPhys = A("rob") * 3 + ARMURE_LEGERE_VALUE + ARMURE_LOURDE_VALUE + ESQUIVE_VALUE;
+    let baseResMag  = (A("dis") + A("mai")) * 2  + CONCENTRATION_VALUE;
+    let baseResMent = (A("car") + A("pre")) * 2 + ESPRIT_CRITIQUE_VALUE;
     let baseSB      = A("rob") * 2 + ENDURANCE_VALUE;
     let baseRap     = A("mai") + A("vig");
 
-    // Bagage
-    let baseBagage = 9;
+    let baseBagage = 9 + OPTIMISATION_VALUE;
 
     // ------------------------------------------------------------
     // Bonus via effets
