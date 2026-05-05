@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.4.6
+
+- Calcul automatiques des capacités secondaires, PV, PM & RDC
+
 ## 2.4.5
 
 - MOve items between actors instead of copy
