@@ -112,6 +112,11 @@ export class LoreLegacyActor extends Actor {
     this._getCharacterRollData(data);
     this._getNpcRollData(data);
 
+    
+    // CapSecs
+    const capsecs = this.items.filter(i => i.type === "capsec");
+    const rap = capsecs.find(c => c.name === game.i18n.localize("LORE_LEGACY.CapSec.Rapidite"));
+    data.init = rap.system.capsecLevel
     return data;
   }
 
