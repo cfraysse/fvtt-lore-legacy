@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.5.1
+
+- Initiative to attribute
+
 ## 2.5.0
 
 - Ajout du calcul de l'init et gestion auto des combats
