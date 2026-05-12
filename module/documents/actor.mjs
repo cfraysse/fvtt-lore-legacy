@@ -251,7 +251,7 @@ export class LoreLegacyActor extends Actor {
 
     let basePV  = (A("rob") + A("vig")) * 2 + ENDURANCE_VALUE;
     let basePM  = (A("car") + A("dis")) + CONCENTRATION_VALUE + MYSTICISME_VALUE*2;
-    let baseRDC = Number(systemData.fortune?.value ?? 0) + A("vig");
+    let baseRDC = Number(systemData.fortune?.max ?? 0) + A("vig");
 
     let baseResPhys = A("rob") * 3 + ARMURE_LEGERE_VALUE + ARMURE_LOURDE_VALUE + ESQUIVE_VALUE;
     let baseResMag  = (A("dis") + A("mai")) * 2  + CONCENTRATION_VALUE;
