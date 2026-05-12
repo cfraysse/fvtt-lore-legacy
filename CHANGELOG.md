@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.5.2
+
+- Push to main
+
 ## 2.5.1
 
 - Initiative to attribute
