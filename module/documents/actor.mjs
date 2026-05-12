@@ -91,6 +91,11 @@ export class LoreLegacyActor extends Actor {
         ability.cadversite = "unchecked";
       }
     }
+
+    // CapSecs
+    const capsecs = this.items.filter(i => i.type === "capsec");
+    const rap = capsecs.find(c => c.name === game.i18n.localize("LORE_LEGACY.CapSec.Rapidite"));
+    systemData.attributes.initiative = rap.system.capsecLevel
   }
 
   /**
@@ -112,11 +117,6 @@ export class LoreLegacyActor extends Actor {
     this._getCharacterRollData(data);
     this._getNpcRollData(data);
 
-    
-    // CapSecs
-    const capsecs = this.items.filter(i => i.type === "capsec");
-    const rap = capsecs.find(c => c.name === game.i18n.localize("LORE_LEGACY.CapSec.Rapidite"));
-    data.init = rap.system.capsecLevel
     return data;
   }
 
@@ -333,7 +333,6 @@ export class LoreLegacyActor extends Actor {
       const cap = getCap(key);
       if (cap) await cap.update({ "system.capsecLevel": value });
     };
-
     await updateCap("LORE_LEGACY.CapSec.ResPhys", baseResPhys + bonusResPhys);
     await updateCap("LORE_LEGACY.CapSec.ResMag",  baseResMag  + bonusResMag);
     await updateCap("LORE_LEGACY.CapSec.ResMent", baseResMent + bonusResMent);

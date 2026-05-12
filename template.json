@@ -45,7 +45,8 @@
         "cfortune" : "unchecked",
         "badversite" : false,
         "nadversite" : 0,
-        "cadversite" : "unchecked"
+        "cadversite" : "unchecked",
+        "initiative" : 0
       },
       "abilities": {
         "vig": {
@@ -102,8 +103,7 @@
           "nadversite" : 0,
           "cadversite" : "unchecked"
         }
-      },
-      "init" : 0
+      }
     },
     "npc": {
       "templates": ["base"],
