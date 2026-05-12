@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2.5.0
+
+- Ajout du calcul de l'init et gestion auto des combats
+- Fix des calculs automatiques de RDC
+
 ## 2.4.6
 
 - Calcul automatiques des capacités secondaires, PV, PM & RDC
